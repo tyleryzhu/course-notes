@@ -1,0 +1,64 @@
+\documentclass[11 pt]{scrartcl}
+\usepackage[header, margin, koma]{tyler}
+
+\newcommand{\hwtitle}{Discussion 0 Recap}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[l]{\hwtitle{}}
+\fancyhead[r]{Tyler Zhu}
+\cfoot{\thepage}
+
+\begin{document} 
+\title{\Large \hwtitle{}}
+\author{\large Tyler Zhu}
+\date{August 27th, 2020}
+
+\maketitle 
+
+\section{Sets}
+Here's some basic notation you should be familiar with. For this section, let $A = \{1,2\}$ and $B = \{1,2,3,4\}$. 
+\begin{itemize}
+    \ii Cardinality, i.e. size of a set. $|A| = 2$. 
+    \ii Subsets, i.e. when all members of one set belong to another. $A\subseteq B$. 
+    \ii Intersection, i.e. everything in common. $A \cap B = \{1,2\}$. 
+    \ii Union, i.e. everything that appears. $A \cup B = \{1,2,3,4\}$. 
+    \ii Set difference, i.e. everything in one but not the other. $B\setminus A = \{3,4\}$. 
+    \ii Cartesian product, i.e. all possible pairs (or tuples) of elements: \\$A\times B = \{(1,1), (1,2), (1,3), (1,4), (2,1), \dots \}$. 
+    \ii Power set, i.e. the set of all subsets. $\Pcal(A) = \{\emptyset, \{1\}, \{2\}, \{1,2\}\}$. Note that $|\Pcal(A)| = 2^{|A|}$.  
+\end{itemize}
+
+Some important sets that you'll come across this semester: 
+\begin{itemize}
+    \ii The naturals (which includes 0): $\NN = \{0,1,2,\dots \}$ 
+    \ii The integers: $\ZZ = \{\dots, -2, -1, 0, 1, 2, \dots\}$
+    \ii The rationals: $\QQ = \{\frac{a}{b} | a,b\in\ZZ, b\not= 0\}$
+    \ii The reals: $\RR$
+    \ii The complexes: $\CC$
+\end{itemize}
+
+As we saw in discussion, if you want to show that two sets are equal, i.e. $A = B$, you need to show $A \subseteq B$ and $B\subseteq A$. This is the same as showing $x=y$ by proving $x\leq y$ and $y\leq x$. 
+
+\section{Propositional Logic}
+We work with logical statements, or propositions. Operators operate on propositions. The common ones are
+\begin{itemize}
+    \ii and, $P\vee Q$: True only if both propositions are True. 
+    \ii or, $P\wedge Q$: False only if both propositions are False (unlike the English or, which is commonly either or). 
+    \ii not, $\neg P$: Negates the truth value, i.e. True becomes False and vice versa. 
+    \ii implies, $P\implies Q \equiv \neg P \wedge Q$: False only if $P$ is True and $Q$ is False. 
+\end{itemize}
+
+Finally, we have two quantifiers: \emph{for all}, which is $(\forall x\in \RR)$, and \emph{there exists}, which is $(\exists x \in \ZZ)$. 
+
+\section{Tips}
+\begin{itemize}
+    \ii Use DeMorgan's Laws to move negations past $\wedge, \vee$. Negate the clauses and swap between the two. 
+    \[ \neg(P\wedge Q) \equiv \neg P \vee \neg Q \] 
+    \[ \neg(P\vee Q) \equiv \neg P \wedge \neg Q \] 
+    \ii To simplify expressions, distribute operators by following the ``distributive law,'' e.x. 
+    \[ (P \wedge Q) \vee R \equiv (P \vee R) \wedge (Q \vee R).\] 
+    The operator linking $P$ and $Q$ remains as the operator linking the two resulting clauses.  
+    \ii Operators cannot be arbitrarily switched, i.e. $\forall x \exists y P(x,y) \not\equiv \exists y \forall x P(x,y)$. Take $P(x,y) = x < y$ as a counterexample. 
+\end{itemize}
+
+\end{document}

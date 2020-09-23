@@ -1,0 +1,297 @@
+\documentclass[11 pt]{scrartcl}
+\usepackage[header, margin, koma]{tyler}
+
+\newcommand{\hwtitle}{Discussion 2B Recap}
+
+\tikzstyle myBG=[line width=3pt,opacity=1]
+
+\newcommand{\drawLinewithBG}[2]
+{
+  \draw[white,myBG]  (#1) -- (#2);
+  \draw[black,very thick] (#1) -- (#2);
+}
+\newcommand{\drawPolarLinewithBG}[2]
+{
+  \draw[white,myBG]  (#1) -- (#2);
+  \draw[black,very thick] (#1) -- (#2);
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[l]{\hwtitle{}}
+\fancyhead[r]{Tyler Zhu}
+\cfoot{\thepage}
+
+\begin{document} 
+\title{\Large \hwtitle{}}
+\author{\large Tyler Zhu}
+\date{\large September 11, 2020}
+
+\maketitle 
+
+\section{Terminology}
+
+A \textbf{graph} $G$ consists of \textbf{vertices} or \textbf{nodes}, the points, and \textbf{edges}, the lines. We frequently write $V(G)$ and $E(G)$ for the vertex and edge sets of $G$ respectively, and call $|V(G)|$ and $|E(G)|$ the \textbf{order} and \textbf{size} of the graph respectively.
+\begin{figure}[!htb]
+    \centering
+        \begin{tikzpicture}[node distance = 2cm,
+            thick,main node/.style={circle,draw}]
+            \node[main node] (1) {$u$};
+            \node[main node] (2) [above right of=1, yshift=-0.5cm] {$v$};
+            \node[main node] (3) [below right of=1, yshift=0.5cm] {$w$};
+            \node[main node] (4) [below right of=2, yshift=0.5cm] {$x$};
+            \node[main node] (5) [right of=4] {$y$};
+
+            \path
+            (1) edge (2)
+                edge (3)
+                edge (4)
+            (2) edge (4)
+            (3) edge (4)
+            (4) edge (5);
+        \end{tikzpicture}
+        \caption{A graph of order 5 and size 6.}
+        \label{fig:simple}
+\end{figure}
+
+In Figure~\ref{fig:simple}, $V(G) = \{u,v,w,x,y\}$ and $E(G) = \{uv, ux, uw, vx, wx, xy\}$. If $e=uv$ is an edge of $G$, then $u$ and $v$ are said to be \textbf{joined} by the edge $e$. In this case, $u$ and $v$ are referred to as \textbf{neighbors} of each other.
+
+%prove characterization of eulerian circuits, and maybe also do hamiltonians
+For a connected graph $G$, any open trail that contains every edge of $G$ is an \textbf{Eulerian trail}. If $G$ contains a closed Eulerian trail, it is \textbf{Eulerian}
+
+\begin{theorem}
+    A nontrivial connected graph $G$ is Eulerian if and only if every vertex of $G$ has even degree.
+\end{theorem}
+
+With this, we can easily characterize graphs possessing an Eulerian trail.
+\begin{corollary}
+    A connected graph $G$ contains an Eulerian trail if and only if exactly two vertices of $G$ have odd degree. Furthermore, each Eulerian trail of $G$ begins at one of these odd vertices and ends at another.
+    \label{cor:euler}
+\end{corollary}
+
+There is an analog to Eulerian trails. A path in a graph $G$ that contains every vertex of $G$ is called a \textbf{Hamiltonian path}.\footnote{We studied Eulerian \textit{trails} because such trails may need to have repeated vertices, unlike paths which necessarily have unique vertices.} Unfortunately, these are much less well-behaved.
+
+\section{Banquet Arrangement}
+Here's Problem 2 from the discussion worksheet. 
+\begin{problem}
+    Suppose $n$ people are attending a banquet, and each of them has at least $m$ friends $(2\leq m\leq n)$, where friendship is mutual.  
+    Prove that we can put at least $m+1$ of the attendants on the same round table, so that each person sits next to his or her friends on both sides.
+\end{problem}
+
+\begin{proof}[Solution]
+
+As an example, suppose Alice, Bob, Claire, and Dom are attending, and the friend pairings are (Alice, Claire), (Alice, Dom), (Bob, Claire), (Bob, Dom), so $n = 4$ and $m = 2$ in this case. 
+We actually can't choose exactly three of them so that they all sit next to their friends, but we can certainly choose to sit the four them in the order (Alice, Claire, Bob, Dom). 
+
+If you haven't realized already, it's helpful to recast this problem in terms of graphs to solve it in general. 
+A big tipoff is both the fact that there are people and mutual friendships which strongly hint to being vertices and edges respectively as well as the topic of this discussion. So we will set 
+\[ \text{ people }\mapsto \text{ vertices } \] 
+and 
+\[ \text{ friendship }\mapsto \text{ edges }.\] 
+
+If we were to represent the above problem in graphs, it'd look something like this: 
+
+\begin{figure}[!ht]
+\begin{center}
+\begin{tikzpicture}[>=stealth', auto, semithick, node distance=2cm]
+\tikzstyle{every state}=[fill=white,draw=black,thick,text=black,scale=0.8]
+\node[state]    (A)               {$A$};
+\node[state]    (B)[below of=A]   {$B$};
+\node[state]    (C)[right of=A]   {$C$};
+\node[state]    (D)[right of=B]   {$D$};
+\path
+(A) edge    (C)
+    edge    (D)
+(B) edge    (C)
+    edge    (D); 
+\end{tikzpicture}
+\end{center}
+\caption{Casting the problem in terms of graphs.}
+\end{figure}
+
+We also see that sitting people around a table so that they sit next to their friends is just asking to find a cycle of length at least $m+1$. Using the above graph, it's easy to find one such cycle, $ACBD$, by starting at $A$ and walking on the graph until you come back to $A$.  
+
+So that's the easy part of the problem. Now let's see how we would create such a cycle. Naively, we might start at an arbitrary vertex, say $v_0$, and try to walk along this graph. We know $v_0$ has at least $m$ neighbors, so let's visit one of them, $v_1$. 
+
+Now $v_1$ also has at least $m$ neighbors, but we've already been to one of them, $v_0$, so it really only has $m-1$ unvisited neighbors, so let's visit one of them, $v_2$. We can keep repeating this process of visiting unvisited neighbors until we're out of new neighbors to get a path 
+
+\[ P = v_0v_1\dots v_l.\] 
+
+One thing we should note is that in the worst case, the number of unvisited neighbors for each $v_i$ is at least $m-i$, which is if all of the $i$ vertices already in the path are neighbors of $v_i$. 
+So $l \geq m$, or else we would still have neighbors we could visit.  
+
+All that's left for us now is to get a cycle from this path. Since we're stuck when we reach $v_l$, all of its neighbors must be in $P$. So let's make a new path starting at $v_l$ by backpedaling from $v_l$ until we reach the last neighbor of $v_l$ in $P$, say $v_k$. Now we have a path 
+\[ P' = v_l v_{l-1} \dots v_k\] 
+where $P'$ is also at least $m+1$ since $v_l$ and all of its neighbors are in the path. But $v_k$ is neighbors with $v_l$, so this is also a cycle, and we're done.  
+\end{proof}
+
+We used the principle of trying things until we get stuck, and trying to fix things until we're free. You'll find that this often works surprisingly well. 
+
+The official solution is quite slick as well, but less motivated.
+It considers the \emph{longest} path in the graph, and constructs the cycle from that. 
+This is an example of the \textbf{Extremal Principle}, where one looks at either the largest or the smallest object satisfying some property. 
+
+\begin{proof}[Official Solution]
+    Let $P=v_0v_1\dots v_l$ be a longest path in the graph. 
+    Such a path exists because the length of paths is bounded above by $n$.  
+    All neighbors of $v_0$ must be in $P$, since otherwise $P$ can be extended to be even longer by appending this edge at the beginning of path $P$.  
+    Let $k$ be the maximum index of neighbors of $v_0$ along $P$. 
+    Since $v_0$ has at least $m$ neighbors, we must have $k\geq m$. 
+    Then $v_0v_1\dots v_kv_0$ gives us the desired cycle.
+\end{proof}
+
+
+Here's a cute example of the Extremal Principle applied in another setting. Before you read on, think about it for a few minutes.  
+
+\begin{problem}
+    There are $n$ students standing in a field such that the distance between each pair is distinct. Each student is holding a ball, and when the teacher blows a whistle, each student throws their ball to the nearest student. Prove that there is a pair of students that throw their balls to each other.
+\end{problem}
+\begin{proof}
+    Consider the two students closest to each other. Since they are each other's nearest student, they must throw their balls to each other. 
+\end{proof}
+
+Try this one for another extremal flavored graph problem. How would you do it without looking at the extreme cases?
+\begin{exercise}
+    Show that every tree $G$ contians at least two leaves, or vertices of degree 1. 
+\end{exercise}
+
+
+\iffalse
+
+%%%%%%%%%%%%% SECTION %%%%%%%%%%%%5
+\section{Planarity Bounds}
+A graph $G$ is called a \textbf{planar graph} if $G$ can be drawn in the plane so that no two of its edges cross each other. If $G$ is planar, then it divides the plane into pieces called \textbf{regions}. Recall that for any planar, connected graph $G$, if $G$ has $V$ vertices, $E$ edges, and $F$ faces, Euler's formula tells us that 
+    \[ V-E+F = 2. \]
+
+You can imagine how hard it is to prove a graph to be non-planar: you can't possibly check every way of drawing the graph. Euler's Identity leads to some simple conditions on planarity.
+
+We can derive many useful bounds using this formula that involve only two of the three quantities, which is helpful especially for showing that certain graphs are nonplanar. Usually we omit faces since those are tricky to quantify, so let's try to compare the number of faces to the number of edges. 
+
+\begin{figure}[!htb]
+\begin{center}
+\begin{tikzpicture}[>=stealth', auto, semithick, node distance=2cm]
+\tikzstyle{every state}=[fill=white,draw=black,thick,text=black,scale=0.8]
+\node[state]    (A)               {};
+\node[state]    (B)[right of=A]   {};
+\node[state]    (C)[right of=B]   {};
+\node[state]    (D)[below of=A]   {};
+\node[state]    (E)[right of=D]   {};
+\path
+(A) edge    node[below = 0.5cm] {$F_1$} (B)
+    edge    (D)
+(B) edge    node[below = 0.6cm, left] {$F_2$} (C)
+    edge    (E)
+(C) edge    node[below right = 0.5cm] {$F_3$} (E) 
+(D) edge    (E); 
+\end{tikzpicture}
+\end{center}
+\caption{An example planar graph $G_1$ with its three faces marked.}
+\label{fig:graph}
+\end{figure}
+
+Let's look at the graph $G_1$ shown in Figure~\ref{fig:graph}. Notice that every edge is a part of exactly two faces. So we can count the number of edges also by looking at how many edges border each face. Let $|F_i|$ denote the number of edges that border the face $F_i$. Then, 
+\begin{align*}
+    2E &= |F_1| + |F_2| + |F_3| \\ 
+       &= 4 + 3 + 5 \\ 
+       &\geq 3 + 3 + 3 \\ 
+       &= 3F
+\end{align*}
+where we used the very deep fact that every face is bordered by at least 3 edges (how else do you have a face?). Hence, we've arrived at the inequality $2E \geq 3F$. Now if we solve our formula for $F$ and substitute, we get the all important bound
+
+\[ 2 - V + E = F \leq \frac{2}{3} E \implies \boxed{E \leq 3V-6}.\] 
+
+This is useful now as a method for showing a graph is nonplanar, as otherwise we'd have to draw every possible configuration of a graph and show all of them have crossings, which is neither feasible nor convincing. We can use this to show that $K_5$, the complete graph on 5 vertices, is nonplanar. Since it has $5$ vertices and $10$ edges, $10 \not\leq 3\cdot 5 - 6 = 9$. 
+
+One extension of the above bound is to find a bound when $G$ is triangle-free, i.e. no face is bounded by 3 edges. I'll leave that as an exercise for you. Recall that the graph with six vertices, where three vertices are connected to all three other vertices, is the complete bipartite graph $K_{3,3}$. We can use this new bound to show $K_{3,3}$ is nonplanar.
+
+
+\begin{exercise}
+    Show that if $G$ is a connected, planar, triangle-free graph, then $E \leq 2V - 4$. Use this to show that $K_{3,3}$ is nonplanar. 
+\end{exercise}
+
+As a hint, we proved that all bipartite graphs have no odd tours. So what do we know about the presence of triangles in such a graph? 
+
+\begin{figure}[!htb]
+    \centering
+    \begin{tikzpicture}[scale = 0.7]
+
+  \begin{scope}[xshift=-6cm,yshift=-1cm]
+    \foreach \x in {4,2,0} {
+      \foreach \y in {0,2,4} {
+        \drawLinewithBG{\x,0}{\y,2};
+      }
+    }
+
+    \foreach \x in {0,2,4} {
+      \foreach \y in {0,2} {
+        \node at (\x,\y) [circle,fill=black] {};
+      }
+    }
+
+    \node at (2,-1.5) {\Large$K_{3,3}$};
+  \end{scope}
+
+  \begin{scope}[xshift=3cm]
+    \foreach \a in { 18, 90, 162, 234, 306 } {
+      \foreach \b in { 18, 90, 162, 234, 306 } {
+        \drawPolarLinewithBG{\a:2}{\b:2};
+      }
+    }
+
+    \foreach \a in {18,90, 162, 234, 306 } {
+      \node at (\a:2cm) [circle,fill=black] {};
+    }
+    \node at (0,-2.5) {\Large$K_5$};
+  \end{scope}
+\end{tikzpicture}
+\caption{The Kuratowski graphs}
+\end{figure}
+
+We can already see how much trouble it can be to determine planarity for arbitrary graphs, let alone simple ones like $K_{3,3}$ and $K_5$. Surprisingly, the main enemies to planarity are precisely these two graphs, which leads to a simple check to see if a graph is planar, discovered in 1930. Before I can state Kuratowski's remarkable theorem, I need to state two notions.
+
+A \textbf{subdivision} of a graph is constructed by replacing one edge by two edges with a vertex in between, and a \textbf{subgraph} is constructed by removing vertices or edges.
+
+\begin{theorem}[Kuratowski]
+    A graph $G$ is planar if and only if $G$ does not contain a subdivision of $K_5$ or $K_{3,3}$ as a subgraph.
+\end{theorem}
+
+In other words, $G$ is planar if it is not possible to subdivide the edges of $K_5$ or $K_{3,3}$, and then possibly add edges or vertices, to get $G$.
+
+\subsection{To Take Home}
+\begin{exercise}[Dis. Problem 2b]
+    Consider graphs with the property $T$: For every three distinct vertices $v_1,v_2,v_3$ of graph $G$ , there are at least two edges among them. 
+    Prove that if $G$ is a graph on $\geq$ 7 vertices, and $G$ has property $T$, then $G$ is nonplanar. 
+\end{exercise}
+Hint: Proof by contradiction when $v = 7$. What do we know about groups of five vertices in a planar graph?
+
+\section{Induction on Edges and Vertices}
+Problem 3 from the discussion sometimes gives people trouble, so I'll try to explain it some more in depth. Here is the problem, paraphrased. 
+
+\begin{problem}
+An edge coloring of a graph is an assignment of colors to edges in a graph where any two edges incident to the same vertex have different colors.
+\alphanum
+    \ii Prove that any graph with maximum degree $d\geq 1$ can be edge colored with $2d-1$ colors.
+    \ii Show that any tree with maximum degree $d\geq 1$ can be edge colored with $d$ colors.
+\enumend
+\end{problem}
+
+The solution is to use induction on the number of edges in the first question, and induction on the number of vertices in the second. I'm not going to re-explain the solution (you can find it online) but I'll try to explain why it's fine to induct this way.
+
+Imagine if I had the following problem: 
+\begin{question}
+    Prove that any graph with maximum degree $4$ can be edge colored with $7$ colors. 
+\end{question}
+
+Now induction, especially on the number of edges, seems like a viable approach. We're proving some statement about all graphs, so let's assume its true for a graph with $m$ edges and prove it for one with $m+1$ edges (both with max degree 4). What about this problem:
+
+\begin{question}
+    Prove that any graph with maximum degree $10$ can be edge colored with $19$ colors. 
+\end{question}
+
+See what I'm getting at? Just because we have a variable $d$ in our original statement doesn't mean we need to induct over $d$. We can treat $d$ as a constant and show the statement is true for all graphs given a specific $d$, which then shows the statement is true for all $d$. 
+
+Another analogy: we don't need to induct over our variable $d$ much like how the number of vertices and edges are also variables, but we don't need to induct over both. 
+
+\fi
+
+\end{document}

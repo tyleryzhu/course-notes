@@ -1,0 +1,46 @@
+\documentclass[11 pt]{scrartcl}
+\usepackage[header, margin, koma]{tyler}
+
+\newcommand{\hwtitle}{Discussion 2A Recap}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[l]{\hwtitle{}}
+\fancyhead[r]{Tyler Zhu}
+\cfoot{\thepage}
+
+\begin{document} 
+\title{\Large \hwtitle{}}
+\author{\large Tyler Zhu}
+\date{\large September 9, 2020}
+
+\maketitle 
+
+\section{Terminology}
+\itemnum
+    \ii An \textbf{instance} of a stable matching is a set of preference lists of jobs and candidates. 
+    \ii A \textbf{matching} for a stable matching is a set of candidate-job couples $(C_i, J_i)$. 
+    \ii A \textbf{rogue couple} is a pair $(C,J)$ that prefer each other over their current partners. 
+    \ii A \textbf{stable} matching is a matching without any rogue couples. 
+    \ii A \textbf{(job/candidate) optimal} matching is one where the (jobs/candidates) receive their highest preferences of \emph{all} stable matchings. 
+\itemend
+
+The traditional propose-and-reject algorithm (PAR) has jobs propose to candidates. It provides us with a job-optimal, candidate-pessimal, stable matching.  
+
+\section{Important Concepts}
+Recall that the propose-and-reject algorithm performs three stages every day until termination: 
+\alphanum
+    \ii \textbf{Morning}: Every job proposes to the best candidate who has yet to reject the job yet.  
+    \ii \textbf{Afternoon}: Each candidate rejects all jobs proposed to her except for her favorite job, which she keeps on a string. 
+    \ii \textbf{Evening}: Each job crosses off the candidate that rejected them, if any.
+\enumend
+
+\itemnum
+    \ii \emph{Candidate Improvement Lemma}: The job a candidate has on her string can only get better. 
+    \ii In general, consider proofs by induction or contradiction with stable matching problems. In most contradiction proofs, use the Well-Ordering Principle (``The first day that...'') and construct a rogue couple. 
+    \ii One very common technique is to create preference lists where the jobs have distinct first choices so that it's easy to reason about what happens.
+    \ii A common counterexample is the $2\times 2$ case where jobs and candidates have different preference lists. 
+    \ii Counting the number of rejections occuring can help in some contradiction proofs.
+\itemend
+
+\end{document}

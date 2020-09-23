@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Copyright 2017 mathsisfun.com -->
+<svg xmlns="http://www.w3.org/2000/svg" width="739.3" height="214.5" version="1.1">
+<defs>
+<marker id="id1" style="overflow:visible;" orient="auto">
+<path transform="matrix(-0.8,0,0,-0.8,-10,0)" style="stroke:black; stroke-width:1pt;" d="M 0,0 5,-5 -12.5,0 5,5 Z"/>
+</marker>
+</defs>
+<g transform="translate(-285.205,-651.586)">
+<g transform="translate(-8.01912)">
+<g transform="matrix(0.265,0,0,0.265,618.88,634.856)">
+<g style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:36.3;">
+<g>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-602.318,148.064)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-602.318,238.08)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-602.318,328.097)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-602.318,508.13)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-602.318,418.113)"/>
+</g>
+</g>
+<g style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:36.3;">
+<g>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-290.702,148.064)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-290.702,238.08)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-290.702,328.097)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-290.702,508.13)"/>
+<circle cx="-199.1" cy="520.6" r="167.991" transform="matrix(0.082649,0,0,0.082649,-290.702,418.113)"/>
+</g>
+</g>
+<g style="marker-end:url(#id1); fill:none; fill-opacity:0.75; stroke:black; stroke-width:3;">
+<g>
+<path d="m -593.7,278.6 258.9,-84.1"/>
+<path d="m -589.4,200.1 251.8,75.4"/>
+<path d="m -590.3,372.2 259.2,-0.6"/>
+<path d="m -589.3,458.5 258.6,-74.1"/>
+<path d="m -596.1,546.7 262.5,-74.8"/>
+</g>
+</g>
+</g>
+<text x="455.5" y="669.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#729fcf; stroke-width:0.27px;">A</text>
+<text x="536" y="670.3" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#fdea4f; stroke-width:0.27px;">B</text>
+</g>
+<g transform="translate(-9.42175)">
+<circle cx="610.1" cy="685.5" r="3.67934" style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;"/>
+<circle cx="610.1" cy="709.4" r="3.67934" style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;"/>
+<circle cx="610.1" cy="733.2" r="3.67934" style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;"/>
+<circle cx="610.1" cy="757.1" r="3.67934" style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;"/>
+<g style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;">
+<g>
+<circle cx="692.7" cy="685.5" r="3.67934"/>
+<circle cx="692.7" cy="709.4" r="3.67934"/>
+<circle cx="692.7" cy="733.2" r="3.67934"/>
+<circle cx="692.7" cy="780.9" r="3.67934"/>
+<circle cx="692.7" cy="757.1" r="3.67934"/>
+</g>
+</g>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 616.7,708.7 68.6,-22.3"/>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 617.9,687.9 66.7,20"/>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 617.7,733.5 68.7,-0.2"/>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 617.9,756.4 66.3,0"/>
+<text x="610.5" y="669.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#729fd0; stroke-width:0.27px;">A</text>
+<text x="692.8" y="670.3" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#fdea4f; stroke-width:0.27px;">B</text>
+</g>
+<g transform="translate(-6.16089)">
+<g style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;">
+<g>
+<circle cx="762.1" cy="685.5" r="3.67934"/>
+<circle cx="762.1" cy="709.4" r="3.67934"/>
+<circle cx="762.1" cy="733.2" r="3.67934"/>
+<circle cx="762.1" cy="780.9" r="3.67934"/>
+<circle cx="762.1" cy="757.1" r="3.67934"/>
+</g>
+</g>
+<circle cx="844.7" cy="685.5" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<circle cx="844.7" cy="709.4" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<circle cx="844.7" cy="733.2" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<circle cx="844.7" cy="757.1" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<g style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;">
+<g>
+<path d="m 768.8,708.7 68.6,-22.3"/>
+<path d="m 769.9,687.9 66.7,20"/>
+<path d="m 769.7,733.5 68.7,-0.2"/>
+<path d="m 769.9,756.4 68.5,-19.6"/>
+<path d="m 768.1,779.7 69.6,-19.8"/>
+</g>
+</g>
+<text x="762.9" y="669.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#729fd0; stroke-width:0.27px;">A</text>
+<text x="843" y="670.3" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#fdea4f; stroke-width:0.27px;">B</text>
+</g>
+<g>
+<g style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;">
+<g>
+<circle cx="911" cy="685.5" r="3.67934"/>
+<circle cx="911" cy="709.4" r="3.67934"/>
+<circle cx="911" cy="733.2" r="3.67934"/>
+<circle cx="911" cy="780.9" r="3.67934"/>
+<circle cx="911" cy="757.1" r="3.67934"/>
+</g>
+</g>
+<g style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;">
+<g>
+<circle cx="993.5" cy="685.5" r="3.67934"/>
+<circle cx="993.5" cy="709.4" r="3.67934"/>
+<circle cx="993.5" cy="733.2" r="3.67934"/>
+<circle cx="993.5" cy="780.9" r="3.67934"/>
+<circle cx="993.5" cy="757.1" r="3.67934"/>
+</g>
+</g>
+<g style="marker-end:url(#id1); fill:none; fill-opacity:0.75; stroke:black; stroke-width:0.8;">
+<g>
+<path d="m 917.6,708.7 68.6,-22.3"/>
+<path d="m 918.7,687.9 66.7,20"/>
+<path d="m 917.6,737 68.4,39.7"/>
+<path d="m 918.8,756.4 68.5,-19.6"/>
+<path d="m 917,779.7 69.6,-19.8"/>
+</g>
+</g>
+<text x="911.5" y="669.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#729fd0; stroke-width:0.27px;">A</text>
+<text x="991.2" y="670.3" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#fdea4f; stroke-width:0.27px;">B</text>
+</g>
+<text x="487.7" y="814.5" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:18.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">General</text>
+<text x="641.8" y="814.5" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:18.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">Injective</text>
+<text x="796" y="814.5" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:18.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">Surjective</text>
+<text x="950.3" y="814.5" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:18.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">Bijective</text>
+<text x="332.4" y="812.4" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:18.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">NOT a</text>
+<g transform="translate(-14)">
+<circle cx="306.3" cy="685.1" r="3.67934" style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;"/>
+<circle cx="306.3" cy="708.9" r="3.67934" style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;"/>
+<circle cx="306.3" cy="732.8" r="3.67934" style="color:black; overflow:visible; fill:#729fcf; stroke:black; stroke-width:0.8;"/>
+<circle cx="388.9" cy="685.1" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<circle cx="388.9" cy="708.9" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<circle cx="388.9" cy="732.8" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<circle cx="388.9" cy="756.6" r="3.67934" style="color:black; overflow:visible; fill:#fce94f; stroke:black; stroke-width:0.8;"/>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 312,686.8 74.6,-1"/>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 312.7,686.9 71.6,20.8"/>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 312.4,734.3 71.5,18.8"/>
+<text x="306.9" y="669.4" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#729fcf; stroke-width:0.27px;">A</text>
+<text x="387.4" y="669.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:23.9px; color:black; overflow:visible; fill:#fdea4f; stroke-width:0.27px;">B</text>
+<path style="marker-end:url(#id1); fill:none; stroke:black; stroke-width:0.8;" d="m 309.4,710.3 74.8,21.9"/>
+</g>
+<text x="486.9" y="835.4" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:18.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">Function</text>
+<text x="641.7" y="834.5" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">(not surjective)</text>
+<text x="796.3" y="834.5" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">(not injective)</text>
+<text x="950.8" y="834.5" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">(injective, surjective)</text>
+<text x="332.3" y="833.3" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:18.7px; overflow:visible; fill:#204a87; stroke-width:0.27px;">Function</text>
+<text x="332.7" y="861.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; font-style:italic; color:black; overflow:visible; fill:#ff9900; stroke-width:1px;">A has many B</text>
+<text x="641.8" y="861.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; font-style:italic; color:black; overflow:visible; fill:#ff9900; stroke-width:1px;">B can't have many A</text>
+<text x="796.5" y="861.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; font-style:italic; color:black; overflow:visible; fill:#ff9900; stroke-width:1px;">Every B has some A</text>
+<text x="950.7" y="861.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; font-style:italic; color:black; overflow:visible; fill:#ff9900; stroke-width:1px;">A to B, perfectly</text>
+<text x="487.2" y="861.9" style="font-family:'Comic Sans MS'; text-align:center; text-anchor:middle; font-size:14.7px; font-style:italic; color:black; overflow:visible; fill:#ff9900; stroke-width:1px;">B can have many A</text>
+</g>
+</svg>

@@ -1,0 +1,130 @@
+\documentclass[11 pt]{scrartcl}
+\usepackage[header, margin, koma]{tyler}
+
+\newcommand{\hwtitle}{Hard Counting Problems}
+
+\newif\ifproblemsol
+\problemsoltrue
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[l]{\hwtitle{}}
+\fancyhead[r]{Tyler Zhu}
+\cfoot{\thepage}
+
+\begin{document} 
+\title{\Large \hwtitle{}}
+\author{\large Tyler Zhu}
+\date{\large\today}
+
+\maketitle 
+
+These are some pretty arbitrary, hard counting problems. They are more so for testing your general ability to see connections in counting well than how well you bookkeep. Safe travels.  
+
+\section{Warm up}
+\begin{problem}
+    How many cubic polynomials $f(x)$ with positive integer coefficients are there such that $f(1) = 9$?
+\end{problem}
+\ifproblemsol
+\begin{proof}[Solution]
+    Let $f(x) = ax^3+bx^2+cx+d$. The only condition on $f(x)$ is that $f(1) = 9$, which means $a + b + c + d = 9$. Since $a,b,c,d$ are positive integers, there are $\binom{8}{3} = 56$ such polynomials. 
+\end{proof}
+\fi
+
+\section{Assorted Candies}
+\begin{problem}
+    Prove $\sum_{k=0}^n \binom{n}{k} 2^k = 3^n$ with a combinatorial argument. 
+\end{problem}
+\ifproblemsol
+\begin{proof}[Solution]
+    Suppose we're trying to create a $n$-bead string with 3 colors; red, blue and green. We can either have 3 chocies for each spot for a total of $3^n$, or pick the $n-k$ spots which will be red, and then fill in the remaining $k$ spots with either blue or green for a total of $\binom{n}{k}2^k$ for each choice of $k$. 
+\end{proof}
+\fi
+
+\begin{problem}
+    Let $a_1, a_2, \dots, a_n$ be a sequence of arbitrary natural numbers. Define $b_k$ to be the number of elements $a_i$ for which $a_i \geq k$. Prove that $a_1 + a_2 + \dots + a_n = b_1 + b_2 + \cdots$. 
+\end{problem}
+\ifproblemsol
+\begin{proof}[Solution]
+    The idea is to double count. Drawing a picture is the best way to see this: for each $a_i$, draw $a_i$ circles vertically. Then the LHS is counting the number of circles going vertically, while the RHS is counting them horizontally. 
+    
+    Formally, one way to count is simply to sum the $a_i$'s. Another way to count uses the fact that they are natural numbers. All the $b_i$ start at 0. Then, for any given $a_i$, $b_1$ through $b_{a_i}$ will have all their values increased by $1$, increasing the total on the RHS by $a_i$. Hence the total contributions of all $a_i$ to the RHS is just $a_1 + \dots + a_n$. 
+\end{proof}
+\fi
+
+\begin{problem}
+    How many ways are there to insert $+$’s between the digits of 111111111111111 (fifteen 1’s) so that the result will be a multiple of 30?
+\end{problem}
+\ifproblemsol
+\begin{proof}[Solution]
+    No matter how many $+$'s we insert, the result will always be a multiple of $3$ since there are fifteen 1's. For it to be a multiple of 10, we need exactly 10 numbers, which means we're adding 9 $+$'s. There are 14 gaps, so our answer is $\binom{14}{9}$.
+\end{proof}
+\fi
+
+
+\begin{problem}
+    Compute 
+    \[ \sum_{n_{60}=0}^2\sum_{n_{59}=0}^{n_{60}}\dots \sum_{n_2=0}^{n_3} \sum_{n_1=0}^{n_2}\sum_{n_0=0}^{n_1} 1.\]
+\end{problem}
+\ifproblemsol
+\begin{proof}[Solution]
+    Another way of phrasing the problem is to find the number of solutions to $0\leq n_0 \leq n_1 \leq n_2 \leq \dots \leq n_{60} \leq 2$. This corresponds to the number of right-up walks on a $61\times 2$ grid from the bottom left to the top right, which we all know to be $\binom{63}{2}$. 
+    
+    Alternatively, notice that every solution is of the form $(0,\dots, 0, 1, \dots, 1, 2, \dots, 2)$, so we only need to specify the number of 0s, 1s, and 2s. This is equivalent to solving the equation $x+y+z = 61$ for nonnegative $x,y,z$, which (by stars and bars) has $\binom{63}{2}$ solutions.
+\end{proof}
+\fi
+
+\begin{problem}
+    There’s a new (virtual) game show featuring $N$ people where a few lucky contestants get to compete for the ultimate prize: a roll of toilet paper. The game works as follows: everyone lines up in front of a jar of ping pong balls numbered 1 through 100 and one-by-one randomly select a ball until everyone has one. Then the winning number is announced, and anyone with the winning number wins the prize. 
+    \alphanum
+        \ii Suppose the winning number is 42. What’s the probability that if $N=3$, then the third person wins the game?
+        \ii If $N = 100$, what’s the probability that the third person wins the game now? 
+        \ii You and a friend are watching the game (for $N = 100$) and after all of the balls have been drawn, you both decide to bet on the results. Your friend picks contestant 42, thinking they must have the winning number, but before you can pick a contestant, 98 of them groan in realization that they have losing numbers, which leaves you with no choice but to bet on contestant 20. What’s the probability that you win the bet? 
+    \enumend
+\end{problem}
+\ifproblemsol
+\begin{proof}[Solution]
+\alphanum
+    \ii By symmetry, $\frac{1}{100}$. One can also compute it out to be $\frac{99}{100}\cdot \frac{98}{99}\frac{1}{98} = \frac{1}{100}$. 
+    \ii As above, by symmetry, $\frac{1}{100}$. Computation also works. 
+    \ii This is just the Monty Hall problem in disguise, where you choose to switch! Once the other 98 doors (contestant's numbers) were revealed, all of the $\frac{99}{100}$ probability went into contest 20's chances, so you have a $\frac{99}{100}$ probability of winning the bet.  
+\enumend
+\end{proof}
+\fi
+
+
+\section{Dessert}
+These aren't actually relevant to course material; please don't do them unless you really want to! 
+
+\begin{exercise}
+    Let $(a_1,a_2, \dots, a_{12})$ be a permutation of $(1,2,\dots,12)$ for which 
+    \[ a_1>a_2>a_3>a_4>a_5>a_6 \text{ and } a_6<a_7<a_8<a_9<a_{10}<a_{11}<a_{12}. \]
+    An example of such a permutation is $(6,5,4,3,2,1,7,8,9,10,11,12)$. Find the number of such permutations. 
+\end{exercise}
+\ifproblemsol
+\begin{proof}[Solution]
+    First, $a_6 = 1$ in every permutation, as it must be the smallest number. We can build any such permutation by picking the five numbers that go on the left and filling them in decreasing order. Then the remaining numbers must fill out the other six on the right, so there are $\binom{11}{5}$ such ways to pick them. 
+\end{proof}
+\fi
+
+\begin{exercise}
+    Let $N$ denote the number of $7$-tuples of sets $S_1, S_2, \dots,S_7$, not necessarily distinct, for which 
+    \[ S_1 \subseteq S_2 \subseteq \cdots \subseteq S_7 \subseteq \{1,2,3,4,5,6,7\}.\] 
+    Find $N$. 
+\end{exercise}
+\ifproblemsol
+\begin{proof}[Solution]
+    For each number, if it appears in a set $S_i$, then it appears in all sets $S_j$ where $j \geq i$. So for each number, we have 7 ways to pick the first set it starts appearing in, or none at all, for a total of 8 choices. Thus $N = 8^7$. 
+\end{proof}
+\fi
+
+\begin{exercise}
+    In a shooting match a marksman must break eight targets arranged in three hanging columns of 3, 3 and 2 targets respectively. Whenever a target is broken, it must be the lowest unbroken target in its column. In how many different orders can the eight targets be broken? 
+\end{exercise}
+\ifproblemsol
+\begin{proof}[Solution]
+    Consider a string such as $AAABBBCC$ as a set of instructions, where the appearance of an $A$ means shoot at the lowest hanging target in the first column, $B$ means shoot in the second column, and $C$ means shoot in the third column. Then every permutation of this string gives a new way to break the eight targets, for a total of $\frac{8!}{3!3!2!}$. 
+\end{proof}
+\fi
+
+\end{document}

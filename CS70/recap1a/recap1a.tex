@@ -1,0 +1,43 @@
+\documentclass[11 pt]{scrartcl}
+\usepackage[header, margin, koma]{tyler}
+
+\newcommand{\hwtitle}{Discussion 1B Recap}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[l]{\hwtitle{}}
+\fancyhead[r]{Tyler Zhu}
+\cfoot{\thepage}
+
+\begin{document} 
+\title{\Large \hwtitle{}}
+\author{\large Tyler Zhu}
+\date{\large September 4, 2020}
+
+\maketitle 
+
+\section{Induction}
+
+Induction is typically most helpful when we try to prove statements of the form: $(\forall n\in \NN), P(n)$ is true. This happens in three steps:
+\itemnum
+    \ii \styl{Base Case}: Prove that $P(0)$ is true.
+    \ii \styl{Induction Hypothesis}: Assume that for any $k \geq 0$, $P(k)$ is true. 
+    \ii \styl{Inductive Step}: Prove that $P(k+1)$ is true, showing that $P(k) \implies P(k+1)$. 
+\itemend
+
+When writing induction proofs for homework or for exams, be sure to state these three steps clearly for maximal points. 
+
+Induction used like this is typically referred to as \emph{weak} induction, in contrast with \emph{strong} induction, where in the IH we instead make the assumption that for all $0\leq k' \leq k$, $P(k')$ is true.  
+
+Let me reinforce the relationship between weak and strong induction. If we have a statement $P(n)$ for integer $n \geq 0$, then weak induction proves $P(0)$ and $P(k) \implies P(k+1)$. So in this framework, if a statement $P(5)$ is true, it must have been proved through the connection $P(0) \implies P(1) \implies P(2) \implies \dots \implies P(5)$, meaning that if $P(5)$ is true, $P(k')$ is true for $0\leq k' \leq 4$.
+
+But that's precisely what strong induction is! To prove $P(k+1)$, we assume that $P(k')$ is true for $0 \leq k' \leq k$. Hence, strong and weak induction are the same, aside from their assumptions. So you don't need to worry about whether you should use strong or weak induction and just worry about what base assumptions you need in order to prove $P(k+1)$. 
+
+\section{Tips}
+\itemnum
+    \ii To show the IS, take $k+1$ case, break it down to the $k$ case, apply the induction hypothesis, and re-extend to the $k+1$ case. In other words, start with the statement of $P(k+1)$ and manipulate until you can apply the induction hypothesis of $P(k)$, then show that $P(k+1)$ follows. This is the standard way to use induction, and is more useful than you'd expect.  
+    \ii For purely algebraic proofs, you can feel free to manipulate from the LHS to the RHS or vice versa, but do not modify both sides at the same time. This works because algebra is symmetric. 
+    \ii If you need more room for bounds or arguing in the IS, consider \emph{strengthening the hypothesis}, i.e. make a claim which is more specific which implies your statement. It's counterintuitive that we would try to instead prove a harder statement, but the extra assumptions often help in induction. 
+\itemend
+
+\end{document}

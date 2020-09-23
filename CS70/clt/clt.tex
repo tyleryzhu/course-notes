@@ -1,0 +1,67 @@
+\documentclass[11 pt]{scrartcl}
+\usepackage[header, margin, koma]{tyler}
+
+\newcommand{\hwtitle}{LLN and the Central Limit Theorem}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[l]{\hwtitle{}}
+\fancyhead[r]{Tyler Zhu}
+\cfoot{\thepage}
+
+\begin{document} 
+\title{\Large \hwtitle{}}
+\author{\large Tyler Zhu}
+\date{\large\today}
+
+\maketitle 
+
+The idea of this worksheet is to get you to the point where applying the Central Limit Theorem becomes natural and doesn't require memorizing a formula to apply it. If you actually try solving each problem on its own, this should do its job. 
+
+\section{Warm-Up: Law of Large Numbers}
+
+\begin{problem}
+    This problem will walk you through a proof of the Law of Large Numbers. The setup is as follows: we have $n$ i.i.d. random variables $X_1, \dots, X_n$ where $\EE[X_i] = \mu$ and $\Var(X_i) = \si^2$. Our intuition tells us that in the long run, we'd expect the average of these random variables to approach the true underlying mean. 
+    \alphanum
+        \ii Create an unbiased estimator $M_n$ for the mean $\mu$.
+        \ii What are $\EE[M_n]$ and $\Var(M_n)$? 
+        \ii Suppose I used Chebyshev's inequality to create a confidence interval $[\mu-\eps, \mu+\eps]$ for $M_n$. As $n\to\infty$, how confident am I that $M_n$ will be in this interval? How does this relate to the law of large numbers?
+    \enumend
+\end{problem}
+
+So LLN tells us that their average will eventually be very close to the mean, but it doesn't tell me how confident I can be for a particular $n$. That's where CLT comes in. 
+
+\section{Central Limit Theorem}
+First we'll see how we can derive the Central Limit Theorem to gain intuition for why it works, then I'll present it. 
+
+\begin{problem}
+    Your friend comes up to you and tells you about the new BLT theorem, which says that the sum of $n$ i.i.d. random variables is approximately Gaussian for large $n$, but forgot what the parameters of it looks like. It's your job to figure out exactly what they should be. Similar to the last problem, suppose that $X_1, \dots, X_n$ are i.i.d. where $\EE[X_i] = \mu$ and $\Var(X_i) = \si^2$. 
+    \alphanum
+        \ii Let $S_n = X_1 + \dots + X_n$. What are $\EE[S_n]$ and $\Var(S_n)$? 
+        \ii Define a new r.v. $Z_n$ in terms of $S_n$ which has mean 0 and standard deviation 1. 
+        \ii The \emph{z-score} of a data point is how many standard deviations (+/-) it's away from the mean. Given some observation $x$ in the distribution $S_n$, what would it's z-score be? 
+        \ii Your friend's BLT theorem tells you that $Z_n\sim \Nor(0,1)$, i.e. it's approximately a standard normal Gaussian, in the following sense: 
+        \[ \lim_{n\to\infty} \PP[Z_n \leq z] = \Phi(z)\] 
+        where $\Phi(z)$ is the CDF of the standard normal Gaussian. Given this, what is $\PP[S_n \leq x]$ for some $x$? 
+    \enumend
+\end{problem}
+
+Here's the general theorem for reference.
+\begin{theorem}[Central Limit Theorem]
+    Let $X_1, \dots, X_n$ be i.i.d. r.v.'s where $\EE[X_i] = \mu$ and $\Var(X_i) = \si^2$, and define $S_n = X_1 + \dots + X_n$. Then as $n\to\infty$, the CDF of $S_n$ approaches that of the CDF of a $\Nor(n\mu, n\si^2)$ distribution. In terms of z-scores, if $Z_n = \frac{S_n-n\mu}{\si\sqrt{n}}$, then 
+    \[ \lim_{n\to\infty} \PP[Z_n \leq z] = \Phi(z)\] 
+    where $\Phi(z)$ is the CDF of a standard normal Gaussian. 
+\end{theorem}
+
+
+\section{Past Practice Problems}
+
+\begin{problem}[Sp19 Final \#7]
+    Suppose the number of people that walk into Jonathan's favorite McDonald's in an hour is $\sim\Poisson(\la)$, where $\la$ is unknown but is definitely at most 10. How many hours does Jonathan need to be at McDonalds to be able to construct a 95\% confidence interval for $\la$ that is of width 2? 
+\end{problem}
+
+\begin{problem}[Fa19 Final \#8]
+    Let $X_i\sim \Poisson(1)$ be independent r.v.'s and $S_n = X_1 + \dots + X_n$ be their sum, and let $c,\eps$ be some constants. For $\eps < \frac 12$, what is $\lim_{n\to\infty}\PP[S_n < cn^\eps+n]$? 
+\end{problem}
+
+\end{document}

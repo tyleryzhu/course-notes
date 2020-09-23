@@ -1,0 +1,53 @@
+\documentclass[11 pt]{scrartcl}
+\usepackage[header, margin, koma]{tyler}
+
+\newcommand{\hwtitle}{Discussion 0B Recap}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[l]{\hwtitle{}}
+\fancyhead[r]{Tyler Zhu}
+\cfoot{\thepage}
+
+\begin{document} 
+\title{\Large \hwtitle{}}
+\author{\large Tyler Zhu}
+\date{\large\today}
+
+\maketitle 
+
+\section{Proofs}
+You should know these main proof types:
+\begin{itemize}
+    \ii Direct Proof: show $P\implies Q$ where $P$ is a truth and $Q$ is our claim. 
+    \ii Contrapositive: for a statement $P\implies Q$, prove $\neg Q \implies \neg P$. 
+    \ii Contradiction: to prove a claim $P$, assume for the sake of contradiction that $\neg P$ is true. Show this implies $R\wedge \neg R$ (for some $R$), contradiction. Hence $P$ is true. 
+    \ii By cases: To show $P$ is true in general, we prove $P$ in separate cases, which in combination cover all possible cases (i.e. cases are a partition). 
+\end{itemize}
+
+If you're thinking of skipping step $B$ in a logical sequence $A\to B\to C$ of a proof, you should ask yourself if a reader would have to think hard to deduce $A\to C$ without including $B$. 
+
+Proofs should also be written in grammatical English, and your proofs need not be all symbols.
+
+\section{Contrapositive vs. Contradiction}
+There's a subtle difference between a proof by contrapositive and a proof by contradiction that's hard to see at first. We can illustrate this with an example. 
+
+\begin{example}
+    Suppose you have a rectangular array of pebbles, where each pebble is either red or blue, with the following property: for every way of choosing one pebble from each column, there exists a red pebble among the chosen ones. Prove that there must exist an all-red column.
+\end{example}
+\begin{proof}[Proof by Contrapositive]
+     We will instead prove the contrapositive, which is: 
+
+     \begin{center} If there is no all-red column, then there is some way of choosing one pebble from each column so that no red pebble exists among the chosen ones.\end{center}
+
+     But if there is no all-red column, then there is a blue pebble in every column. Picking every such blue pebble gives us a collection with no red pebbles. 
+\end{proof}
+\begin{proof}[Proof by Contradiction]
+    Assume for the sake of contradiction that there was no all-red column. Then there is a blue pebble in every column, so picking every such blue pebble gives us a collection with no red pebbles, contradiction to the property of our array. Hence, there must be an all-red column. 
+\end{proof}
+
+In this case, the contrapositive and the contradiction were virtually identical because the fact $R$ used to derive the contradiction was our base assumption. In other words, the contrapositive proved the statement $P\implies Q$ (where $Q$ is our claim) by showing $\neg Q \implies \neg P$. Contradiction proved our claim $Q$ by assuming $\neg Q$ and logically arriving at $\neg P$, which is a contradiction with our base assumption $P$. 
+
+If we had used a different clause $R$ to draw our contradiction, then the proofs would have been different. 
+
+\end{document}
