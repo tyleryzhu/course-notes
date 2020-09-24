@@ -1,0 +1,310 @@
+%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[usenames,svgnames,dvipsnames]{xcolor}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{caption}
+\usepackage[framemethod=TikZ]{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{array}
+\usepackage{thmtools}
+\usepackage{hyperref} % for clickable links in toc
+\usepackage{bbm}
+
+%%%%%%%%% If/Else
+\newif\iftylerheader\tylerheaderfalse
+\newif\iftylerhints\tylerhintsfalse
+\newif\iftyleranswers\tyleranswersfalse
+\newif\iftylermargin\tylermarginfalse
+\newif\iftylerkoma\tylerkomafalse
+\newif\iftylerstylish\tylerstylishfalse
+
+%%%%%%%  Receive Arguments
+\DeclareOption{header}{\tylerheadertrue}
+\DeclareOption{noheader}{\tylerheaderfalse}
+\DeclareOption{hints}{\tylerhintstrue}
+\DeclareOption{nohints}{\tylerhintsfalse}
+\DeclareOption{answers}{\tyleranswerstrue}
+\DeclareOption{noanswers}{\tyleranswersfalse}
+\DeclareOption{margin}{\tylermargintrue}
+\DeclareOption{nomargin}{\tylermarginfalse}
+\DeclareOption{koma}{\tylerkomatrue}
+\DeclareOption{nokoma}{\tylerkomafalse}
+\DeclareOption{stylish}{\tylerstylishtrue}
+\DeclareOption{nostylish}{\tylerstylishfalse}
+\ProcessOptions
+
+%%%%%%%%%%%%%%  PAGE SETUP %%%%%%%%%%%%%%%%%
+\iftylerkoma
+    \thispagestyle{empty}
+    \usepackage{sectsty}
+    \allsectionsfont{\normalfont\sffamily\bfseries}
+    \setkomafont{section}{\large} %sets section headers to a reasonable size
+    \setkomafont{author}{\large\scshape}
+    \setkomafont{title}{\Large\sffamily\bfseries}
+    \setkomafont{date}{\Large\normalsize}
+\fi
+
+\iftylermargin
+    \geometry{
+         left=1in,
+         right=1in,
+         top=1in,
+         bottom=1in
+     }
+\fi
+
+\iftylerheader
+	\usepackage{fancyhdr}
+    \pagestyle{fancy}
+	\fancyhf{}
+    \fancyhead[l]{\tiny\@title}
+	\fancyhead[r]{Tyler Zhu}
+	\cfoot{\thepage}
+\fi
+
+\iftylerhints 
+    \usepackage{answers}
+    \Newassociation{hint}{hintitem}{hints}
+    \renewcommand{\solutionextension}{out}
+    \Opensolutionfile{hints}
+    \newcommand{\makehints}{\Closesolutionfile{hints}\input{hints.out}}
+\fi
+
+% Define a Sans-Serif Environment for KOMA Type Documents
+\newtheoremstyle{ss-definition}% <name>
+    {5pt}% <Space above>
+    {3pt}% <Space below>
+    {}% <Body font>
+    {}% <Indent amount>
+    {\sffamily\bfseries}% <Theorem head font>
+    {.}% <Punctuation after theorem head>
+    {.5em}% <Space after theorem headi>
+    {}% <Theorem head spec (can be left empty, meaning `normal')>
+
+
+%%%%%%% Nice Theorem Style  %%%%%
+\iftylerstylish
+\mdfdefinestyle{mdbluebox}{%
+%    roundcorner = 10pt,
+    linewidth=1pt,
+    skipabove=8pt,
+    innertopmargin=7pt,
+    innerbottommargin=6pt,
+    skipbelow=2pt,
+%    linecolor=blue,
+    nobreak=true,
+    backgroundcolor=TealBlue!5,
+}
+\declaretheoremstyle[
+    headfont=\sffamily\bfseries,%\color{MidnightBlue},
+    mdframed={style=mdbluebox},
+    headpunct={.},
+    postheadspace={4pt}
+]{thmbluebox}
+\declaretheorem[%
+style=thmbluebox,name=Theorem]{theorem}
+
+\mdfdefinestyle{mdredbox}{%
+    linewidth=0.5pt,
+    skipabove=8pt,
+    frametitleaboveskip=7pt,
+    frametitlebelowskip=6pt,
+    skipbelow=2pt,
+    frametitlefont=\bfseries,
+    innertopmargin=6pt,
+    innerbottommargin=10pt,
+    nobreak=true,
+    backgroundcolor=Salmon!5,
+    linecolor=RawSienna,
+}
+\declaretheoremstyle[
+    headfont=\sffamily\bfseries\color{RawSienna},
+    mdframed={style=mdredbox},
+    headpunct={.},
+    postheadspace={4pt},
+]{thmredbox}
+\declaretheorem[%
+style=thmredbox,name=Example,numberwithin=section]{example}
+\declaretheorem[%
+style=thmredbox,name=Problem]{problem}
+\else 
+    \iftylerkoma
+        \theoremstyle{ss-definition}
+    \else 
+        \theoremstyle{definition}
+    \fi
+    \newtheorem{theorem}{Theorem}
+    \newtheorem{example}{Example}[section]
+    \newtheorem*{example*}{Example}
+    \newtheorem{problem}{Problem}
+\fi
+
+\iftylerkoma 
+    \theoremstyle{ss-definition}
+\else
+    \theoremstyle{definition}
+\fi
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{fact}[theorem]{Fact}
+
+\newtheorem{exercise}[example]{Exercise}
+\newtheorem*{question}{Question}
+\newtheorem*{remark}{Remark}
+\newtheorem*{claim}{Claim}
+
+%\newtheorem{problem}{Problem}
+%\newtheorem{example}{Example}
+
+% Blackboard Math Fonts
+\newcommand{\one}{\mathbbm 1}
+\newcommand{\CC}{\mathbb C}
+\newcommand{\EE}{\mathbb E}
+\newcommand{\FF}{\mathbb F}
+\newcommand{\II}{\mathbf I}
+\newcommand{\NN}{\mathbb N}
+\newcommand{\PP}{\mathbb P}
+\newcommand{\QQ}{\mathbb Q}
+\newcommand{\RR}{\mathbb R}
+\renewcommand{\SS}{\mathbb S}
+\newcommand{\ZZ}{\mathbb Z}
+
+% Mathcal Fonts
+\newcommand{\Acal}{\mathcal A}
+\newcommand{\Bcal}{\mathcal B}
+\newcommand{\Ccal}{\mathcal C}
+\newcommand{\Ecal}{\mathcal E}
+\newcommand{\Gcal}{\mathcal G}
+\newcommand{\Hcal}{\mathcal H}
+\newcommand{\Ical}{\mathcal I}
+\newcommand{\Pcal}{\mathcal P}
+\newcommand{\Qcal}{\mathcal Q}
+\newcommand{\Wcal}{\mathcal W}
+\newcommand{\Vcal}{\mathcal V}
+\newcommand{\Xcal}{\mathcal X}
+
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+% Shorthands
+\newcommand{\ii}{\item}
+\newcommand{\alphanum}{\begin{enumerate}[(a)]}
+\newcommand{\enumend}{\end{enumerate}}
+\newcommand{\itemnum}{\begin{itemize}}
+\newcommand{\itemend}{\end{itemize}}
+\newcommand{\eps}{\epsilon}
+\newcommand{\la}{\lambda}
+\newcommand{\om}{\omega}
+\newcommand{\si}{\sigma}
+\newcommand{\vv}{\vec{v}}
+\newcommand{\x}{\times}
+\newcommand{\Col}[1]{$\text{Col}$($#1$)}
+\newcommand{\Nul}[1]{$\text{Nul}$($#1$)}
+\newcommand{\Null}[1]{\text{Null} #1 } 
+\newcommand{\tr}[1]{\text{tr} #1 } 
+\newcommand{\rank}[1]{\text{rank} #1 } 
+\newcommand{\range}{\text{range}}
+\newcommand{\bbm}{\begin{bmatrix}}
+\newcommand{\ebm}{\end{bmatrix}}
+\newcommand{\T}{\intercal}
+\newcommand{\lar}{\Leftarrow} 
+\newcommand{\rar}{\Rightarrow} 
+\newcommand{\diam}{\text{diam }}
+\newcommand{\se}{\subseteq}
+\newcommand{\sgn}{\text{sgn}}
+\newcommand{\ord}{\text{ord}}
+\newcommand{\Syl}{\text{Syl}}
+\newcommand{\Res}{\text{Res}}
+\newcommand{\per}{\text{per}}
+
+% Typesetting
+\newcommand{\styl}[1]{{\sffamily\bfseries #1}}
+
+\def\upint{\mathchoice%
+    {\mkern13mu\overline{\vphantom{\intop}\mkern7mu}\mkern-20mu}%
+    {\mkern7mu\overline{\vphantom{\intop}\mkern7mu}\mkern-14mu}%
+    {\mkern7mu\overline{\vphantom{\intop}\mkern7mu}\mkern-14mu}%
+    {\mkern7mu\overline{\vphantom{\intop}\mkern7mu}\mkern-14mu}%
+  \int}
+\def\lowint{\mkern3mu\underline{\vphantom{\intop}\mkern7mu}\mkern-10mu\int}
+
+% Probability Theory Commands
+\newcommand{\Bin}{\text{Bin}}
+\newcommand{\Ber}{\text{Ber}}
+\newcommand{\Exp}{\text{Exp}}
+\newcommand{\Var}{\text{Var}}
+\newcommand{\var}{\,\text{var}}
+\newcommand{\Cov}{\text{Cov}}
+\newcommand{\cov}{\,\text{cov}}
+\newcommand{\Corr}{\,\text{Corr}}
+\newcommand{\Expo}{\text{Expo}}
+\newcommand{\Geo}{\text{Geo}}
+\newcommand{\Poisson}{\text{Poisson}}
+\newcommand{\PoisP}{\text{PP}}
+\newcommand{\Uniform}{\text{Uniform}}
+\newcommand{\Nor}{\mathcal{N}}
+\newcommand{\asure}{\xrightarrow{\text{a.s.}}}
+\newcommand{\cinprob}{\xrightarrow[n\to\infty]{\PP}}
+\newcommand{\BEC}[1]{\text{BEC}(#1)}
+\newcommand{\grle}[2]{\underset{{#2}}{\overset{#1}{\gtrless}}}
+\newcommand{\legr}[2]{\underset{{#2}}{\overset{#1}{\lessgtr}}}
+\newcommand{\cyc}[1]{\langle #1 \rangle}
+\newcommand{\proj}{\text{proj}}
+\newcommand{\MMSE}{\text{MMSE}}
+\newcommand{\MAP}{\text{MAP}}
+\newcommand{\MLE}{\text{MLE}}
+
+%%%%%%%%%% Math (255) Things %%%%%%%%%%%%%%
+\newcommand{\pd}{\partial}
+\newcommand{\parx}[1]{\dfrac{\partial #1}{\partial x}}
+\newcommand{\pary}[1]{\dfrac{\partial #1}{\partial y}}
+\newcommand{\parz}[1]{\dfrac{\partial #1}{\partial z}}
+\newcommand{\SL}{\text{SL}}
+\newcommand{\ASL}{\text{ASL}}
+\newcommand{\AGL}{\text{AGL}}
+\newcommand{\Gal}{\text{Gal}}
+
+%%%%%%%%%% Analaysis (H104) command %%%%%%%%
+
+% Augmented Matrices 
+\newenvironment{amatrix}[1]{%
+  \left[\begin{array}{@{}*{#1}{c}|c@{}}
+}{%
+  \end{array}\right]
+} 
+
+% For ease in using arrays
+\newcolumntype{C}{>$c<$}
+
+% Column Vectors
+\newcount\colveccount
+\newcommand*\colvec[1]{
+        \global\colveccount#1
+        \begin{bmatrix}
+        \colvecnext
+}
+\def\colvecnext#1{
+        #1
+        \global\advance\colveccount-1
+        \ifnum\colveccount>0
+                \\
+                \expandafter\colvecnext
+        \else
+                \end{bmatrix}
+        \fi
+}
+
+
+%%%%% ALGORITHMS %%%%%
+\makeatletter
+\def\BState{\State\hskip-\ALG@thistlm}
+\makeatother
+
+%%%%%%%%% Drawing Markov Chains / Graphs %%%%%%%%%%%
+\usetikzlibrary{automata,arrows,positioning,calc}
