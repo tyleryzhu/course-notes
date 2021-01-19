@@ -3,6 +3,7 @@
 \usepackage[usenames,svgnames,dvipsnames]{xcolor}
 \usepackage{mathtools}
 \usepackage{graphicx}
+\usepackage{biblatex}
 \usepackage{geometry}
 \usepackage{caption}
 \usepackage[framemethod=TikZ]{mdframed}
@@ -13,6 +14,7 @@
 \usepackage{thmtools}
 \usepackage{hyperref} % for clickable links in toc
 \usepackage{bbm}
+\usepackage{bm}
 
 %%%%%%%%% If/Else
 \newif\iftylerheader\tylerheaderfalse
@@ -73,7 +75,6 @@
     \Opensolutionfile{hints}
     \newcommand{\makehints}{\Closesolutionfile{hints}\input{hints.out}}
 \fi
-
 % Define a Sans-Serif Environment for KOMA Type Documents
 \newtheoremstyle{ss-definition}% <name>
     {5pt}% <Space above>
@@ -174,6 +175,7 @@ style=thmredbox,name=Problem]{problem}
 \newcommand{\RR}{\mathbb R}
 \renewcommand{\SS}{\mathbb S}
 \newcommand{\ZZ}{\mathbb Z}
+\newcommand{\vx}{{\bm{x}}}%
 
 % Mathcal Fonts
 \newcommand{\Acal}{\mathcal A}
@@ -208,11 +210,13 @@ style=thmredbox,name=Problem]{problem}
 \newcommand{\Nul}[1]{$\text{Nul}$($#1$)}
 \newcommand{\Null}[1]{\text{Null} #1 } 
 \newcommand{\tr}[1]{\text{tr} #1 } 
+\newcommand{\Tr}{\text{Tr}} 
 \newcommand{\rank}[1]{\text{rank} #1 } 
 \newcommand{\range}{\text{range}}
+\newcommand{\Span}{\text{span}}
 \newcommand{\bbm}{\begin{bmatrix}}
 \newcommand{\ebm}{\end{bmatrix}}
-\newcommand{\T}{\intercal}
+\newcommand{\T}{\top}
 \newcommand{\lar}{\Leftarrow} 
 \newcommand{\rar}{\Rightarrow} 
 \newcommand{\diam}{\text{diam }}
@@ -225,7 +229,6 @@ style=thmredbox,name=Problem]{problem}
 
 % Typesetting
 \newcommand{\styl}[1]{{\sffamily\bfseries #1}}
-
 \def\upint{\mathchoice%
     {\mkern13mu\overline{\vphantom{\intop}\mkern7mu}\mkern-20mu}%
     {\mkern7mu\overline{\vphantom{\intop}\mkern7mu}\mkern-14mu}%
