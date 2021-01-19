@@ -1,6 +1,5 @@
 \documentclass[11 pt]{scrartcl}
 \usepackage[header, margin, koma]{tyler}
-%\usetikzlibrary{automata,arrows,positioning,calc}
 \usepackage{csquotes}
 
 \pagestyle{fancy}
@@ -30,7 +29,157 @@ These are course notes for the Spring 2021 rendition of EECS 127, Optimization M
 \newpage
 
 \section{Tuesday, January 19th}
+\subsection{Introduction}
+In this course, we'll be talking primarily about \emph{optimization}. 
+A standard form of optimization is the following: 
+\[ p^* = \min_\vx f_0(\vx)\quad \text{subject to: } f_i(\vx) \leq 0,\; i=1,\dots, m,\] 
+where 
+\itemnum
+    \ii vector $\vx\in \RR^n$ is the \emph{decision variable}; 
+    \ii $f_0: \RR^n \to \RR$ is the \emph{objective} function, or \emph{cost}; 
+    \ii $f_i: \RR^n\to \RR$, $i=1,\dots, m$, represent the \emph{constraints}; 
+    \ii $p^*$ is the \emph{optimal value}. 
+\itemend
+
+Realistically, $\vx = [x_1\; \dots\; x_n]$ represents different decisions, i.e. $x_2$ would be our decision at time $t=2$. 
+Also note that we can easily solve instead to maximize some $r(x)$ by setting $f_0(x) = -r(x)$. 
+This above setup is known as the \emph{standard form}. 
+
+Oftentimes we will have multiple optimal solutions to the constraint, in which case any $x^* \in \arg\min f_0(x)$ for which $f_i(x^*) \leq 0, i=1, \dots, m$ is satisfied acts as an optimizer.
+
+In this class, we're not as concerned with algorithms for optimization, but more so translating problems from the real world into this language. 
+
+\begin{example}[Least-squares regression]
+A classic example in machine learning is when we have a given vector $y$ and we're trying to express it as a linear function of an input vector $z$, i.e. data points. 
+The goal is the solve the objective 
+\[ \min_x \sum_{i=1}^m (y_i - x^\T z^{(i)})^2\] 
+where 
+\itemnum
+    \ii $z^{(i)}\in \RR^n$, $i=1, \dots, n$ are data points; 
+    \ii $y\in \RR^m$ is a ``response'' vector; 
+    \ii $x^\T z$ is the scalar product $z_1x_1+\dots + z_nx_n$ b/w the two vectors $x,z \in \RR^n$. 
+\itemend
+
+One example of constraints we could be working with are $x\geq 0$ and $x^\T \one = 1$, which corresponds to modeling a discrete distribution.
+
+\end{example}
+
+\begin{example}[Support Vector Machines (SVMs)]
+In SVMs, we instead are trying to optimize a ``hinge'' loss, i.e. 
+\[ \min_{x,b} \sum_{i=1}^m \max(0, 1-y_i(x^\T z^{(i)} + b))\] 
+where 
+\itemnum
+    \ii $z^{(i)}\in \RR^n$, $i=1, \dots, n$ are data points; 
+    \ii $y\in \{-1, 1\}^m$ is a \emph{binary} response vector; 
+    \ii $x^\T z + b = 0$ defines a ``separating hyperplane'' in data space. 
+\itemend
+
+We could imagine that our points are colored green and red.
+Then at a conceptual level, we're trying to create a hyperplane that separates our data points into two different classes as clearly as possible. 
+Once we find the best $x,b$, we can predict the binary output $\hat{y}$ corresponding to a new point's predicted class.
+\end{example}
+
+While we just gave a few machine learning examples which were problems without constraints, we can often use optimization to act on certain situations. 
+One example is energy production. 
+There's a \textbf{lot} of other ones. 
 
 
+\subsection{Optimization Problems}
+There is more nomenclature we need to know: 
+\itemnum
+    \ii \emph{Feasible set}, i.e. the set of possible values satisfying the constraints. 
+    \ii \emph{Unconstrained minimizer}:$x_0$, i.e. minimizing the cost function without constraints. 
+    \ii \emph{Optimal Point}: $x^*$. 
+    \ii \emph{Level sets} of objective functions, i.e. sets $\{x | R(x) = c\}$ for some $c$. 
+    \ii \emph{Sub-level sets}, i.e. sets $\{ x | R(x) \leq c\}$ for some $c$. 
+\itemend
+Usually our optimal points will be some intersection with the smallest level sets and the feasible set. 
 
+Similar to neural networks, we can have an issue in optimization of local vs. global optimal points. 
+A point $z$ is \emph{locally optimal} if there exists a value $R>0$ such that $z$ is optimal for problem 
+\[ \min_x\; f_0(x) \text{ s.t. } f_i(x) \leq 0,\;  i=1, \dots, m \text{ and } |x_i - z_i| \leq R,\; i=1, \dots, n.\] 
+
+A local minimizer $x$ minimizes $f_0$, but only compared to nearby points on the feasible set. 
+The value of the objective function at that point is \emph{not} necessarily the (global) optimal value of the problem. 
+Locally optimal points might be of no practical interest to the user. 
+Visually, you could imagine that we could find ourselves in certain pits that locally seem like optima but globally are far from it. 
+
+Due to these problems (and others), often times even coming up with any minimizer can be difficult. 
+However, there's a special class of problems called \emph{convex problems} which have the nice property that \emph{all} local optimums are also global optimums.
+Usually your objective function when plotted looks something like a bowl, i.e. there's a single point at the bottom which is the previously mentioned global optimum.
+
+\begin{figure}[!htb]
+    \caption{Convex and Non-convex functions (missing!)}
+\end{figure}
+
+Funny enough, even though most problems are non-convex, we could find a convex function that lower bounds our objective function and hope its global optimum is a decent solution to our original objective. 
+Pushing this further, if we could find the tightest convex function which is a lower bound (think convex hulls), then its optimal point \emph{is} the same as our original's! 
+It looks like we just turned a hard problem into a much easier one, but we unfortunately have no idea how to find this convex-hull. 
+Back to square one. 
+
+\subsection{Course Outline}
+
+In this course, we shall deal specifically with convex optimization problems with special structure, such as: 
+\itemnum
+    \ii Least-Squares (LS)
+    \ii Linear Programs (LP)
+    \ii Convex Quadratic Program (QP)
+    \ii Second-order cone programs (SOCP)
+\itemend
+
+For such specific models, very efficient solution algorithms exist with high quality implementations/software (CVX, for example). 
+Most of the problems we come across can be categorized into one of the above structures, as we'll come to see. 
+
+A large part of our time will be spent talking about affine subspaces, and normal vectors to hyperplanes to geometrically construct feasible sets. 
+
+We'll also discuss a few non-convex problems that come up often in the real world: 
+\itemnum
+    \ii \emph{Boolean/integer optimization}: $x_i\in \{0,1\}^n$; some variables are constrained to be Boolean or integers. Convex optimization can be used for getting (sometimes) good approximations. 
+    \ii \emph{Cardinality-constrained problems}: we seek to bound the number of non-zero elements in a vector variable. Convex optimization can be used for getting good approximations. 
+    \ii \emph{Non-linear programming}: usually non-convex problems with differentiable objective and functions. Algorithms provide only local minima. 
+\itemend
+
+It goes without saying that most (but not all) non-convex problems are \emph{hard}!
+
+For example, let's look at boolean optimization. We would like to solve $\min_{\vx} c^\T \vx$ subject to $A\vx \leq b$ and $\vx\in \{0,1\}^n$. 
+One way of relaxing this into a problem that's easier to solve is to consider instead $\vx \in [0,1]^n$, i.e. going from discrete to continuous feasible set.
+This is an important question because this allows us to do sparsity and feature-selection. 
+
+What this course if for: 
+\itemnum
+    \ii Learnign to model and efficiently solve problems arising in Engineering, Management, Control, Finance, ML, etc. 
+    \ii Learning to prototype small- to medium- sized problems on numerical computing platforms. 
+    \ii Learning basics of applied linear algebra, convex optimization.
+\itemend
+
+What this course is NOT: 
+\itemnum
+    \ii A course on mathematical convex analysis.
+    \ii A course on details of optimization algorithms. 
+\itemend
+
+Here's a high level overview of what we're talking about: 
+\itemnum
+    \ii Linear algebra models 
+    \itemnum
+        \ii Vectors, projection theorem, matrices, symmetric matrices.
+        \ii Linear equation, least-squares and minimum-norm problems.
+        \ii Singular value decomposition (SVD), PCA, and related optimization problems. 
+    \itemend
+    \ii Convex optimization models 
+    \itemnum
+        \ii Convex sets, convex functions, convex problems. 
+        \ii Optimality conditions, duality. 
+        \ii Special convex models: LP, QP, SOCP.
+    \itemend
+    \ii Applications 
+    \itemnum
+        \ii Machine Learning.
+        \ii Control.
+        \ii Finance.
+        \ii Engineering desisgn.
+    \itemend
+\itemend
+
+There will only be six homeworks in this course.
 \end{document}
