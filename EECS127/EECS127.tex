@@ -1,5 +1,5 @@
 \documentclass[11 pt]{scrartcl}
-\usepackage[header, margin, koma]{tyler}
+\usepackage[header, margin, koma, stylish]{tyler}
 \usepackage{csquotes}
 
 \pagestyle{fancy}
@@ -182,4 +182,145 @@ Here's a high level overview of what we're talking about:
 \itemend
 
 There will only be six homeworks in this course.
+
+\newpage
+\section{Thursday, January 21st}
+Today's lecture went pretty fast and sped through sections, so likewise these notes are pretty rough. 
+Also I don't have time to add pictures (unless I rip them off from somewhere), so I hope you have Beth Harmon level visualization powers. 
+
+\subsection{Introduction}
+We usually write vectors in column format, i.e. 
+\[ x = \colvec{4}{x_1}{x_2}{\vdots}{x_n}.\] 
+Element $x_i$ is the $i$th component, and the number $n$ of components is the \emph{dimension} of $x$. 
+Importantly, in math, we always 1-index, not 0-index. 
+
+We can use vectors for example in bag of words frequency matching.
+
+\begin{example}[Time series]
+    We can model a time series, i.e. the evolution of a physical or economical quantity. 
+    We can represent it like $x = [x(1)\; x(2)\; \dots\; x(T)]^\T\in\RR^T$ where each $x(k)$ is the value of the quantity at time $k$.
+
+    One example of a model for time series is an ``auto-regressive'' model, where we assume that the output depends linearly on certain previous terms and some stochasticity (i.e. error). 
+    For example, if we think it only depends on the previous two days, we could write that 
+    \[ x_t \approx \alpha_1 x_{t-1} + \alpha_2 x_{t-2} + \text{error}.\]
+\end{example}
+
+Now for a list of definitions... 
+
+Vectors have a few special properties, in that the operations of sum, difference, and scalar multiplication all hold and are closed, i.e. that they return other vectors. 
+These properties define a \emph{vector space}. 
+The simplest example is $\Xcal = \RR^n$. 
+
+From a vector space $\Xcal$, a nonempty subset $\mathcal{V}$ of $\Xcal$ is a \emph{subspace} if, for any scalars $\alpha, \beta$, 
+\[ x,y \in \mathcal{V} \implies \alpha x + \beta y \in \mathcal{V}.\] 
+For example, the set of all possible linear combinations of vectors in $S = \{x^{(1)}, \dots, x^{(m)}\}$ forms a subspace called the \emph{span} of $S$, denoted as $\spn(S)$. 
+
+Finally, given two subspaces $\Xcal, \Ycal$ in $\RR^n$, the \emph{direct sum} of $\Xcal, \Ycal$, denoted by $\Xcal\oplus \Ycal$, is the set of vectors of the form $x+y$ with $x\in \Xcal, y\in \Ycal$. 
+One can easily check that $\Xcal\oplus\Ycal$ is a subspace. 
+
+We also have the familiar concepts of linear independence and hence the \emph{basis} for a subspace, whose cardinality defines the dimension of the subspace.
+
+\begin{definition}[Affine sets]
+    An affine set is a set of the form 
+    \[ \Acal = \{x\in \Xcal\; | x = v+x^{(0)}, v\in \Vcal\},\] 
+    where $x^{(0)}$ is a given point and $\Vcal$ is a given subspace of $\Xcal$. 
+    Subspaces are affine spaces containing the origin (i.e. $x^{(0)}$ is the origin). 
+\end{definition}
+
+Naturally, a \emph{line} is a one-dimensional affine set. 
+We start with some point $x_0$ which hinges the line, and then some vector $v$ which determines the direction (i.e. including all multiples of it). 
+
+Quick quiz: how many values do we need to uniquely determine lines in 2D? 
+You might think it's 2, but we need to identify the vertical line as well, so it's 3. 
+Think of $ax+by+c=0$. 
+
+One question we might have is how do we measure the \emph{size} of a vector; norms are the answer to this question. 
+In short, a \emph{norm} simply assigns real numbers to vectors in a consistent manner, i.e. it satisfies the following properties: 
+\begin{definition}[Norm]
+
+\end{definition}
+
+We will primarily use three norms: 
+\itemnum
+    \ii For $p=2$, we obtain the standard Euclidean length 
+    \[ \|x\|_2 = \sqrt{\sum_{k=1}^n x_k^2},\] 
+    \ii or $p=1$ which gives the sum-of-absolute-values length (or Manhattan distance) 
+    \[ \|x\|_1 = \sum_{k=1}^n |x_k|.\] 
+    \ii When $p=\infty$ defines the $\ell_\infty$ norm (max absolute value norm) 
+    \[ \|x\|_{\infty} = \max_{k=1,\dots, n} |x_k|.\] 
+    \ii The cardinality of a vector $x$ is often called the $\ell_0$ (pseudo-) norm, which
+\itemend
+
+\subsection{Inner product, orthogonality}
+Inner products are interesting since we can think of vectors now as functions acting on other vectors, i.e. like $\cyc{x, \cdot}$. 
+\begin{definition}[Inner product]
+    An \emph{inner product} on a (real) vector space $\Xcal$ is a real-valued function which maps pairs $x,y\in \Xcal$ into a scalar denoted by $\cyc{x,y}$. 
+    The inner product satisfies the following axioms (for $x,y,z\in \Xcal$ and scalar $\alpha$):
+    \begin{align*}
+        \cyc{x,x} \geq 0;  
+    \end{align*}
+\end{definition}
+
+A vector space with an inner product is called an \emph{inner product space}, and the standard inner product in $\RR^n$ is the row-column product of two vectors, 
+\[ \cyc{x,y} = x^\T y = \sum_{k=1}^n x_ky_k.\] 
+Finally, inner products also induce a norm given by $\|x\| = \sqrt{\cyc{x,x}}$ (which you may notice is identical to the $\ell_2$-norm in $\RR^n$). 
+
+With inner products, we can define the angle $\theta$ between two vectors $x,y$ by 
+\[ \cos \theta = \dfrac{x^\T y}{\|x\|_2\|y\|_2},\]
+which results from doing some easy geometry. 
+This lets us characterize when $x,y$ are \emph{orthogonal} (i.e. $\theta = \pm 90^\circ$), and when $x,y$ are \emph{parallel} (i.e. $\theta = 0^\circ, \pm 180^\circ$). 
+
+Since $|\cos\theta| \leq 1$, we easily get the following inequality. 
+\begin{theorem}[Cauchy-Schwarz Inequality]
+    For vectors $x,y\in \RR^n$, 
+    \[ |x^\T y| \leq \|x\|_2 \|y\|_2\] 
+    where inequality holds when $x = \alpha y$ for scalar $\alpha$ (i.e. when $|\cos\theta| = 1$). 
+\end{theorem}
+
+We also have the following generalization with $\ell_p$ norms. 
+\begin{theorem}[Holder's Inequality]
+    For any vectors $x,y\in \RR^n$ and for any $p,q \geq 1$ such that $1/p + 1/q = 1$, it holds that 
+    \[ |x^\T y| \leq \sum_{k=1}^n|x_ky_k| \leq \|x\|_p \|y\|_q.\] 
+\end{theorem}
+
+As a quick aside, let's discuss maximizing the inner product over norm balls. 
+In other words, we're trying to solve the optimization problem 
+\[ \max_{\|x\|_p\leq 1} x^\T y.\] 
+
+For $p=2$, ... 
+
+
+For generic inner product spaces, we say that two vectors $x,y$ in an inner product space $\Xcal$ are \emph{orthogonal} if $\cyc{x,y} = 0$, which we denote by $x\perp y$. 
+Nonzero vectors are \emph{mutually orthogonal} if they are pairwise orthogonal. 
+
+
+We have an important theorem concerning projections.
+\begin{theorem}[Projection Theorem]
+    Let $\Xcal$ be an inner product space, $x$ be a given element in $\Xcal$, and $\Scal$ a subspace of $\Xcal$. 
+    Then, there exists a unique vector $x^*\in \Scal$ which is the solution to the problem 
+    \[ \min_{y\in\Scal} \|y-x\|.\] 
+    Moreover, a necessary and sufficient condition for $x^*$ being the optimal solution for this problem is that $x^*\in \Scal,\; (x-x^*)\perp \Scal$. 
+\end{theorem}
+
+Let $p\in \RR^n$ be a given point. 
+We want to compute the Euclidean projection $p^*$ of $p$ onto a line $L = \{x_0 + \spn(u)\}$, $\|u\|_2 = 1$. 
+%For example, we can write this simply as 
+
+Now say we want to solve the harder problem of projecting onto a span of vectors, say $\Scal = \spn(x^{(1)}, \dots, x^{(d)})\subseteq \Xcal$. 
+By the projection theorem, we can convert this into a system of equations and solve. 
+
+
+\subsection{Functions and maps}
+In this class, we usually reserve the term \emph{function} to denote $f: \RR^n\to \RR$, and use the term \emph{map} when $f: \RR^n \to \RR^m$ and $m > 1$.
+
+A \emph{linear} function is simply a function that perserves scaling and additivity, i.e. that 
+\begin{align*}
+    f(\alpha x) &= \alpha f(x) \quad\forall x\in \RR^n, \alpha\in\RR \\ 
+    f(x + y) &= f(x) + f(y) \quad\forall x,y\in \RR^n.
+\end{align*}
+
+The gradient of a function can be intepreted in the context of level sets. 
+Geometrically, the gradient of $f$ at a point $x_0$ is a vector $\nabla f(x_0)$ perpendicular to the contour line of $f$ at level $\alpha = f(x_0)$, pointing from $x_0$ outwards the $\alpha$-sublevel set (i.e. points towards higher values of the function). 
+
+
 \end{document}
