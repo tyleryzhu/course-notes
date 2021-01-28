@@ -1,0 +1,5 @@
+[0] Config.pm:302> INFO - This is Biber 2.11
+[0] Config.pm:305> INFO - Logfile is 'EECS127.blg'
+[43] biber-darwin:313> INFO - === Thu Jan 28, 2021, 12:18:16
+[67] Biber.pm:371> INFO - Reading 'EECS127.bcf'
+[170] Utils.pm:193> WARN - No data sources defined!

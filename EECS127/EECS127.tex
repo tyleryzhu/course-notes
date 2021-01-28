@@ -323,4 +323,224 @@ The gradient of a function can be intepreted in the context of level sets.
 Geometrically, the gradient of $f$ at a point $x_0$ is a vector $\nabla f(x_0)$ perpendicular to the contour line of $f$ at level $\alpha = f(x_0)$, pointing from $x_0$ outwards the $\alpha$-sublevel set (i.e. points towards higher values of the function). 
 
 
+\section{Tuesday, January 26th: Matrices and Linear Maps}
+
+\subsection{Matrix Basics}
+In this class, we will use the convention that if $A$ is a data matrix, then every column of $A$ is a single data point. 
+Also, note that $x^\T Ay = y^\T A^\T x$, since the inner product is symmetric and the result is a scalar. 
+This will be useful later on when we discuss duality. 
+
+There's many ways we can think of a matrix-vector product. 
+Let $A\in \RR^{m,n}$ with columns $a_1, \dots, a_n\in \RR^m$, and $b\in \RR^n$ a vector. 
+Then we can define the product by 
+\[ Ab = \sum_{k=1}^n a_k b_k,\] 
+which is essentially just a weighted sum of the columns of $A$ with the elements of $b$ as coefficients. 
+
+We can do the same definition for multiplication on the right by $A$. 
+Let $\alpha_1, \dots, \alpha_m$ be the rows of $A$. 
+If instead we had some $c\in \RR^m$, we can multiply on the left by it's transpose to get 
+\[ c^\T A = \sum_{k=1}^m c_k\alpha_k^\T,\]
+which says that this is a weighted sum of the rows $\alpha_k$ of $A$ using the elements of $c$ as coefficients. 
+
+
+From matrix-vector products, we can then define matrix products.
+We can view a matrix $A\in \RR^{m,n}$ in two different ways; either as a collection of columns or rows.
+\[ A = \rowvec{4}{a_1}{a_2}{\dots}{a_n}, \text{   or   } A = \colvec{4}{\alpha_1^\T}{\alpha_2^\T}{\vdots}{\alpha_m^\T},\] 
+where $a_1, \dots, a_n\in \RR^m$ denote the columns of $A$ and $\alpha_1^\T, \dots, \alpha_m^\T\in \RR^n$ denote the rows of $A$. 
+
+We have three main interpretations of matrix-matrix products. 
+One is obtained by letting $A$ act as a linear map on the columns of $B$, where $B = \RR^{n,p}$ and $B = [b_1\;\dots\;b_p]$. 
+This gives 
+\[ AB = A\rowvec{3}{b_1}{\dots}{b_p} = \rowvec{3}{Ab_1}{\dots}{Ab_p}.\] 
+
+Similarly, we can also view the product as the linear map $B$ operating on the rows of $A$, which gives 
+    \[ AB = \colvec{3}{\alpha_1^\T}{\vdots}{\alpha_m^\T} B = \colvec{3}{\alpha_1^\T B}{\vdots}{\alpha_m^\T B}.\] 
+
+Finally, we can also write $AB$ as a sum of \emph{dyadic} matrices (i.e. rank one matrices of the form $uv^\T$).
+Letting $\beta_i^\T$ denote the rows of $B$, we can write 
+\[ AB = \sum_{i=1}^n a_i \beta_i^\T.\] 
+
+\subsection{Matrices as linear maps}
+Assume that $A$ is an $m\times n$ matrix unless stated otherwise. 
+Recall that we can interpret matrices as \emph{linear maps}, i.e. maps where $f(ax+by) = af(x) + bf(y)$ for scalars $a,b$. 
+Affine maps are simply linear functions plus a constant, i.e. $f(x) = Ax+b$. 
+
+Also recall that we have the familiar concepts of range, rank, and nullspace. 
+Specifically, the set of linear combinations of the columns $a_i$'s of a matrix $A$ are of the form $Ax$, for $x\in \RR^n$. 
+We call this the \emph{range} of $A$, and denote it as 
+\[ \Rcal(A) = \{Ax | x\in \RR^n\}.\] 
+The dimension of $\Rcal(A)$ (i.e. cardinality of a basis for $A$ or the number of lin. ind. rows of $A$) is called the \emph{rank} of $A$.
+We also have that $\rank(A) = \rank(A^\T)$. 
+
+On the other hand, the null space of $A$ gives the vectors which are mapped to zero by $A$ (i.e. the \emph{kernel}) and is denoted by 
+\[ \Ncal(A) = \{x \in \RR^n | Ax = 0\}.\] 
+
+The null space of a matrix gives you the ``ambiguity'' of the solutions to $Ax = 0$. 
+For any two solutions $Ax = 0$ and $Ay=0$, $A(x+y) = A(x-y) = 0$, so $x+y, x-y \in \Ncal(A)$ for example.
+
+Importantly, $\Rcal(A^\T)$ and $\Ncal(A)$ are mutually orthogonal subspaces, i.e. $\Ncal(A)\perp \Rcal(A^\T)$, meaning that every vector in one space is orthogonal to every vector in the other.
+This leads us to the following fundamental theorem. 
+
+\begin{theorem}[Fundamental Theorem of Linear Algebra]
+    For any given matrix $A \in \RR^{m,n}$, it holds that $\Ncal(A) \perp \Rcal(A^\T)$ and $\Rcal(A) \perp\Ncal(A^\T)$, hence 
+    \begin{align*}
+        \Ncal(A) \oplus \Rcal(A^\T) &= \RR^n \\ 
+        \Rcal(A) \oplus \Ncal(A^\T) &= \RR^m.
+    \end{align*}
+    Consequently, we can decompose any vector $x\in \RR^n$ into a vector in the range of $A^\T$ and another in the nullspace of $A$: 
+    \[ x = A^\T\xi + z, \quad z\in \Ncal(A).\] 
+    Similarly, we can decompose any vector $w\in \RR^m$ into a vector in the range of $A$ and another in the nullspace of $A^\T$:
+    \[ w = A\varphi + \zeta, \quad \zeta \in \Ncal(A^\T).\] 
+\end{theorem}
+
+This theorem makes much more sense geometrically. 
+We did a derivation of least squares using the fundamental theorem which is cool, and I might put in when I find time. 
+
+\subsection{Matrix Concepts}
+Things we didn't cover in lecture that I need to review and note on (for my own sake): determinants, inverses, similar matrices, eigenvalues and diagonalizability, ... 
+
+Some matrices with special structure: 
+\itemnum
+    \ii Square, diagonal, triangular (upper or lower). 
+    \ii Symmetric: a square matrix $A$ such that $A = A^\T$. 
+    \ii Orthogonal: a square matrix $A$ such that $AA^\T = A^\T A = I$. 
+    These are interesting since this implies $A^{-1} = A^\T$. 
+    So for any vector $x$, $\|Ax\|_2^2 = x^\T A^\T Ax = x^\T x = \|x\|_2^2$, so orthogonal matrices don't change the norm of $x$. 
+    Hence, they actually represent rotations. 
+    \ii Dyads (i.e. ``outer products''): matrices of the form $uv^\T$. 
+    Let $A = uv^\T$. Then the $(i,j)$-th entry of $A$ is 
+    \[ A_{ij} = e_i^\T(uv^\T) e_j = (e_i^\T u)(v_j^\T e_j) = u_iy_j,\] 
+    (where $e_i, e_j$ are the elementary vectors) which is reminiscent of the inner product. 
+\itemend
+
+Outer products are quite useful in practice, for multiple reasons. 
+If you have a data matrix like a time series, and observe that it is close to an outer product, then you can tell that you have factors which are scaled versions of each other. 
+
+We can also find what the rank of an outer product is. 
+If $A = xy^\T$, then an element of its range looks like $Az = (xy^\T)z = x(y^\T z)$. 
+This last term is a scalar (as it's an inner product), so all outputs are scaled versions of $x$, and thus $A$ is rank one. 
+In fact, all dyads are rank one. 
+
+\newpage
+\section{Thursday, January 28th}
+
+\subsection{Orthogonalization: Gram-Schmidt}
+Recall that a basis $(u_i)_{i=1}^n$ is said to be \emph{orthogonal} if $u_i^\T u_j = 0$ for $i\not= j$. 
+If $\|u_i\|_2 = 1$, the basis is said to be \emph{orthonormal}.
+
+
+Orthogonalization is the process where we find an orthonormal basis of the span of given vectors (which could be linearly dependent!). 
+Specifically, given vectors $a_1, \dots, a_k\in \RR^n$, an orthogonalization procedures computes vectors $q_1, \dots, q_n\in \RR^n$ such that 
+\[ S:= \spn \{a_1, \dots, a_k\} = \spn\{q_1,\dots,q_r\},\] 
+where $r = \dim S$ and $(q_1, \dots, q_r)$ is an orthonormal basis for $S$. 
+
+One useful concept for this process is that of a projection onto a line. 
+We have a point $a\in \RR^n$ which we want to project onto a line $L(q) := \{tq : t\in \RR\}$, where $q$ is a unit vector in $\RR^n$. 
+This amounts to solving the optimization problem 
+\[ \min_{t\in \RR} \|a-tq\|_2\] 
+for the closest point on $L(q)$ to $a$. 
+The resulting vector $a_{\proj} := t^* q$ ($t^*$ being the optimal value) is this projection onto the line $L(q)$. 
+This optimization problem has a simple solution (by geometry):
+\[ a_{\proj} = (q^\T a) q.\] 
+
+A simple interpretation of this is that we are \emph{removing the component} of $a$ along $q$, since $a-a_\proj$ and $a_\proj$ are orthogonal. 
+Gram-Schmidt uses this idea to then create a set of vectors which are orthogonal to each other. 
+The big idea is to first orthogonalize each vector w.r.t. the previous ones then normalize it to have norm one. 
+
+\begin{theorem}[Gram-Schmidt Procedure]
+    Let $a_1, \dots, a_n$ be linearly independent. 
+    The Gram-Schmidt procedure below will output an orthonormal basis for $\spn\{a_1, \dots, a_n\}$. 
+    \itemnum
+        \ii Set $\tilde{q}_1 = a_1$. 
+        \ii Normalize: set $q_1 = \tilde{q}_1/\|\tilde{q}_1\|_2.$
+        \ii Remove component of $q_1$ in $a_2$:: set $\tilde{q}_2 = a_2 - (a_2^\T q_1) q_1$. 
+        \ii Normalize: set $q_2 = \tilde{q}_2/\|\tilde{q}_2\|_2$. 
+        \ii Remove component of $q_1, q_2$ in $a_3$: set $\tilde{q}_3 = a_3 - (a_3^\T q_1)q_1 - (a_3^\T q_2)q_2$. 
+        \ii Normalize: set $q_3 = \tilde{q}_3/\|\tilde{q}_3\|_2$. 
+        \ii etc.
+    \itemend
+\end{theorem}
+
+We start by projecting each $a_i$ onto the previous normalized basis vectors, which makes it orthogonal to them. 
+Then we normalize so that our basis becomes orthonormal.
+
+This is well-defined, since if $\tilde{q}_i$ is ever 0, this means that the vectors are linearly dependent, which we assumed against. 
+This means we can easily modify the above to produce a basis in the linearly dependent case; simply skip $a_i$ if the result $\tilde{q}_i$ turns out to be 0. 
+
+\subsection{QR Decomposition}
+The basic goal of QR decomposition is to factor a matrix as a product of two matrices which hopefully have simple structure to exploit. 
+This will make it easier to solve equations $Ax = y$, since we can instead analyze $Cx = z$ and then $Bz = y$ as  
+\[ Ax = B(Cx) = Bz = y.\] 
+For example, if we could factor $A = BC$ where $B$ is some rotation, then we could easily solve this by taking its inverse rotation. 
+
+The QR decomposition is just the Gram-Schmidt procedure applied to the columns of the matrix, with the result applied in matrix form. 
+
+Consider an $m\times n$ matrix $A = (a_1, \dots, a_n)$ with columns $a_i$, and assume the columns are linearly independent. 
+Then $A$ is full column-rank, so each step of G-S can be written as 
+\[ a_i = (a_i^\T q_1) q_1 + \dots + (a_i^\T q_{i-1})q_{i-1} + \|\tilde{q}_i\|_2 q_i, \quad i=1,\dots, n\] 
+where recall that $\tilde{q}_i = a_i - (a_i^\T q_1)q_1 - \dots - (a_i^\T q_{i-1})q_{i-1}$ (the remaining components of $a_i$, per se). 
+We write this as 
+\[ a_1 = r_{i1}q_1 + \dots + r_{i, i-1} q_{i-1} + r_{ii} q_i, \quad i = 1,\dots, n,\] 
+
+where $r_{ij} = (a_i^\T q_j)$ for $1\leq j \leq i-1$ and $r_{ii} = \| \tilde{q}_i \|_2$. 
+
+Since we got this output from G-S, we know the $q_i$'s form an orthonormal basis, so the matrix $Q = (q_1, \dots, q_n)$ satisfies $Q^\T Q = \II_n$ (i.e. is an \emph{orthonormal} matrix). 
+The QR decomposition thus allows us to write the matrix in a \emph{factored} form 
+\[ 
+    A = QR,\quad Q = \rowvec{3}{q_1}{\dots}{q_n}, \quad R = 
+    \bpm r_{11} & r_{12} & \dots & r_{1n} \\ 
+         0      & r_{22} &       & r_{2n} \\ 
+         \vdots &        & \ddots& \vdots \\ 
+         0      &        &  0    & r_{nn} 
+   \epm 
+\]
+where $Q$ is an $m\times n$ matrix with $Q^\T Q = \II_n$ and $R$ is $n\times n$ upper-triangular. 
+
+With this decomposition, this makes it very efficient to solve linear equations, since any equation of the form $Ax = y$ can be written as $QRx = y$. 
+We can then multiply by $Q^\T$ to get $Rx = Q^\T y$, and $R$ is upper-triangular, so we can efficiently solve this using back-substitution.
+
+
+When the columns of $A$ are not independent, G-S simply skips over any zero vectors $\tilde{q}_j$ that we encounter. 
+In matrix form, this means we obtain a factorization $A = QR$, with $Q \in \RR^{m\times r}$, $r = \rank(A)$, and $R$ having an upper staircase form like 
+\[ R = 
+    \bpm 
+        * & * & * & * & * & * \\
+        0 & 0 & * & * & * & * \\
+        0 & 0 & 0 & 0 & 0 & * 
+    \epm
+\]
+
+This is just as simple for us to solve with back-substitution, but we can also permute the columns of $R$ so that we bring all the pivot entries to thhe front. 
+
+\subsection{Kernels in Machine Learning}
+Recall that in least-squares, our training problem is solving the optimization problem 
+\[ \min_{w, b} \Lcal(X^\T w + b\cdot 1, y),\] 
+where the pairs of poinits $(X_i, y_i)$ with $X_i\in\RR^n, y_i\in \RR$ form our training set.
+
+Our predictions are then given by $\hat{y}(x) = w^\T x +  b$ once we find these optimal $w,b$.
+This means we can compute an error between the \emph{actual} measured output $y_i$ with our predictions $\hat{y}_i$, which forms our loss function that we try to optimize:
+
+\[ \min_{w,b} \sum_{i=1}^n (y_i - (w^\T x_i + b))^2.\] 
+
+The shape of our data is $X = \rowvec{3}{x_1}{\dots}{x_m}$, i.e. an $n\times m$ matrix, so 
+\[ X^\T w + b\cdot 1 = \colvec{3}{x_1^\T \cdot w + b}{\vdots}{x_m^\T \cdot w+b} .\] 
+Analyzing the term $X^\T w$ is the key to understanding the impact of kernels.
+
+Suppose we simplify our problem to 
+\[ \min_w \Lcal (X^\T w) + \la \| w\|_2^2\] 
+where $\la > 0$ is a penalty/regularization term on our weights trying to force our training process to find a more ``robust example for weights $w$.'' 
+It helps account for noise in your dataset, so that small changes in the $x_i$ won't result in large changes in our loss. 
+
+Let's analyze the simple case $m = 2$ (\# of data points) and $n = 3$ (dimension of data points). 
+Invoking the fundamental theorem of linear algebra, we can write our weight vector in terms of a vector in the span of our $x_1, x_2$, i.e. $w = Xv + r$ where $v\in \spn\{x_1, \dots, x_m\}$ and $r\in \Ncal(X^\T)$, so $X^\T r = 0$. 
+So $X^\T w = X^\T X v+ X^\T r = X^\T X v$, which let's us rewrite the optimization problem as 
+\[ 
+    \min_{w,v} \Lcal[X^\T X v, y] + \la v^\T X^\T X v.  
+\]
+In other words, we've converted the optimization in terms of $X$ instead into an optimization in terms of the matrix $X^\T X$. 
+We refer to this matrix as the \emph{kernel} matrix $K = X^\T X$, or the Gram matrix of our data. 
+Note that 
+\[ K_{ij} = e_i^\T K e_j = e_i^\T X^\T X e_j = x_i^\T x_j = \cyc{x_i, x_j}.\]
+This inspires us to think of other inner products that aren't just the usual scalar product $\cyc{x_i, x_j} = x_i^\T x_j$. 
+We could use nonlinear products instead which let use use richer models on transformed data instead. 
 \end{document}
