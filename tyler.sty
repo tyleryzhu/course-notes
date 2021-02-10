@@ -185,8 +185,11 @@ style=thmredbox,name=Problem]{problem}
 \newcommand{\Gcal}{\mathcal G}
 \newcommand{\Hcal}{\mathcal H}
 \newcommand{\Ical}{\mathcal I}
+\newcommand{\Lcal}{\mathcal L}
+\newcommand{\Ncal}{\mathcal N}
 \newcommand{\Pcal}{\mathcal P}
 \newcommand{\Qcal}{\mathcal Q}
+\newcommand{\Rcal}{\mathcal R}
 \newcommand{\Scal}{\mathcal S}
 \newcommand{\Wcal}{\mathcal W}
 \newcommand{\Vcal}{\mathcal V}
@@ -218,10 +221,13 @@ style=thmredbox,name=Problem]{problem}
 \newcommand{\spn}{\text{span}} % don't renew \span! fucks up align environments :-(
 \newcommand{\bbm}{\begin{bmatrix}}
 \newcommand{\ebm}{\end{bmatrix}}
+\newcommand{\bpm}{\begin{pmatrix}}
+\newcommand{\epm}{\end{pmatrix}}
 \newcommand{\T}{\top}
 \newcommand{\lar}{\Leftarrow} 
 \newcommand{\rar}{\Rightarrow} 
 \newcommand{\diam}{\text{diam }}
+\newcommand{\diag}{\text{diag}}
 \newcommand{\se}{\subseteq}
 \newcommand{\sgn}{\text{sgn}}
 \newcommand{\ord}{\text{ord}}
@@ -304,6 +310,23 @@ style=thmredbox,name=Problem]{problem}
                 \end{bmatrix}
         \fi
 }
+
+% Row Vectors 
+\newtoks\rowvectoks
+\newcommand{\rowvec}[2]{%
+  \rowvectoks={#2}\count255=#1\relax
+  \advance\count255 by -1
+  \rowvecnexta}
+\newcommand{\rowvecnexta}{%
+  \ifnum\count255>0
+    \expandafter\rowvecnextb
+  \else
+    \begin{bmatrix}\the\rowvectoks\end{bmatrix}
+  \fi}
+\newcommand\rowvecnextb[1]{%
+    \rowvectoks=\expandafter{\the\rowvectoks&#1}%
+    \advance\count255 by -1
+    \rowvecnexta}
 
 
 %%%%% ALGORITHMS %%%%%

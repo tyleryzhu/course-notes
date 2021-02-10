@@ -109,7 +109,9 @@ However, there's a special class of problems called \emph{convex problems} which
 Usually your objective function when plotted looks something like a bowl, i.e. there's a single point at the bottom which is the previously mentioned global optimum.
 
 \begin{figure}[!htb]
-    \caption{Convex and Non-convex functions (missing!)}
+    \centering
+    \includegraphics[scale=0.6]{convexnonconvex.png}
+    \caption{Convex and Non-convex functions}
 \end{figure}
 
 Funny enough, even though most problems are non-convex, we could find a convex function that lower bounds our objective function and hope its global optimum is a decent solution to our original objective. 
@@ -205,8 +207,6 @@ We can use vectors for example in bag of words frequency matching.
     \[ x_t \approx \alpha_1 x_{t-1} + \alpha_2 x_{t-2} + \text{error}.\]
 \end{example}
 
-Now for a list of definitions... 
-
 Vectors have a few special properties, in that the operations of sum, difference, and scalar multiplication all hold and are closed, i.e. that they return other vectors. 
 These properties define a \emph{vector space}. 
 The simplest example is $\Xcal = \RR^n$. 
@@ -218,7 +218,7 @@ For example, the set of all possible linear combinations of vectors in $S = \{x^
 Finally, given two subspaces $\Xcal, \Ycal$ in $\RR^n$, the \emph{direct sum} of $\Xcal, \Ycal$, denoted by $\Xcal\oplus \Ycal$, is the set of vectors of the form $x+y$ with $x\in \Xcal, y\in \Ycal$. 
 One can easily check that $\Xcal\oplus\Ycal$ is a subspace. 
 
-We also have the familiar concepts of linear independence and hence the \emph{basis} for a subspace, whose cardinality defines the dimension of the subspace.
+We also have the familiar concepts of linear independence and hence the \emph{basis} for a subspace $\Scal$, the smallest set of vectors which spans $\Scal$, whose cardinality defines the dimension of the subspace.
 
 \begin{definition}[Affine sets]
     An affine set is a set of the form 
@@ -237,8 +237,16 @@ Think of $ax+by+c=0$.
 One question we might have is how do we measure the \emph{size} of a vector; norms are the answer to this question. 
 In short, a \emph{norm} simply assigns real numbers to vectors in a consistent manner, i.e. it satisfies the following properties: 
 \begin{definition}[Norm]
-
+    A function $\|\cdot\|$ from $\Xcal$ to $\RR$ is a \emph{norm} if 
+    \begin{enumerate}
+        \ii $\|x\| \geq$ for all $x\in \Xcal$, and $\|x\| = 0$ iff $x = 0$; 
+        \ii $\|x+y\| \leq \|x\| + \|y\|$, for any $x,y\in \Xcal$ (triangle inequality); 
+        \ii $\|\alpha x\| = \alpha \|x\|$, for any scalar $\alpha$ and any $x\in \Xcal$.
+    \end{enumerate}
 \end{definition}
+
+A classic example of a norm which we'll use often are the $\ell_p$ norms, defined by 
+\[ \|x\|_p := \left(\sum_{k=1}^n |x_k|^p \right)^{1/p}, \quad 1\leq p < \infty.\] 
 
 We will primarily use three norms: 
 \itemnum
@@ -246,24 +254,28 @@ We will primarily use three norms:
     \[ \|x\|_2 = \sqrt{\sum_{k=1}^n x_k^2},\] 
     \ii or $p=1$ which gives the sum-of-absolute-values length (or Manhattan distance) 
     \[ \|x\|_1 = \sum_{k=1}^n |x_k|.\] 
-    \ii When $p=\infty$ defines the $\ell_\infty$ norm (max absolute value norm) 
+    \ii When $p=\infty$, it defines the $\ell_\infty$ norm (max absolute value norm) 
     \[ \|x\|_{\infty} = \max_{k=1,\dots, n} |x_k|.\] 
     \ii The cardinality of a vector $x$ is often called the $\ell_0$ (pseudo-) norm, which
 \itemend
 
-\subsection{Inner product, orthogonality}
+\subsection{Inner product}
 Inner products are interesting since we can think of vectors now as functions acting on other vectors, i.e. like $\cyc{x, \cdot}$. 
 \begin{definition}[Inner product]
     An \emph{inner product} on a (real) vector space $\Xcal$ is a real-valued function which maps pairs $x,y\in \Xcal$ into a scalar denoted by $\cyc{x,y}$. 
     The inner product satisfies the following axioms (for $x,y,z\in \Xcal$ and scalar $\alpha$):
     \begin{align*}
-        \cyc{x,x} \geq 0;  
+        \cyc{x,x} &\geq 0;  \\
+        \cyc{x,x} &= 0 \text{ iff } x = 0;  \\
+        \cyc{x+y,x} &= \cyc{x,z} + \cyc{y,z};  \\
+        \cyc{\alpha x,y} &= \alpha \cyc{x,y};  \\
+        \cyc{x,y} &= \cyc{y,x}.
     \end{align*}
 \end{definition}
 
 A vector space with an inner product is called an \emph{inner product space}, and the standard inner product in $\RR^n$ is the row-column product of two vectors, 
 \[ \cyc{x,y} = x^\T y = \sum_{k=1}^n x_ky_k.\] 
-Finally, inner products also induce a norm given by $\|x\| = \sqrt{\cyc{x,x}}$ (which you may notice is identical to the $\ell_2$-norm in $\RR^n$). 
+The inner product induces a norm given by $\|x\| = \sqrt{\cyc{x,x}}$ (which you may notice is identical to the $\ell_2$-norm in $\RR^n$). 
 
 With inner products, we can define the angle $\theta$ between two vectors $x,y$ by 
 \[ \cos \theta = \dfrac{x^\T y}{\|x\|_2\|y\|_2},\]
@@ -274,7 +286,7 @@ Since $|\cos\theta| \leq 1$, we easily get the following inequality.
 \begin{theorem}[Cauchy-Schwarz Inequality]
     For vectors $x,y\in \RR^n$, 
     \[ |x^\T y| \leq \|x\|_2 \|y\|_2\] 
-    where inequality holds when $x = \alpha y$ for scalar $\alpha$ (i.e. when $|\cos\theta| = 1$). 
+    where equality holds when $x = \alpha y$ for scalar $\alpha$ (i.e. when $|\cos\theta| = 1$). 
 \end{theorem}
 
 We also have the following generalization with $\ell_p$ norms. 
@@ -283,15 +295,44 @@ We also have the following generalization with $\ell_p$ norms.
     \[ |x^\T y| \leq \sum_{k=1}^n|x_ky_k| \leq \|x\|_p \|y\|_q.\] 
 \end{theorem}
 
-As a quick aside, let's discuss maximizing the inner product over norm balls. 
-In other words, we're trying to solve the optimization problem 
+\subsection{Maximization of inner product over norm balls}
+Let's solve our first optimization problem and discuss maximizing the inner product over norm balls. 
+We're trying to solve the optimization problem 
 \[ \max_{\|x\|_p\leq 1} x^\T y.\] 
 
-For $p=2$, ... 
+For $p=2$, we can use the Cauchy-Schwarz inequality to get $|x^\T y\| \leq \|x\|_2 \|y\|_2$, where equality holds when $x = \alpha y$. 
+Since $\|x\|_2 \leq 1$ and we want the largest positive value, we should take 
+\[ x_2^* = \frac{y}{\|y\|_2},\]
+so $\max_{\|x\|_2\leq 1} x^\T y = \|y\|_2$. 
+
+For $p=\infty$, each entry of $x$ should be $\pm 1$ to satisfy the norm condition, which then maximizes the inner product by making everything positive, so 
+\[ x_\infty^* = \sgn(y).\] 
+So $\max_{\|x\|_\infty \leq 1} x^\T y = \|y\|_1$. 
+
+For $p=1$, we simply set 
+\[ [x_1^*] = \begin{cases} \sgn(y_i)\quad &\text{ if }i = m \\ 0 \quad &\text{ o/w } \end{cases},\quad i= 1,\dots, n,\] 
+where $m$ is the index of an entry in $y$ which has maximum absolute value. 
+Then $\max_{\| x\|_1 \leq 1} x^\T y = \|y\|_\infty$. 
+
+Notice that all of these results are in line with what we'd expect by applying Holder's inequality to each case.
 
 
+\subsection{Orthogonalization and Projections} 
+In our favorite vector space $\RR^2$, two vectors are perpendicular when they have a dot product 0.
 For generic inner product spaces, we say that two vectors $x,y$ in an inner product space $\Xcal$ are \emph{orthogonal} if $\cyc{x,y} = 0$, which we denote by $x\perp y$. 
-Nonzero vectors are \emph{mutually orthogonal} if they are pairwise orthogonal. 
+Nonzero vectors are \emph{mutually orthogonal} if they are pairwise orthogonal.
+It is a simple exercise to show that mutually orthogonal vectors are linearly independent.
+
+Given a subset $\Scal$ of an inner product space $\Xcal$, a vector $x\in \Xcal$ is orthogonal to $\Scal$ if $x\perp s$ for all $s\in \Scal$. 
+The set of vectors orthogonal to $\Scal$ is called the \emph{orthogonal complement} of $\Scal$, and is denoted by $\Scal^\perp$. 
+
+\begin{theorem}[Orthogonal Decomposition]
+    If $\Scal$ is a subspace of an inner-product space $\Xcal$, then any vector $x\in \Xcal$ can be uniquely written as the sum of an element in $S$ and an element in $S^\perp$, i.e. 
+    \[ \Xcal = \Scal \oplus \Scal^\perp \quad \text{ for any subspace } \Scal\subseteq \Xcal.\]
+\end{theorem}
+
+Now we will talk about projections. 
+The idea of projection is central in optimization, which is finding a point on a given set that is closest (in norm) to a given point. 
 
 
 We have an important theorem concerning projections.
@@ -322,7 +363,7 @@ A \emph{linear} function is simply a function that perserves scaling and additiv
 The gradient of a function can be intepreted in the context of level sets. 
 Geometrically, the gradient of $f$ at a point $x_0$ is a vector $\nabla f(x_0)$ perpendicular to the contour line of $f$ at level $\alpha = f(x_0)$, pointing from $x_0$ outwards the $\alpha$-sublevel set (i.e. points towards higher values of the function). 
 
-
+\newpage
 \section{Tuesday, January 26th: Matrices and Linear Maps}
 
 \subsection{Matrix Basics}
@@ -543,4 +584,199 @@ Note that
 \[ K_{ij} = e_i^\T K e_j = e_i^\T X^\T X e_j = x_i^\T x_j = \cyc{x_i, x_j}.\]
 This inspires us to think of other inner products that aren't just the usual scalar product $\cyc{x_i, x_j} = x_i^\T x_j$. 
 We could use nonlinear products instead which let use use richer models on transformed data instead. 
+
+
+\newpage
+\section{Tuesday, February 2nd}
+
+Today is about symmetric matrices. 
+\subsection{Symmetric Matrices} 
+Recall that a square $n\times n$ matrix $A$ is \emph{symmetric} if $A = A^\T$. 
+The set of symmetric $n\times n$ matrices is a subspace of $R^{n,n}$, and is denoted by $\SS^n$. 
+
+\begin{example}[Sample covariance Matrix]
+    \label{ex:cov}
+    For one dimensional data $z_1, \dots, z_m\in \RR$, we can define the mean and variance of the data as 
+    \[ \hat{z} = \frac{1}{m} \sum_{i=1}^m z_i \] 
+    \[ \si^2 = \frac{1}{m} \sum_{i=1}^m (z_i-\hat{z})^2.\] 
+    
+    We can extend this notion to multi-dimensional points, which results in an important symmetric matrix we will see many times: the covariance matrix. 
+    
+    The covariance matrix is a way for us to understand the variance along any direction $u$ ($\|u\|_2=1$). 
+    Let $x_1, \dots, x_m \in \RR^n$, which has sample mean $\hat{x} = \frac 1m \sum_{i=1}^m x_i$. 
+    If we project our points $x$ onto this line by using $x' = (x^\T u)u$, we reduce this to the previous one dimensional case and analyze the mean and variance again.
+    This creates ``scores'' of our points along the line $u$ defined by $z_i = (x_i-\hat{x})^\T u$. 
+    Then following the same procedure from before, we can compute variance as 
+    \begin{align*}
+        \si^2(u) &= \frac{1}{m}\sum_{i=1}^m (z_i - \hat{z})^\T (z_i-\hat{z}) \\ 
+                 &= \frac{1}{m}\sum_{i=1}^m u^\T (x_i-\hat{x}) (x_i-\hat{x})^\T u  \\ 
+                 &= u^\T C u
+    \end{align*}
+    where $C= \frac{1}{m}\sum_{i=1}^m (x_i-\hat{x}) (x_i-\hat{x})^\T$ is the covariance matrix.
+    From this, one can see that we can use it to compute arbitrary sample variances.
+\end{example}
+
+\begin{example}[Hessian matrix]
+    The Hessian of a twice differentiable function $f: \RR^n \to \RR$ at a point $x$ is the matrix containing the second derivates of the function at that point. 
+    It is given by 
+    \[ H_{ij} = \dfrac{\pd^2 f(x)}{\pd x_i \pd x_j}, \; 1\leq i,j\leq n.\] 
+    We usually denote the Hessian by $\nabla^2 f(x)$. 
+    Since the second-derivative is the same regardless of order of derivative, $H_{ij} = H_{ji}$, so it is symmetric. 
+\end{example}
+
+As a quick aside, we can talk about quadratic functions being written as matrices and vectors. 
+Supposes we have a quadratic function 
+\[ q(x) = x_1^2 + 2x_1x_2 + 3x_2^2 + 4x_1 + 5x_2+6,\]
+which has Hessian 
+\[ H = \bbm 2&2 \\ 2 & 6 \ebm.\] 
+
+We can also write the monomials as 
+\[ x_1^2 + 2x_1x_2 + 3x_2^2 = \frac 12 x^\T H x.\] 
+Hence, any quadratic function can be written as the sum of a quadratic term involving the Hessian, and an affine term: 
+\[ q(x) = \frac 12 x^\T H x + c^\T x + d, \quad c^\T = [4\; 5],\; d = 6.\] 
+
+
+We can finally get to this most important result, which states that every symmetric matrix is orthogonally similar to a diagonal matrix. 
+
+\begin{theorem}[Spectral Theorem]
+    Let $A$ be a symmetric $n\times n$ matrix and let $\la_i\in \RR, (i=1, \dots, n)$ be its eigenvalues with multiplicty. 
+    Then there exists a set of orthogonal vectors $u_i \in \RR^n$, $i=1,\dots, n$ such that $Au_i = \la_i u_i$. 
+    Equivalently, there exists an orthogognal matrix $U = \rowvec{3}{u_1}{\cdots}{u_n}$ (i.e. $UU^\T = U^\T U = \II_n$) such that 
+    \[ A = U\Lambda U^\T = \sum_{i=1}^n \la_i u_i u_i^\T, \quad \Lambda = \diag(\la_1, \dots, \la_n).\] 
+\end{theorem}
+
+In other words, $A$ can be written as the weighted sum of dyads which are mutually orthogonal. 
+
+Also talked about Rayleigh quotients and matrix gain. 
+
+\subsection{Positive-Semidefinite Matrices}
+\begin{definition}[PSD]
+    A symmetric matrix $A\in \SS^n$ is said to be \emph{positive semidefinite} (PSD) if the associated quadratic form is nonnegative, i.e., 
+    \[ x^\T A x \geq 0, \quad \forall x \in \RR^n.\]
+
+    If, moreover, 
+    \[ x^\T A x > 0, \quad \forall x\in \RR^n\setminus\{0\},\] 
+    then $A$ is said to be \emph{positive definite} (PD). 
+    We denote a symmetric positive semidefinite (resp. positive definite) matrix by $A\succeq 0$ (resp. $A\succ 0$). 
+\end{definition}
+
+Some immediate properties are that a PSD matrix is actually positive definite if and only if it is invertible. 
+Also, it holds that 
+\[ A \succeq 0 \iff \la_i(A) \geq 0,\; i=1, \dots, n.\] 
+\[ A \succ   0 \iff \la_i(A) > 0,\; i=1, \dots, n.\] 
+
+We then talked about Matrix square-root, Cholesky decomp, and PSD's with ellipsoids. 
+Schur complements are on the homework.
+
+\subsection{Principal Component Analysis}
+
+The motivation behind PCA is that if we have a low-dimensional data set existing in a high-dimensional space, then we should instead view it from an angle where the ``variance'' of thhe data is highest. 
+In other words, we want to project our data onto a direction which maximizes the resulting variance of our points, since that lets us tell the points apart the most. 
+
+When we do this, recall that the variance of the projections of our points onto a direction $u$ is given by the covariance matrix (Example~\ref{ex:cov})
+This gives us the optimization problem 
+\[ \max_u\; u^\T C u: \quad \|u\|_2 = 1\] 
+where $C$ is the empirical covariance matrix and we impose the unit vector constraint so that the optimization is actually tractable. 
+
+To solve this, we can look at the spectral decomposition of $C$ given by 
+\[ C = \sum_{i=1}^p \la_i u_i u_i^\T,\] 
+with $\la_1 \geq \dots \geq \la_p$ and $U = [u_1,\dots, u_p]$ is orthogonal ($U^\T U = I$). Then a solution to the quadratic form 
+\[ \max_{u: \|u\|_2=1} \; u^\T C u\] 
+is $u^* = u_1$ where $u_1$ is the eigenvector of $C$ that corresponds to the largest eigenvalue $\la_1$ as we discussed before. 
+
+Later we will see how to arrive at this using SVD. 
+
+
+\newpage
+\section{Thursday, February 4th}
+PCA and SVD. 
+
+\begin{theorem}[SVD]
+    woohoo (to be added)
+    \label{thm:svd}
+\end{theorem}
+
+
+\newpage
+\section{Tuesday, February 9th}
+\subsection{Motivation for Linear Equations}
+Linear equations are one of the most basic form of relationship among variables in an engineering problem. 
+There's all sorts of applications of linear equations that come up in science, and they form the building block for many other optimization methods, so it's important to know how to solve them.
+
+Here is an example of a system in 3 equations in 2 unknowns: 
+\begin{align*}
+    x_1 + 4.5x_2 &= 1 \\ 
+    2x_1 + 1.2x_2 &= -3.2  \\
+    -0.1x_1 + 8.2x_2 &= 1.5.
+\end{align*}
+
+We can write this in vector format as $Ax=y$, where 
+\[ A = \bbm 1 & 4.5 \\ 2 & 1.2 \\ -0.1 & 8.2 \ebm, \quad y = \colvec{3}{1}{-3.2}{1.5}.\] 
+Solutions are $x\in \RR^2$ which satisfy the equation. 
+In this case, the equation has no solution, i.e. the system is \emph{infeasible}.
+
+We then went over a lot of examples. 
+I prefer theory so I did not take notes on them.
+
+\subsection{Set of Solutions of Linear Equations}
+Our general setup is that we want to solve the linear equation 
+\[ Ax = y, \quad A \in \RR^{m,n}.\] 
+
+There are many issues we concern ourselves with, such as existence and uniqueness of solutions, or the characterization of the \emph{solution set} 
+\[ S = \{x\in \RR^n : Ax=y\}.\] 
+Notice that $Ax$ always lies in $\Rcal(A)$, so $S\not= 0 \iff y \in \Rcal(A)$. 
+Hence, there is a solution if and only if $\rank([A\; y]) = \rank(A)$. 
+
+When existence is satisfied, the set of solutions is the affine set 
+\[ S = \{\bar{x} + Nz, z\in \RR^{n-r} \},\] 
+where $\bar{x}$ is any vector such that $A\bar{x} = y$, $r = \rank(A)$, and $N \in \RR^{n, n-r}$ is a matrix whose columns span the nullspace of $A$ (hence $AN = 0$). 
+
+Geometrically, the null space represents the span of the ``free variables'' in the solutions.
+
+Finding the solution set in the above manner can be useful in optimization. We can use this by turning our usual optimization problem into an unconstrained one, i.e. 
+\[ \min_x f_0(x) :\; Ax = b \implies \min_z f_0(x_0 + Nz),\] 
+using notation from above. 
+
+\subsection{Solving Linear Systems}
+We can also use SVD to easily analyze our linear equation system.
+As usual, suppose we're solving $Ax = y$ where $A\in \RR^{m,n}$ and $y\in \RR^m$. 
+If $A = U\tilde{\Sigma} V^\T$ is the SVD of $A$ (see Theorem~\ref{thm:svd}), then $Ax = y$ is equivalent to 
+
+\[ U\tilde{\Sigma} V^\T x = y \implies \tilde{\Sigma} V^\T x = U^\T y \implies \tilde{\Sigma} \tilde{x} = \tilde{y},\] 
+where $\tilde{x} = V^\T x, \tilde{y} = U^\T y$. 
+
+In other words, we're using $U$ and $V$ to rotate our inputs and outputs to make the system diagonal (as per the usual SVD interpretation). 
+Since $\tilde{\Sigma}$ is a diagonal matrix 
+\[ \tilde{\Sigma} = \bbm \Sigma & 0_{r, n-r} \\ 0_{m-r, r} & 0_{m-r, n-r} \ebm,\quad \Sigma = \diag(\si_1, \dots, \si_r) \succ 0,\]
+
+this makes the system very easy to solve or analyze.
+Note that $\Ncal(A) = m-r$. 
+
+Let's analyze the resulting system $\tilde{\Sigma}\tilde{x} = \tilde{y}$, which reduces to 
+\begin{align*}
+    \si_i \tilde{x}_i &= \tilde{y}_i \quad i = 1, \dots, r \\ 
+    0 &= \tilde{y}_i \quad i = r+1, \dots, m.
+\end{align*}
+
+Clearly we need $\tilde{y}_i$ to be zero for its last $m-r$ components, which happens when $y\in \Rcal(A)$. 
+Otherwise the solution set is empty. 
+
+If $y\in \Rcal(A)$, then we can solve for $\tilde{x}$ with our first set of conditions: $\tilde{x}_i = \tilde{y}_i/\si_i$ for $i = 1, \dots, r$, with the last $n-r$ components being free (which correspond to elements in the nullspace of $A$).
+
+When $A$ is full column rank, it has trivial nullspace and hence there is a unique solution. 
+
+\begin{example}
+    Suppose we have a system $Ax = y$ with 
+    \[ A = \bbm \si_1 & 0 & 0 \\ 0 & \si_2 & 0 \\ 0&0&0 \\ 0&0&0\ebm, \quad y=\colvec{4}{y_1}{y_2}{y_3}{y_4}.\]
+    This system has no solution if $(y_3, y_4) \not= 0$. If $y_3=y_4 = 0$ so that $y\in \Rcal(A)$, we then get the solution sest $S = \{x_0 + Nz : z\in \RR^2\}$ with 
+    \[ x_0 = \colvec{4}{y_1/\si_1}{y_2/\si_2}{0}{0},\quad N = \bbm 0&0\\0&0\\1&0\\0&1\ebm.\] 
+\end{example}
+
+Finally, we can also use QR decomposition to analyze a linear system. 
+The idea is to reduce the system to a triangular one and then solve using ``back-substitution.'' 
+For example, if $A$ is square and $A = QR$ with $Q^\T Q = I_n$, then $Ax = y$ is equivalent to $Rx = \tilde{y} = Q^\T y$, which is triangular. 
+Then we just have to back substitute to find a solution. 
+
+Similarly to using SVD, we're rotating our outputs here to make the system triangular and easier to solve.
+
 \end{document}
