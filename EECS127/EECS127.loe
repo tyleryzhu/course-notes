@@ -1,0 +1,19 @@
+\contentsline {example}{\numberline {1.1}Example\thmtformatoptarg {Least-squares regression}}{3}{example.1.1}
+\contentsline {example}{\numberline {1.2}Example\thmtformatoptarg {Support Vector Machines (SVMs)}}{4}{example.1.2}
+\contentsline {example}{\numberline {2.1}Example\thmtformatoptarg {Time series}}{7}{example.2.1}
+\contentsline {definition}{\numberline {1}Definition\thmtformatoptarg {Affine sets}}{7}{definition.1}
+\contentsline {definition}{\numberline {2}Definition\thmtformatoptarg {Norm}}{8}{definition.2}
+\contentsline {definition}{\numberline {3}Definition\thmtformatoptarg {Inner product}}{8}{definition.3}
+\contentsline {theorem}{\numberline {4}Theorem\thmtformatoptarg {Cauchy-Schwarz Inequality}}{9}{theorem.4}
+\contentsline {theorem}{\numberline {5}Theorem\thmtformatoptarg {Holder's Inequality}}{9}{theorem.5}
+\contentsline {theorem}{\numberline {6}Theorem\thmtformatoptarg {Orthogonal Decomposition}}{10}{theorem.6}
+\contentsline {theorem}{\numberline {7}Theorem\thmtformatoptarg {Projection Theorem}}{10}{theorem.7}
+\contentsline {theorem}{\numberline {8}Theorem\thmtformatoptarg {Fundamental Theorem of Linear Algebra}}{13}{theorem.8}
+\contentsline {theorem}{\numberline {9}Theorem\thmtformatoptarg {Gram-Schmidt Procedure}}{15}{theorem.9}
+\contentsline {example}{\numberline {5.1}Example\thmtformatoptarg {Sample Covariance Matrix}}{18}{example.5.1}
+\contentsline {example}{\numberline {5.2}Example\thmtformatoptarg {Hessian matrix}}{18}{example.5.2}
+\contentsline {theorem}{\numberline {10}Theorem\thmtformatoptarg {Spectral Theorem}}{19}{theorem.10}
+\contentsline {definition}{\numberline {11}Definition\thmtformatoptarg {Positive Semidefiniteness}}{19}{definition.11}
+\contentsline {theorem}{\numberline {12}Theorem\thmtformatoptarg {Singular Value Decomposition}}{21}{theorem.12}
+\contentsline {theorem}{\numberline {13}Theorem\thmtformatoptarg {Compact-form SVD}}{22}{theorem.13}
+\contentsline {example}{\numberline {7.1}Example}{25}{example.7.1}

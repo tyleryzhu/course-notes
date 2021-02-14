@@ -443,12 +443,12 @@ Things we didn't cover in lecture that I need to review and note on (for my own 
 Some matrices with special structure: 
 \itemnum
     \ii Square, diagonal, triangular (upper or lower). 
-    \ii Symmetric: a square matrix $A$ such that $A = A^\T$. 
-    \ii Orthogonal: a square matrix $A$ such that $AA^\T = A^\T A = I$. 
+    \ii Symmetric: a square matrix $A$ such that $A = A^\T$ (more on this later; in fact, an \emph{entire class} on it)
+    \ii \textbf{Orthogonal}: a square matrix $A$ such that $AA^\T = A^\T A = I$. 
     These are interesting since this implies $A^{-1} = A^\T$. 
     So for any vector $x$, $\|Ax\|_2^2 = x^\T A^\T Ax = x^\T x = \|x\|_2^2$, so orthogonal matrices don't change the norm of $x$. 
     Hence, they actually represent rotations. 
-    \ii Dyads (i.e. ``outer products''): matrices of the form $uv^\T$. 
+    \ii \textbf{Dyads} (i.e. ``outer products''): matrices of the form $uv^\T$. 
     Let $A = uv^\T$. Then the $(i,j)$-th entry of $A$ is 
     \[ A_{ij} = e_i^\T(uv^\T) e_j = (e_i^\T u)(v_j^\T e_j) = u_iy_j,\] 
     (where $e_i, e_j$ are the elementary vectors) which is reminiscent of the inner product. 
@@ -461,6 +461,26 @@ We can also find what the rank of an outer product is.
 If $A = xy^\T$, then an element of its range looks like $Az = (xy^\T)z = x(y^\T z)$. 
 This last term is a scalar (as it's an inner product), so all outputs are scaled versions of $x$, and thus $A$ is rank one. 
 In fact, all dyads are rank one. 
+
+Here are some other matrix concepts that I personally find helpful.
+The first is using the standard basis vectors $e_1, \dots, e_n$ to express information. 
+We already saw this idea earlier when analyzing the $(i,j)$th position of the dyad $A = uv^\T$. 
+If we want the $i$th row of a matrix $A$ or the $i$th entry of a column vector, we can multiply on the left by $e_i^\T$.
+If we want the $j$th row of the matrix or the $j$th entry of a row vector, we can multiply on the right by $e_j$
+
+
+Here's an example of where it's helpful. 
+Recall from earlier that given matrices $A\in \RR^{m,n}, B \in \RR^{n,p}$, their matrix product can be written as $AB = \sum_{i=1}^n a_i \beta_i^\T$.  
+If we were to insert a diagonal matrix $\diag(c_1,\dots, c_n)$ in between this product, we can break it down as 
+\begin{align*}
+    A \;\diag(c_1, \dots, c_n)\; B &= [A(c_1e_1)\; \dots \; A(c_n e_n)] B  \tag{using $e_1, \dots, e_n$ for the columns} \\
+                                   &= [c_1 (Ae_1)\; \dots \; c_n (Ae_n)] B \\ 
+                                   &= [c_1 a_1 \; \dots \; c_n a_n ] B \tag{using $a_1,\dots, a_n$ as columns of $A$}\\ 
+                                   &= \sum_{i=1}^n c_i a_i\beta_i^\T \tag{using the dyadic matrix product above}
+\end{align*}
+
+In short, introducing a diagonal matrix turns this product into a weighted sum of dyads.
+Useful to know for later when we discuss spectral decomposition and SVD!
 
 \newpage
 \section{Thursday, January 28th}
@@ -569,7 +589,7 @@ Analyzing the term $X^\T w$ is the key to understanding the impact of kernels.
 
 Suppose we simplify our problem to 
 \[ \min_w \Lcal (X^\T w) + \la \| w\|_2^2\] 
-where $\la > 0$ is a penalty/regularization term on our weights trying to force our training process to find a more ``robust example for weights $w$.'' 
+where $\la > 0$ is a penalty/regularization term on our weights trying to force our training process to find a more ``robust example for weights $whttps://www.reddit.com/r/berkeley/comments/lgmlnz/top_20_schools_for_admits_and_enrollees_for_2020/$.'' 
 It helps account for noise in your dataset, so that small changes in the $x_i$ won't result in large changes in our loss. 
 
 Let's analyze the simple case $m = 2$ (\# of data points) and $n = 3$ (dimension of data points). 
@@ -592,9 +612,9 @@ We could use nonlinear products instead which let use use richer models on trans
 Today is about symmetric matrices. 
 \subsection{Symmetric Matrices} 
 Recall that a square $n\times n$ matrix $A$ is \emph{symmetric} if $A = A^\T$. 
-The set of symmetric $n\times n$ matrices is a subspace of $R^{n,n}$, and is denoted by $\SS^n$. 
+The set of symmetric $n\times n$ matrices is a subspace of $\RR^{n,n}$, and is denoted by $\SS^n$. 
 
-\begin{example}[Sample covariance Matrix]
+\begin{example}[Sample Covariance Matrix]
     \label{ex:cov}
     For one dimensional data $z_1, \dots, z_m\in \RR$, we can define the mean and variance of the data as 
     \[ \hat{z} = \frac{1}{m} \sum_{i=1}^m z_i \] 
@@ -624,24 +644,31 @@ The set of symmetric $n\times n$ matrices is a subspace of $R^{n,n}$, and is den
     Since the second-derivative is the same regardless of order of derivative, $H_{ij} = H_{ji}$, so it is symmetric. 
 \end{example}
 
-As a quick aside, we can talk about quadratic functions being written as matrices and vectors. 
+As a quick aside, we can talk about quadratic functions being written in terms of matrices and vectors. 
 Supposes we have a quadratic function 
 \[ q(x) = x_1^2 + 2x_1x_2 + 3x_2^2 + 4x_1 + 5x_2+6,\]
 which has Hessian 
 \[ H = \bbm 2&2 \\ 2 & 6 \ebm.\] 
 
-We can also write the monomials as 
+We can write the degree two monomials stricly in terms of the Hessian as 
 \[ x_1^2 + 2x_1x_2 + 3x_2^2 = \frac 12 x^\T H x.\] 
-Hence, any quadratic function can be written as the sum of a quadratic term involving the Hessian, and an affine term: 
+Taking this further, any quadratic function can be written as the sum of a quadratic term involving the Hessian, and an affine term: 
 \[ q(x) = \frac 12 x^\T H x + c^\T x + d, \quad c^\T = [4\; 5],\; d = 6.\] 
 
+A \textbf{quadratic form} is a quadratic function with no linear and constant terms, that is $c=0, d=0$. 
+Dropping the scalar, they generally look like
+\[ q(x) = x^\T H x, \quad H\in \SS^n.\] 
+
+A special quadratic form is when $H$ is diagonal, which leads to the form 
+\[ q(x) = x^\T \diag(a_1, \dots, a_n) x = \sum_{i=1}^n a_i x_i^2,\] 
+that is $q(x)$ is a linear combination of pure squares $x_i^2$ (i.e. no cross terms $x_i x_j$).
 
 We can finally get to this most important result, which states that every symmetric matrix is orthogonally similar to a diagonal matrix. 
 
 \begin{theorem}[Spectral Theorem]
     Let $A$ be a symmetric $n\times n$ matrix and let $\la_i\in \RR, (i=1, \dots, n)$ be its eigenvalues with multiplicty. 
     Then there exists a set of orthogonal vectors $u_i \in \RR^n$, $i=1,\dots, n$ such that $Au_i = \la_i u_i$. 
-    Equivalently, there exists an orthogognal matrix $U = \rowvec{3}{u_1}{\cdots}{u_n}$ (i.e. $UU^\T = U^\T U = \II_n$) such that 
+    Equivalently, there exists an orthogonal matrix $U = \rowvec{3}{u_1}{\cdots}{u_n}$ (i.e. $UU^\T = U^\T U = \II_n$) such that 
     \[ A = U\Lambda U^\T = \sum_{i=1}^n \la_i u_i u_i^\T, \quad \Lambda = \diag(\la_1, \dots, \la_n).\] 
 \end{theorem}
 
@@ -650,7 +677,8 @@ In other words, $A$ can be written as the weighted sum of dyads which are mutual
 Also talked about Rayleigh quotients and matrix gain. 
 
 \subsection{Positive-Semidefinite Matrices}
-\begin{definition}[PSD]
+
+\begin{definition}[Positive Semidefiniteness]
     A symmetric matrix $A\in \SS^n$ is said to be \emph{positive semidefinite} (PSD) if the associated quadratic form is nonnegative, i.e., 
     \[ x^\T A x \geq 0, \quad \forall x \in \RR^n.\]
 
@@ -689,12 +717,128 @@ Later we will see how to arrive at this using SVD.
 
 \newpage
 \section{Thursday, February 4th}
-PCA and SVD. 
 
-\begin{theorem}[SVD]
-    woohoo (to be added)
+\subsection{The Singular Value Decomposition (SVD)}
+One motivation for SVD is that we'd like to analyze data better and understand potential clusters that may arise from it. 
+First, we need to understand what \emph{dyads} are. 
+A matrix $A\in \RR^{m,n}$ is called a \emph{dyad} if it can be written as 
+\[ A = pq^\T,\] 
+for some vectors $p\in \RR^m, q\in \RR^n$, i.e. the product of a column and a row vector.
+Element-wise the above reads 
+\[ A_{ij} = p_iq_j, \quad 1\leq i\leq m,\; 1\leq j \leq n.\] 
+
+Breaking this down, notice that the $j$th column of $A$ is given by 
+\[A(\cdot, j) = Ae_j = q_j p,\] 
+so all the columns are copies of $p$ scaled by a number, namely $q_j$. 
+
+Similarly for the rows, the $i$th row of $A$ is 
+\[ A(i, \cdot) = e_i^\T A = p_i q^\T,\] 
+so the rows are scalar multiples of $q^\T$. 
+
+
+The singular value decomposition theorem states that any matrix can be written as a sum of dyads with the special property that if 
+\[ A = \sum_{i=1}^r p_i q_i^\T,\] 
+then $p_i$ and $q_i$ are mutually orthogonal, i.e. $p_i^\T p_j = q_i^\T q_j = 0$ for all $i\not= j$. 
+This special property is particularly important; it's actually really easy to write any arbitrary matrix as the sum of dyads. 
+For example, we can easily break down the following matrix as 
+\begin{align*}
+    A &= \bbm 1 & 2 & 3 \\ 4 & 5 & 6 \ebm = \sum p_i q_i^\T \\ 
+      &= 1\cdot \colvec{2}{1}{0} \rowvec{3}{1}{0}{0} + 2\cdot \colvec{2}{1}{0} \rowvec{3}{0}{1}{0} + \dots \\ 
+      &= 1\cdot e_1 e_1^\T + 2e_1 e_2^\T + 3 e_1 e_3^\T + \dots.
+\end{align*}
+
+So the main contribution of SVD is that the dyads are mutually orthogonal, i.e. the $p_i$ and $q_i$ respectively are mutually orthogonal. 
+It provides a three-term factorization which is similar to spectral factorization, but holds for any, possibly non-symmetric and rectangular, matrix $A$. 
+
+\begin{theorem}[Singular Value Decomposition]
+    Any matrix $A\in \RR^{m,n}$ can be factored as 
+    \[ A = U \tsig V^\T = \sum_{i=1}^r \si_i u_i v_i^\T\] 
+    where $U\in \RR^{m,m}$ and $V\in \RR^{n,n}$ are orthogonal matrices (i.e. $U^\T U = I_m$ and $V^\T V = I_n$), and $\tsig\in \RR^{m,n}$ is a matrix having the first $r = \rank(A)$ diagonal entries $(\si_1, \dots, \si_r)$ positive and decreasing in magnitude, and all other entries zero: 
+    \[ \tsig = \bbm \Sigma & 0_{r, n-r} \\ 0_{m-r, r} & 0_{m-r, n-r} \ebm, \quad \Sigma = \diag(\si_1, \dots, \si_r) \succ 0.\]
     \label{thm:svd}
 \end{theorem}
+
+Before we discuss the proof, let's analyze in further detail what SVD is really doing. 
+We look at its effect as a matrix operation 
+\[ x \mapsto Ax = U\tsig V^\T x.\] 
+Recall that orthogonal matrices represent rotations. 
+Then the operation $V^\T x =: \bar{x}$ represents a rotation of $x$, since $V^\T$ is orthogonal. 
+
+Next, how does $\tsig$ operate on $\bar{x}$? 
+It will scale some dimensions of $\bar{x}$ by the singular values, and could either crush some dimensions of $\bar{x}$ or add more. 
+For example, if we have $m = 3, n = 5$, we could have the following example of crushing the dimensions $\bar{x}$:
+
+\[ \tsig = 
+\left[
+\begin{array}{ccc|cc}
+    1 &   &   & |  & | \\ 
+      & 0.2 &   & 0  & 0 \\ 
+      &   & 0 & |  & | 
+\end{array}
+\right], \quad 
+\bar{x} = \colvec{5}{x_1}{x_2}{x_3}{x_4}{x_5} 
+\implies \tsig \bar{x} = \colvec{3}{x_1}{0.2x_2}{0}.
+\]
+
+On the other hand, if $m = 5, n = 4$, we get an example of adding dimensions to $\bar{x}$.
+
+\[ \tsig = 
+\left[
+\begin{array}{ccc|c}
+    1 &   &   & |   \\ 
+      & 0.2 &   & 0 \\ 
+      &   & 0 & |    \\ \hline 
+    0 & 0 & 0 & 0 \\ 
+    0 & 0 & 0 & 0 
+\end{array}
+\right], \quad 
+\bar{x} = \colvec{4}{x_1}{x_2}{x_3}{x_4}
+\implies \tsig \bar{x} = \colvec{5}{x_1}{0.2x_2}{0}{0}{0}.
+\]
+
+In summary, $\tsig$ scales $\bar{x}$ and acts as a dimension adjustment. 
+
+Since we don't care about these last few columns of $U$ corresponding to the zeroes in $\tsig$, we get a compact form of SVD. 
+
+\begin{theorem}[Compact-form SVD]
+    Any matrix $A\in \RR^{m,n}$ can be expressed as 
+    \[ A = \sum_{i=1}^r \si_i u_i v_i^\T = U_r \Sigma V_r^\T, \quad \Sigma = \diag(\si_1, \dots, \si_n) \]
+    where $r = \rank(A), U_r = [u_1\; \dots\; u_r]$ is such that $U_r^\T U_r = I_r$, $V_r = [v_1\; \dots\; v_r]$ is such that $V_r^\T V_r = I_r$, and $\si_1 \geq \dots \geq \si_r > 0$. 
+
+    The positive number $\si_i$ are the \emph{singular values} of $A$, vectors $u_i$ are the \emph{left singular vectors} of $A$, and $v_i$ the \emph{right singular vectors}. These quantities satisfy 
+    \[ Av_i = \si_i u_i, \quad u_i^\T A = \si_i v_i, \quad i = 1, \dots, r.\]
+
+    Morever, $\si_i^2 = \la_i(AA^\T) = \la_i(A^\T A), \; i = 1,\dots, r$, and $u_i, v_i$ are the eigenvectors of $A^\T A$ and of $AA^\T$, respectively.
+\end{theorem}
+
+Let's unpack this last statement more. 
+Starting with the full form SVD of an $m\times n$ matrix $A = U \tsig V^\T$ with $U\in \RR^{m\times m}, V\in\RR^{n\times n}$, we can write out $A^\T A$ as 
+\begin{align*}
+    A^\T A &= (V \tsig^\T U^\T) (U \tsig V^\T) =  V \tsig^\T (U^\T U) \tsig V^\T \\ 
+           &= V\tsig^\T \tsig V^\T = V \left(\begin{array}{c|c} \diag(\si_1^2, \dots, \si_r^2) & 0 \\ \hline 0 & 0 \end{array}\right) V^\T \tag{since $U$ is orthogonal}
+\end{align*}
+
+where the inside matrix is $n\times n$. 
+This is the spectral decomposition of $A^\T A$, which is a symmetric matrix. 
+
+Similarly, 
+\begin{align*}
+    A A^\T = U \left(\begin{array}{c|c} \diag(\si_1^2, \dots, \si_r^2) & 0 \\ \hline 0 & 0 \end{array}\right) U^\T \tag{since $V$ is orthogonal}
+\end{align*}
+where the inside matrix is $m\times m$. 
+This is the spectral decomposition applied to the symmetric matrix $AA^\T$. 
+
+In fact, $AA^\T \succeq 0$ and $A^\T A \succeq 0$.  
+
+
+\subsection{Matrix properties via SVD}
+
+\subsection{Low-rank matrix approximation}
+
+\subsection{Link with PCA}
+
+\subsection{Generalized low-rank models}
+
 
 
 \newpage
@@ -778,5 +922,11 @@ For example, if $A$ is square and $A = QR$ with $Q^\T Q = I_n$, then $Ax = y$ is
 Then we just have to back substitute to find a solution. 
 
 Similarly to using SVD, we're rotating our outputs here to make the system triangular and easier to solve.
+
+\newpage
+
+\section{Appendix}
+\renewcommand{\listtheoremname}{List of Definitions and Theorems}
+\listoftheorems[ignoreall,show={theorem,definition}]
 
 \end{document}

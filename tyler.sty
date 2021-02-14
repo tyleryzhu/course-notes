@@ -3,7 +3,6 @@
 \usepackage[usenames,svgnames,dvipsnames]{xcolor}
 \usepackage{mathtools}
 \usepackage{graphicx}
-\usepackage{biblatex}
 \usepackage{geometry}
 \usepackage{caption}
 \usepackage[framemethod=TikZ]{mdframed}
@@ -15,6 +14,7 @@
 \usepackage{hyperref} % for clickable links in toc
 \usepackage{bbm}
 \usepackage{bm}
+\usepackage{easybmat}
 
 %%%%%%%%% If/Else
 \newif\iftylerheader\tylerheaderfalse
@@ -23,6 +23,7 @@
 \newif\iftylermargin\tylermarginfalse
 \newif\iftylerkoma\tylerkomafalse
 \newif\iftylerstylish\tylerstylishfalse
+\newif\iftylerbib\tylerbibfalse
 
 %%%%%%%  Receive Arguments
 \DeclareOption{header}{\tylerheadertrue}
@@ -37,6 +38,8 @@
 \DeclareOption{nokoma}{\tylerkomafalse}
 \DeclareOption{stylish}{\tylerstylishtrue}
 \DeclareOption{nostylish}{\tylerstylishfalse}
+\DeclareOption{bib}{\tylerbibtrue}
+\DeclareOption{nobib}{\tylerbibfalse}
 \ProcessOptions
 
 %%%%%%%%%%%%%%  PAGE SETUP %%%%%%%%%%%%%%%%%
@@ -132,6 +135,29 @@ style=thmbluebox,name=Theorem]{theorem}
 style=thmredbox,name=Example,numberwithin=section]{example}
 \declaretheorem[%
 style=thmredbox,name=Problem]{problem}
+
+%%%% left red border 
+\mdfdefinestyle{mdredleftborder}{%
+    linewidth=4pt,
+    skipabove=8pt,
+    innertopmargin=7pt,
+    innerbottommargin=6pt,
+    skipbelow=2pt,
+%    linecolor=blue,
+    nobreak=true,
+    linecolor=FireBrick,
+    hidealllines=true, 
+    leftline=true
+}
+\declaretheoremstyle[
+    headfont=\sffamily\bfseries,
+    mdframed={style=mdredleftborder},
+    headpunct={.},
+    postheadspace={4pt}
+]{redleftborder}
+\declaretheorem[%
+style=redleftborder,name=Definition, sibling=theorem]{definition}
+
 \else 
     \iftylerkoma
         \theoremstyle{ss-definition}
@@ -142,6 +168,7 @@ style=thmredbox,name=Problem]{problem}
     \newtheorem{example}{Example}[section]
     \newtheorem*{example*}{Example}
     \newtheorem{problem}{Problem}
+    \newtheorem{definition}[theorem]{Definition}
 \fi
 
 \iftylerkoma 
@@ -149,7 +176,6 @@ style=thmredbox,name=Problem]{problem}
 \else
     \theoremstyle{definition}
 \fi
-\newtheorem{definition}[theorem]{Definition}
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{lemma}[theorem]{Lemma}
@@ -162,6 +188,11 @@ style=thmredbox,name=Problem]{problem}
 
 %\newtheorem{problem}{Problem}
 %\newtheorem{example}{Example}
+
+%%% bibliography 
+\iftylerbib
+    \usepackage{biblatex}
+\fi
 
 % Blackboard Math Fonts
 \newcommand{\one}{\mathbbm 1}
@@ -234,6 +265,7 @@ style=thmredbox,name=Problem]{problem}
 \newcommand{\Syl}{\text{Syl}}
 \newcommand{\Res}{\text{Res}}
 \newcommand{\per}{\text{per}}
+\newcommand{\tsig}{\tilde{\Sigma}}
 
 % Typesetting
 \newcommand{\styl}[1]{{\sffamily\bfseries #1}}
