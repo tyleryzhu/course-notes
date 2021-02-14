@@ -3,6 +3,7 @@
 *.fls
 *.log
 *.out
+*.toc
 **/.aux
 **/.bbl
 **/.bcf
