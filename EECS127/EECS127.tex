@@ -802,13 +802,13 @@ Since we don't care about these last few columns of $U$ corresponding to the zer
 
 \begin{theorem}[Compact-form SVD]
     Any matrix $A\in \RR^{m,n}$ can be expressed as 
-    \[ A = \sum_{i=1}^r \si_i u_i v_i^\T = U_r \Sigma V_r^\T, \quad \Sigma = \diag(\si_1, \dots, \si_n) \]
+    \[ A = \sum_{i=1}^r \si_i u_i v_i^\T = U_r \Sigma V_r^\T, \quad \Sigma = \diag(\si_1, \dots, \si_r) \]
     where $r = \rank(A), U_r = [u_1\; \dots\; u_r]$ is such that $U_r^\T U_r = I_r$, $V_r = [v_1\; \dots\; v_r]$ is such that $V_r^\T V_r = I_r$, and $\si_1 \geq \dots \geq \si_r > 0$. 
 
     The positive number $\si_i$ are the \emph{singular values} of $A$, vectors $u_i$ are the \emph{left singular vectors} of $A$, and $v_i$ the \emph{right singular vectors}. These quantities satisfy 
     \[ Av_i = \si_i u_i, \quad u_i^\T A = \si_i v_i, \quad i = 1, \dots, r.\]
 
-    Morever, $\si_i^2 = \la_i(AA^\T) = \la_i(A^\T A), \; i = 1,\dots, r$, and $u_i, v_i$ are the eigenvectors of $A^\T A$ and of $AA^\T$, respectively.
+    Morever, $\si_i^2 = \la_i(AA^\T) = \la_i(A^\T A), \; i = 1,\dots, r$, and $u_i, v_i$ are the eigenvectors of $A A^\T$ and of $A^\T A$, respectively.
 \end{theorem}
 
 Let's unpack this last statement more. 
@@ -929,6 +929,28 @@ Similarly to using SVD, we're rotating our outputs here to make the system trian
 Todo.
 
 
+\newpage
+\section{Tuesday, February 16th}
+Today is a linear algebra review.
+
+\subsection{Vectors}
+Recall that projections are solving the optimization problem where given a point $x$, and some line going through $x_0$ in the direction of $v$ ($\|v\|_2 = 1$), we want to find the point $z$ on that line closestt to $x$. 
+The line is defined by $\Lcal = \{x_0 + tv : t\in \RR\}$, and our optimal $z$ will look like $z = x_0 + t^* v$. 
+The problem to be solved is 
+\[ \min_t \|x_0 + tv - x\|_2^2.\] 
+To solve this, we expand the objective as 
+\[ (x_0+tv - x)^\T (x_0 + tv - x) =  t^2 v^\T v + 2tv^\T (x_0-x) + (x_0-x)^\T (x_0 - x) ,\]
+and go about optimizing with gradients. 
+Using $v^\T v$, the optimal value of $t$ simplifies to $t^* = v^\T (x-x_0)$, i.e. the scalar product between $v$ and $x-x_0$ as expepcted. 
+This is one of the most important optimization problems to know, which is why we've gone over it so many times.
+
+Hyperplanes are also very important to understand. 
+Suppose we have the plane $\{x: a^\T x = b\}$, and we want to project $0$ onto the hyperplane, i.e. find the closest point to 0.
+We can rewrite this by first finding an $x_0$ for which $a^\T x_0 = b$, $x_0\not= a$. 
+We know that $x_0 = \alpha a$ (by the fundamental theorem of linear algebra), so 
+\[ \alpha a^\T a = b \implies \alpha = \frac{b}{\|a\|_2^2},\; x = \frac{ba}{a^\T a}.\]
+
+The rest of today was review of previous days, so I didn't take notes.
 
 \newpage
 \section{Matrix Cheat Sheet}
