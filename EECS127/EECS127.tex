@@ -8,6 +8,8 @@
 \fancyhead[r]{Tyler Zhu}
 \cfoot{\thepage}
 
+\newcommand{\tx}{\tilde{x}}
+
 \begin{document} 
 \title{\Large EECS 127: Optimization Models in Engineering}
 \author{\large Tyler Zhu}
@@ -28,7 +30,7 @@ These are course notes for the Spring 2021 rendition of EECS 127, Optimization M
 
 \newpage
 
-\section{Tuesday, January 19th}
+\section{Tuesday, January 19th: Introduction}
 \subsection{Introduction}
 In this course, we'll be talking primarily about \emph{optimization}. 
 A standard form of optimization is the following: 
@@ -186,7 +188,7 @@ Here's a high level overview of what we're talking about:
 There will only be six homeworks in this course.
 
 \newpage
-\section{Thursday, January 21st}
+\section{Thursday, January 21st: Vectors and Functions}
 Today's lecture went pretty fast and sped through sections, so likewise these notes are pretty rough. 
 Also I don't have time to add pictures (unless I rip them off from somewhere), so I hope you have Beth Harmon level visualization powers. 
 
@@ -401,7 +403,7 @@ Finally, we can also write $AB$ as a sum of \emph{dyadic} matrices (i.e. rank on
 Letting $\beta_i^\T$ denote the rows of $B$, we can write 
 \[ AB = \sum_{i=1}^n a_i \beta_i^\T.\] 
 
-\subsection{Matrices as linear maps}
+\subsection{Matrices as Linear Maps}
 Assume that $A$ is an $m\times n$ matrix unless stated otherwise. 
 Recall that we can interpret matrices as \emph{linear maps}, i.e. maps where $f(ax+by) = af(x) + bf(y)$ for scalars $a,b$. 
 Affine maps are simply linear functions plus a constant, i.e. $f(x) = Ax+b$. 
@@ -435,7 +437,7 @@ This leads us to the following fundamental theorem.
 \end{theorem}
 
 This theorem makes much more sense geometrically. 
-We did a derivation of least squares using the fundamental theorem which is cool, and I might put in when I find time. 
+We did a derivation of least squares using the fundamental theorem which is cool; we revisit this anyways later on in the linear regression lecture.
 
 \subsection{Matrix Concepts}
 Things we didn't cover in lecture that I need to review and note on (for my own sake): determinants, inverses, similar matrices, eigenvalues and diagonalizability, ... 
@@ -468,7 +470,6 @@ We already saw this idea earlier when analyzing the $(i,j)$th position of the dy
 If we want the $i$th row of a matrix $A$ or the $i$th entry of a column vector, we can multiply on the left by $e_i^\T$.
 If we want the $j$th row of the matrix or the $j$th entry of a row vector, we can multiply on the right by $e_j$
 
-
 Here's an example of where it's helpful. 
 Recall from earlier that given matrices $A\in \RR^{m,n}, B \in \RR^{n,p}$, their matrix product can be written as $AB = \sum_{i=1}^n a_i \beta_i^\T$.  
 If we were to insert a diagonal matrix $\diag(c_1,\dots, c_n)$ in between this product, we can break it down as 
@@ -482,8 +483,59 @@ If we were to insert a diagonal matrix $\diag(c_1,\dots, c_n)$ in between this p
 In short, introducing a diagonal matrix turns this product into a weighted sum of dyads.
 Useful to know for later when we discuss spectral decomposition and SVD!
 
+\subsection{Matrix Norms}
+
+\begin{definition}[Matrix norm]
+    A function $f:\RR^{m,n}\to \RR$ is a \emph{matrix norm} if, analogously to the vector case, it satisfies three standard axioms. 
+    Namely, for all $A,B\in \RR^{m,n}$ and $\alpha\in \RR$, 
+    \begin{itemize}
+        \ii $f(A)\geq 0$, and $f(A) = 0$ if and only if $A = 0$; 
+        \ii $f(\alpha A) = |\alpha| f(A)$; 
+        \ii $f(A+B) \leq f(A) + f(B)$. 
+    \end{itemize}
+    Many of the popular matrix norms also satisfy a fourth condition called \emph{sub-multiplicativity}: for any conformably sized matrices $A,B$, $f(AB) \leq f(A) f(B)$. 
+\end{definition}
+
+Probably the most common example of a matrix norm is the Frobenius norm.
+
+\begin{definition}[Frobenius norm]
+    The \emph{Frobenius norm} $\|A\|_F$ is simply the standard Euclidean $\ell_2$ vector norm applied to the vector formed by all elements of $A\in \RR^{m,n}$, i.e. 
+    \[ \|A\|_F = \sqrt{\tr\; AA^\T} = \sqrt{\sum_{i=1}^m \sum_{j=1}^m |a_{ij}|^2}.\] 
+\end{definition}
+From this definition, it can also be interpreted as the sum of the eigenvalues of $AA^\T$. 
+
+For any $x\in \RR^n$, it holds that $\|Ax\|_2 \leq \|A\|_F \|x\|_2$ (as a result of the Cauchy-Schwarz inequality applied to $|a_i^\T x|$).
+Finally, the Frobenius norm is also sub-multiplicative: for any $B\in \RR^{n,p}$, it holds that $\|AB\|_F \leq \|A\|_F \|B\|_F$. 
+
+Another type of matrix norm are the operator norms, which give a characterization of the \emph{maximum} input-output \emph{gain} of the linear map $u\mapsto Au$. 
+Each choice of $\ell_p$ norm to measure the inputs and outputs in gives rise to a different norm. 
+\begin{definition}[Induced Operator norm]
+    The \emph{operator norm} induced by a given $\ell_p$ norm is defined as 
+    \[ \|A\|_p = \max_{u\not= 0} \dfrac{\|Au\|_p}{\|u\|_p} = \max_{\|u\|=1} \|Au\|_p.\] 
+\end{definition}
+
+By definition, $\|Au\|_p \leq \|A\|_p \|u\|_p$ since $\|A\|_p$ is the max gain achieved with any choice of $u$. 
+From this, it follows that any operator norm is sub-multiplicative, since for two operators $B,A$, 
+\[ \|Bu\| \leq \|B\|_p \|u\|_p \implies \|ABu\|_p \leq \|A\|_p \|Bu\|_p \leq \|A\|_p\|B\|_p \|u\|_p,\]
+and $\max_{\|u\|=1} \|ABu\|_p = \|AB\|_p $ by definition, so $\|AB\|_p \leq \|A\|_p \|B\|_p$. 
+
+For the usual values of $p = 1, 2, \infty$, we have the following results (not obvious): 
+\begin{itemize}
+    \ii The $\ell_1$-induced norm corresponds to the largest absolute column sum 
+    \[ \|A \|_1 = \max_{\|u\|_1 = 1} = \max_{j=1,\dots, n} \sum_{i=1}^m |a_{ij}|,\] 
+    since $Au = u_1a_1 + \dots + u_na_n$, so maximizing the weight of the largest absolute column maximizes the norm. 
+    \ii The $\ell_\infty$-induced norm corresponds to the largest absolute column sum 
+    \[ \|A \|_\infty = \max_{\|u\|_\infty = 1} = \max_{i=1,\dots, m} \sum_{i=1}^n |a_{ij}|.\] 
+    \ii The $\ell_2$-induced norm (sometimes called the \emph{spectral} norm corresponds to the square root of the largest eigenvalue $\la_{\max}$ of $A^\T A$: 
+    \[ \|A\|_2 = \max_{\|u\|_2 = 1} \|Au\|_2 = \sqrt{\la_{\max} (A^\T A)}.\] 
+    This follows from the spectral decomposition of symmetric matrices, which we'll see later.
+\end{itemize}
+
+There's also something called the \emph{spectral radius} $\rho(A) = \max_i |\la_i(A)|$ which measures the maximum modulus of the eigenvalues of $A$.
+It turns out that $\rho(A) \leq \|A\|_p$ for any induced matrix norm $\|\cdot \|_p$, and that $\rho(A) \leq \min(\|A\|_1, \|A\|_\infty)$, i.e. that the radius is no larger than the maximum row or column sum of $|A|$. 
+
 \newpage
-\section{Thursday, January 28th}
+\section{Thursday, January 28th: Matrices II}
 
 \subsection{Orthogonalization: Gram-Schmidt}
 Recall that a basis $(u_i)_{i=1}^n$ is said to be \emph{orthogonal} if $u_i^\T u_j = 0$ for $i\not= j$. 
@@ -607,7 +659,7 @@ We could use nonlinear products instead which let use use richer models on trans
 
 
 \newpage
-\section{Tuesday, February 2nd}
+\section{Tuesday, February 2nd: Symmetric Matrices}
 
 Today is about symmetric matrices. 
 \subsection{Symmetric Matrices} 
@@ -716,7 +768,7 @@ Later we will see how to arrive at this using SVD.
 
 
 \newpage
-\section{Thursday, February 4th}
+\section{Thursday, February 4th: Singular Value Decomposition}
 
 \subsection{The Singular Value Decomposition (SVD)}
 One motivation for SVD is that we'd like to analyze data better and understand potential clusters that may arise from it. 
@@ -734,7 +786,6 @@ so all the columns are copies of $p$ scaled by a number, namely $q_j$.
 Similarly for the rows, the $i$th row of $A$ is 
 \[ A(i, \cdot) = e_i^\T A = p_i q^\T,\] 
 so the rows are scalar multiples of $q^\T$. 
-
 
 The singular value decomposition theorem states that any matrix can be written as a sum of dyads with the special property that if 
 \[ A = \sum_{i=1}^r p_i q_i^\T,\] 
@@ -827,22 +878,136 @@ Similarly,
 \end{align*}
 where the inside matrix is $m\times m$. 
 This is the spectral decomposition applied to the symmetric matrix $AA^\T$. 
+As a result, $AA^\T \succeq 0$ and $A^\T A \succeq 0$, since all the eigenvalues are squared values and must be non-negative.
 
-In fact, $AA^\T \succeq 0$ and $A^\T A \succeq 0$.  
-
+To summarize, the SVD theorem allows us to write any matrix as a sum of dyads $A = \sum_{i=1}^r \si_i u_i v_i^\T$ where the $\si_i$ provide the ``strength'' of the corresponding dyad and the rank is how many dyads we need to reconstruct $A$. 
 
 \subsection{Matrix properties via SVD}
+We can infer many things from the SVD. 
+For example, the rank $r$ of $A$ is the number of nonzero singular values, i.e. nonzero entries on the diagonal of $\tsig$. 
+
+The SVD also gives us a basis for the range and nullspace of $A$.
+Recall that the range of $A$ is $\Rcal(A) = \{Ax : x\in \RR^n\}$. 
+Then the first $r$ columns of $U$ give an orthonormal basis spanning the range of $A$, i.e. 
+\[ \Rcal(A) = \Rcal(U_r), \quad U_r = \rowvec{3}{u_1}{\dots}{u_r}.\] 
+
+Since $r = \rank\; A$, by the fundamental theorem the dimension of the nullspace is $n-r$. 
+An orthonormal basis spanning $\Ncal(A)$ is given by the last $n-r$ columns of $V$, i.e. 
+\[ \Ncal(A) = \Rcal(V_{nr}),\quad V_{nr} = \rowvec{3}{v_{r+1}}{\dots}{v_n}.\] 
+
+These two facts are not immediately obvious, but here's some intuition. 
+Let $A$ be a $3\times 5$ matrix with entries
+\[ A = \bpm 1 & 0 & 0 & 0 & 0 \\ 0 & .1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 \epm.\] 
+The rank of $A$ is clearly 2, and the range is $\Rcal(A) = \{Ax: x\in \RR^5\}$, which expands to 
+\[ \left\{Ax = \colvec{3}{x_1}{.1x_2}{0} : x_1, x_2\in \RR\right\} = x_1e_1 + (.1x_2) e_2,\] 
+meaning that $\{e_1, e_2\}$ is an orthonormal basis for the range.
+When we add back in the $U$ and $V^\T$, all that happens to the basis is it gets rotated. 
+
+(I will say it's still not clear to me personally yet why this means the columns of $U$ and $V$ should be the basis, but I'm thinking about it). 
+
+We can also look at matrix norms using SVD. 
+The \emph{squared Frobenius} matrix norm of a matrix $A\in \RR^{m,n}$ can be defined as 
+\[ \|A\|_F^2 = \sum_{i,j} A_{i,j}^2 = \tr\; A^\T A = \sum_{i=1}^n \la_i (A^\T A) = \sum_{i=1}^n \si_i^2,\] 
+where $\si_i$ are the singular values of $A$a. 
+Hence the squared Frobenius norm is just the sum of the squares of the singular values. 
+
+The \emph{squared spectral} matrix norm $\|A\|_2^2$, defined below, is equal to the maximum eigenvalue of $A^\T A$, so 
+\[ \|A\|_2^2 = \si_1^2,\] 
+i.e. the spectral norm coincides with the maximal singular value of $A$. 
+
+The \emph{nuclear} norm of a matrix $A$ is defined as 
+\[ \|A\|_* = \sum_{i=1}^r \si_i,\quad r = \rank A.\] 
+This appears in problems related to low-rank matrix completion of rank minimization problems. 
+
+We can actually prove that the squared spectral norm above is equal to the maximum eigenvalue of $A^\T A$ as follows. 
+Recall that $\|A\|_2^2 = \max_{x\not= 0} \frac{\|Ax\|_2^2}{\|x\|_2^2}$, i.e. the largest matrix gain or the induced operator norm. 
+Then using $A = U\tsig V^\T$,
+\begin{align*}
+    \|A\|_2^2 = \max_{x\not= 0} \dfrac{\|Ax\|_2^2}{\|x\|_2^2} &= \max_{x\not= 0} \dfrac{\|\tsig V^\T x \|_2^2}{\|x\|_2^2} \tag{since $U^\T U = I$} \\ 
+                                                              &= \max_{z\not= 0} \dfrac{\|\tsig z\|_2^2}{\|z\|_2^2} \tag{with $z = V^\T x$} \\ 
+                                                              &= \max_z \|\tsig z \|_2^2 : \quad z^\T z = 1 \\ 
+                                                              &= \max_z \sum_{i=1}^r \si_i^2 z_i^2 : \quad z^\T z = 1 \\ 
+                                                              &\leq \max_{1\leq i \leq r} \si_i^2,
+\end{align*}
+which is achieved at the largest singular value, $\si_1^2$. 
+So $\si_1$ gives us a measure of how much amplification can happen multiplying by $A$.
+
+We can use this idea to define a useful matrix property.
+\begin{definition}
+    The \emph{condition number} of an invertible matrix $A\in \RR^{n,n}$ is defined as the ratio between the largest and the smallest singular value 
+    \[ \kappa(A) = \frac{\si_1}{\si_n} = \|A\|_2\cdot\|A^{-1}\|_2.\] 
+\end{definition}
+
+The condition number provides a quantitative measure of how close $A$ is to being singular. 
+The larger $\kappa(A)$ is, the more close to singular $A$ is. 
+
+It also provides a measure of the sensitivity of the solution of a system of linear equations to changes in the equatin coefficients.
+
+There are other matrix properties we could derive, such as the Moore-Penrose pseudo-inverse, but we did not go over them in lecture (although I added condition number here for my own notes).
 
 \subsection{Low-rank matrix approximation}
+One problem we may consider frequently is that of approximating a matrix $A\in \RR^{m,n}$ with a matrix of lower rank. 
+For example, if we have a camera taking a still video of a scene, and then a person walks by, the image matrix suddenly goes from rank 1 to nonzero rank. 
+Looking for a one-rank approximation is a way we could try to remove the person from the picture. 
+
+In particular, we consider the following rank-constrained approximation problem 
+\[ \min_{A_k\in \RR^{m,n}} \|A-A_k\|_F^2\quad s.t. \rank(A_k) = k,\] 
+where $1\leq k \leq r$ is given. 
+
+Let $A = U\tsig V^\T = \sum_{i=1}^r \si_i u_i v_i^\T$ be an SVD of $A$. 
+An optimal solution to the above problem is to simply truncate this summation to the first $k$ terms, i.e. take the $k$ dyads with largest singular values, 
+\[A_k = \sum_{i=1}^k \si_i u_i v_i^\T.\] 
+
+The ratio 
+\[ \eta_k = \dfrac{\|A_k\|_F^2}{\|A\|_F^2} = \dfrac{\si_1^2+\dots + \si_k^2}{\si_1^2 + \dots + \si_r^2}\] 
+indicates what fraction of the total \emph{variance} (Frobenius norm) in $A$ is explained by the rank $k$ approximation of $A$. 
+Plotting $\eta_k$ as a function of $k$ can give helpful guidance to what $k$ would be best to approximate $A$ with. 
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics{lowrankappx.png}
+    \caption{A plot of $\eta_k$ vs. $k$ taken from El Ghaoui's slides. Here, $k=9$ captures a good amount of variance.}
+\end{figure}
 
 \subsection{Link with PCA}
+PCA is the same as low rank approximations, except you center your data first, as we'll see shortly.
 
-\subsection{Generalized low-rank models}
+Let $x_i\in \RR^n$, $i=1,\dots, m$ be the data points, so $X = \rowvec{3}{x_1}{\dots}{x_m}$.
+Then replace each point with its centered version by subtracting the mean $\bar{x} = \frac 1m \sum_{i=1}^m x_i$ to get 
+\[ \tilde{X} = \rowvec{3}{\tilde{x}_1}{\dots}{\tilde{x}_m}, \quad \tilde{x}_i = x_i-\bar{x}.\] 
 
+As we discussed last lecture (see Example~\ref{ex:cov}), we want to look for a normalized direction in data space $z\in \RR^n$, $\|z||_2 = 1$, such that the variance of the projections of the centered data pointst on the line determined by $z$ is maximal. 
+These components are given by $\alpha_i = \tx_i^\T z$, $i=1,\dots, m$, so the mean-square variation of the data along this direction is 
+\[ \frac{1}{m} \sum_{i=1}^m \alpha_i^2 = \sum_{i=1}^m z^\T \tx_i \tx_i^\T z = z^\T \tilde{X} \tilde{X}^\T z.\] 
+Hence, there's a very simple relationship between PCA and the covariance matrix $C = \frac 1m \sum_{i=1}^m (x_i-\bar{x})(x_i-\bar{x})^\T$ once you've centered the data. 
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[scale = 0.3]{pca.jpg}
+    \caption{Illustration of projecting points onto the direction $z$. Taken from Lior Pachter's blog.}
+\end{figure}
+
+Finding the maximal variance direction reduces to solving the following optimization problem: 
+\[ \max_{z\in \RR^n} z^\T (\tilde{X} \tilde{X}^\T) z \quad \text{s.t. } \|z\|_2 = 1.\] 
+We can directly employ SVD to solve this problem. 
+Let 
+\[ \tilde{X} = U_r \Sigma V_r^\T = \sum_{i=1}^r \si_i u_i v_i^\T.\] 
+Then, $H = \tilde{X}\tilde{X}^\T = U_r\Sigma^2 U_r^\T$. 
+We already know that this problem $z^\T H z$ is maximized by the eigenvector corresponding to the largest eigenvalue of $H$, which is $\si_1^2$.
+Hence, the direction is $z = u_1$, and the mean-square variation is proportional to $\si_1^2$. 
+
+Successive principal axes can be found by ``removing'' the first principal components and repeating these approaches on the deflated data matrix. 
+
+In summary, there are two ways to do PCA: 
+\begin{enumerate}
+    \ii Form the covariance matrix $C$, find it's spectral decomposition, and take its top eigenvector (as we saw last lecture). 
+    \ii Form the centered data matrix $\tilde{X}$, and find an svd of $\tilde{X} = U\tsig V^\T$.
+    Then $U$ contains the eigenvectors of $C = \frac 1m \tilde{X}\tilde{X}^\T$ since $\frac 1m \tilde{X}\tilde{X}^\T = \frac 1m U\tsig^2 U^\T$ is the spectral decomposition for $C$ (as we just saw).
+\end{enumerate}
 
 
 \newpage
-\section{Tuesday, February 9th}
+\section{Tuesday, February 9th: Linear Equations}
 \subsection{Motivation for Linear Equations}
 Linear equations are one of the most basic form of relationship among variables in an engineering problem. 
 There's all sorts of applications of linear equations that come up in science, and they form the building block for many other optimization methods, so it's important to know how to solve them.
@@ -925,15 +1090,20 @@ Similarly to using SVD, we're rotating our outputs here to make the system trian
 
 \newpage
 
-\section{Thursday, February 11th}
+\section{Thursday, February 11th: Least-Squares and Variants}
 Todo.
+
+\subsection{Ordinary Least-Squares and Minimum-Norm Solutions}
+
+\subsection{Variants of Least-Squares}
+
+\subsection{Kernels for Least-Squares}
 
 
 \newpage
-\section{Tuesday, February 16th}
+\section{Tuesday, February 16th: Linear Algebra Review}
 Today is a linear algebra review.
 
-\subsection{Vectors}
 Recall that projections are solving the optimization problem where given a point $x$, and some line going through $x_0$ in the direction of $v$ ($\|v\|_2 = 1$), we want to find the point $z$ on that line closestt to $x$. 
 The line is defined by $\Lcal = \{x_0 + tv : t\in \RR\}$, and our optimal $z$ will look like $z = x_0 + t^* v$. 
 The problem to be solved is 
@@ -951,6 +1121,15 @@ We know that $x_0 = \alpha a$ (by the fundamental theorem of linear algebra), so
 \[ \alpha a^\T a = b \implies \alpha = \frac{b}{\|a\|_2^2},\; x = \frac{ba}{a^\T a}.\]
 
 The rest of today was review of previous days, so I didn't take notes.
+
+\section{Thursday, February 18th: Quiz}
+We just took a quiz today. 
+That is all. 
+
+
+\newpage
+\section{Tuesday, February 23rd}
+
 
 \newpage
 \section{Matrix Cheat Sheet}
