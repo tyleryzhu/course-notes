@@ -9,6 +9,8 @@
 \cfoot{\thepage}
 
 \newcommand{\tx}{\tilde{x}}
+\newcommand{\eq}{\text{eq}}
+\newcommand{\epi}{\text{epi}\;}
 
 \begin{document} 
 \title{\Large EECS 127: Optimization Models in Engineering}
@@ -641,7 +643,7 @@ Analyzing the term $X^\T w$ is the key to understanding the impact of kernels.
 
 Suppose we simplify our problem to 
 \[ \min_w \Lcal (X^\T w) + \la \| w\|_2^2\] 
-where $\la > 0$ is a penalty/regularization term on our weights trying to force our training process to find a more ``robust example for weights $whttps://www.reddit.com/r/berkeley/comments/lgmlnz/top_20_schools_for_admits_and_enrollees_for_2020/$.'' 
+where $\la > 0$ is a penalty/regularization term on our weights trying to force our training process to find a more ``robust example for weights $w$.''
 It helps account for noise in your dataset, so that small changes in the $x_i$ won't result in large changes in our loss. 
 
 Let's analyze the simple case $m = 2$ (\# of data points) and $n = 3$ (dimension of data points). 
@@ -933,7 +935,7 @@ which is achieved at the largest singular value, $\si_1^2$.
 So $\si_1$ gives us a measure of how much amplification can happen multiplying by $A$.
 
 We can use this idea to define a useful matrix property.
-\begin{definition}
+\begin{definition}[Condition Number]
     The \emph{condition number} of an invertible matrix $A\in \RR^{n,n}$ is defined as the ratio between the largest and the smallest singular value 
     \[ \kappa(A) = \frac{\si_1}{\si_n} = \|A\|_2\cdot\|A^{-1}\|_2.\] 
 \end{definition}
@@ -1128,8 +1130,146 @@ That is all.
 
 
 \newpage
-\section{Tuesday, February 23rd}
+\section{Tuesday, February 23rd: Linear Programs}
 
+\subsection{Polyhedrons}
+To talk about linear programs, we first need to discuss the geometry of the set of points we want to work with. 
+For a given $a\in \RR^n$ and $b\in \RR$, the set $\Hcal$ of points satisfying the linear inequality $a^\T x \leq b$ is a closed half-space. 
+Its boundary is the hyperplane defined by the \emph{equality} $a^\T x = b$. 
+
+TODO: insert more graphs. 
+
+For given $a_1, \dots, a_m\in \RR^n$, and $b\in \RR^m$, the collection of $m$ linear inequalities 
+\[ a_i^\T x \leq b_i, \quad i = 1,\dots, m\] 
+defines a region in $\RR^m$ which is the intersection of $m$ half-spaces and it is named a \emph{polyhedron}. 
+Depending on the actual inequalities, this region could be unbounded or bounded; in the latter case, we call it a \emph{polytope}.
+
+For convenience, we will often group several linear inequalities together using matrix notation. 
+As such, if 
+\[ A = \colvec{4}{a_1^\T}{a_2^\T}{\vdots}{a_m^\T}, \quad b = \colvec{4}{b_1}{b_2}{\vdots}{b_m},\] 
+
+then we can write the inequalities in equivalent matrix form $Ax\leq b$ (inequality taken component-wise). 
+
+\begin{example}[Probability Simplex]
+
+\end{example}
+
+\begin{example}[The $\ell_1$-norm ball]
+
+\end{example}
+
+\subsection{Linear Programs}
+
+\begin{definition}[Linear Program]
+    A linear optimization problem, or linear program (LP), is one of standard form where every function $f_0, f_1, \dots, f_m$ is affine. 
+    Thus, the feasible set of an LP is a polyhedron. 
+
+    Linear optimization problems admits several standard forms, such as 
+    \[ p^* = \min_x\; c^\T x + d\quad \text{s.t. }A_{\eq}x = b_{\eq};\; Ax\leq b,\] 
+    where the inequalities are understood componentwise. 
+    We shall denote this form as the \emph{inequality form} of the LP. 
+\end{definition}
+
+Of course, the constant $d$ in the objective function has no influence on the minimizer. 
+It is simply there to offset the value of the objective.
+
+The set of points that satisfy the constraints of an LP (i.e. the feasible sete) is a polyhedron (or polytope when bounded): $\Xcal = \{x\in \RR^n : A_{\eq}x = b_{\eq}, Ax\leq b\}.$ 
+
+Let $x_f \in \Xcal$ be a feasible point. 
+To such a point is associated the objective level $c^\T x_f$; from now one, we assume without loss of generality that $d = 0$. 
+
+A point $x_f\in \Xcal$ is an optimal point, hence a solution of our LP, if and only if there is no other point $x\in \Xcal$ with lower objective, that is: 
+\[ x_f \in \Xcal \text{ is optimal for LP } \iff c^\T x\geq c^\T x_f, \; \forall x\in \Xcal.\] 
+
+\begin{example}[A toy LP]
+    Take the following LP: 
+    \[ \min_{x\in \RR^2} 3x_1 + 1.5x_2 \text{ subject to: } -1\leq x_1\leq 2,\; 0\leq x_2\leq 3.\] 
+    
+    We can put it in standard inequality form with the constraints
+    \[ \min_x:\; \min_{x\in \RR^2} 3x_1 + 1.5x_2 \text{ subject to: } -x_1 \leq 1, x_1 \leq 2, -x_2\leq 0, x_2\leq 3.\] 
+
+    Using matrix notation, we can write this as $\min_x c^\T x$ subject to $Ax\leq b$, with 
+    \[ c^\T = \rowvec{2}{3}{1.5},\quad A = \bbm -1 & 0 \\ 1 & 0 \\0& -1 \\ 0 & 1\ebm,\quad b = \colvec{4}{1}{2}{0}{3}.\] 
+    
+    The level curves (curves of constant value) of the objective function are straight lines orthogonal to the objective vector, $c^\T = \rowvec{2}{3}{1,5}$. 
+    The problem amounts to finding the smallest value of $p$ such that $p = c^\T x$ for some feasible $x$. 
+    The optimal point is $x^* = \rowvec{2}{-1}{0}^\T$, which gives an optimal objective value of $p^* = -3$. 
+
+\end{example}
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[scale=0.6]{toyLP.png}
+    \caption{Visualization of the above LP, shamelessly borrowed from El Ghaoui's slides.}
+\end{figure}
+
+\begin{definition}[Polyhedral Functions]
+    We say that a function $f:\RR^n\to \RR$ is \emph{polyhedral} if its epigraph is a polyhedron, that is if $\epi f = \{(x,t)\in \RR^{n+1}: f(x)\leq t\}$ can be represented as 
+    \[ \epi f = \left\{ (x,t)\in \RR^{n+1}:\; C\colvec{2}{x}{t} \leq d\right\},\] 
+    for some matrix $C\in \RR^{m,n+1}$ and vector $d\in \RR^m$. 
+\end{definition}
+
+Polyhedral functions include in particular functions that can be expressed as a maximum of a finite number of affine functions 
+\[ f(x) = \max_{i=1,\dots, m} a_i^\T x + b_i,\] 
+where $a_i \in \RR^n$, $b_i \in \RR$ for $i=1, \dots, m$. 
+Indeed, the epigraph of such functions $f$ 
+\[ \epi f = \{(x,t) \in \RR^{n+1}: \max_{i=1,\dots, m} a_i^\T x + b_i \leq t\}\] 
+can indeed be expressed as the polyhedron 
+\[ \epi f = \{(x,t) \in \RR^{n+1}: a_i^\T x + b_i \leq t, \; i = 1,\dots, m\}.\] 
+
+Here are some more examples of polyhedral functions: 
+\begin{itemize}
+    \ii The $\ell_\infty$-norm function $f(x) = \|x\|_\infty$ is polyhedral since it can be written as the maximum of $2n$ affine functions 
+    \[ f(x) = \max_{i=1\dots, n} \max(x_i, -x_i).\] 
+    \ii The $\ell_1$-norm function $f(x) = \|x\|_1$ is polyhedral since it can be written as the sum of maxima of affine functions: 
+    \[ f(x) = \sum_{i=1}^n \max(x_i, -x_i).\] 
+    \ii Functions that are sums of maximums of affine functions (as discussed above) are polyhedral: 
+    \[ f(x) = \sum_{j=1}^q \max_{i=1,\dots,m} a_{ij}^\T x + b_{ij}.\] 
+    \ii Take $f$ as in the previous part again.
+    The condition $(x,t)\in \epi f$ is equivalent to $\exists u\in \RR^q$ such that 
+    \begin{align}
+        \label{eq:epipoly}
+        \sum_{j=1}^q u_j\leq t, \quad a_{ij}^\T x + b_{ij} \leq u_j, \; i = 1, \dots, m; \; j = 1,\dots, q.
+    \end{align}
+    The epigraph $\epi f$ is the projection (on the space of $(x,t)$-variables) of a polyhedron, so the epigraph itself is a polyhedron. 
+   \end{itemize}
+
+Polyhedral functions are convenient since minimizing them is equivalent to solving an LP. 
+If $f$ is polyhedral, then 
+\[ \min_x f(x)\quad \text{ s.t.: } Ax \leq b,\] 
+can be written as 
+\[ \min_{x,t} t\quad \text{ s.t.: } Ax\leq b, (x,t) \in \epi f.\] 
+
+Since $\epi f$ is a polyhedron, we can express it as in Equation~\ref{eq:epipoly}, hence the problem above is an LP. 
+However, note that the explicit representation of an LP in standard form may require the introduction of additional slack variables, which are needed for representation of the epigraph.
+
+\subsection{Examples}
+\begin{example}[$\ell_\infty$ regression problems]
+    Take the following $\ell_\infty$ optimization problem: 
+    \[ \min_x \|Ax - b\|_\infty, \quad A\in \RR^{m,n}, b\in \RR^{m}.\]
+    The problem can first be rewritten in epigraphic form, adding a slack scalar variable $t$ 
+    \[ \min_{x,t}\; t\quad \text{ s.t.: } \|Ax-b\|_\infty \leq t.\] 
+    Then simply using the definition of the $\ell_\infty$ norm, observe that 
+    \[ \|Ax-b\|_\infty \leq t \iff \max_{i=1,\dots,m} |a_i^\T x - b_i| \leq t \iff |a_i^\T x - b_i| \leq t, \; i = 1,\dots, m.\] 
+    Hence, the problem is equivalent to the following LP in variables $x\in \RR^n$ and $t\in \RR$: 
+    \begin{align*}
+        \min_{x,t}\quad &t \\ 
+        \text{ s.t. } &a_i^\T x - b_i \leq t, \quad i = 1,\dots, m \\ 
+                                           &a_i^\T x - b_i \geq -t, \quad i = 1,\dots, m.
+    \end{align*}
+\end{example}
+
+\begin{example}[$\ell_1$ regression problems]
+    Here's another optimization problem using an $\ell_1$ norm instead:
+    \[ \min_x \|Ax - b\|_1, \quad A\in \RR^{m,n}, b\in \RR^{m}.\]
+    To convert this, we utilize a vector $u\in \RR^m$ of slack variables to get 
+    \[ \min_{x,u} \sum_{i=1}^m u_i \quad \text{ s.t. } |a_i^\T x - b_i|\leq u_i,\; i=1,\dots, m.\] 
+    This in turn is easily turned into a standard LP as follows:
+    \begin{align*}
+        \min_{x,u}\quad &\one^\T u \\
+        \text{ s.t. } &a_i^\T x - b_i \leq u_i, \quad i = 1,\dots, m \\ 
+                      &a_i^\T x - b_i \geq -u_i, \quad i = 1,\dots, m.
+    \end{align*}
+\end{example}
 
 \newpage
 \section{Matrix Cheat Sheet}
