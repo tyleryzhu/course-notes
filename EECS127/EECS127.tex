@@ -1,6 +1,8 @@
 \documentclass[11 pt]{scrartcl}
 \usepackage[header, margin, koma, stylish]{tyler}
 \usepackage{csquotes}
+\usepackage{caption}
+\usepackage{todonotes}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -10,6 +12,7 @@
 
 \newcommand{\tx}{\tilde{x}}
 \newcommand{\eq}{\text{eq}}
+\newcommand{\nz}{\text{nz}\,}
 \newcommand{\epi}{\text{epi}\;}
 
 \begin{document} 
@@ -291,12 +294,14 @@ Since $|\cos\theta| \leq 1$, we easily get the following inequality.
     For vectors $x,y\in \RR^n$, 
     \[ |x^\T y| \leq \|x\|_2 \|y\|_2\] 
     where equality holds when $x = \alpha y$ for scalar $\alpha$ (i.e. when $|\cos\theta| = 1$). 
+    \label{thm:cs}
 \end{theorem}
 
 We also have the following generalization with $\ell_p$ norms. 
 \begin{theorem}[Holder's Inequality]
     For any vectors $x,y\in \RR^n$ and for any $p,q \geq 1$ such that $1/p + 1/q = 1$, it holds that 
     \[ |x^\T y| \leq \sum_{k=1}^n|x_ky_k| \leq \|x\|_p \|y\|_q.\] 
+    \label{thm:holder}
 \end{theorem}
 
 \subsection{Maximization of inner product over norm balls}
@@ -338,6 +343,7 @@ The set of vectors orthogonal to $\Scal$ is called the \emph{orthogonal compleme
 Now we will talk about projections. 
 The idea of projection is central in optimization, which is finding a point on a given set that is closest (in norm) to a given point. 
 
+\todo{Finish writing about projections}
 
 We have an important theorem concerning projections.
 \begin{theorem}[Projection Theorem]
@@ -443,6 +449,7 @@ We did a derivation of least squares using the fundamental theorem which is cool
 
 \subsection{Matrix Concepts}
 Things we didn't cover in lecture that I need to review and note on (for my own sake): determinants, inverses, similar matrices, eigenvalues and diagonalizability, ... 
+\todo{Briefly cover eigenvalues, determinants. Similarity for spectral thm.}
 
 Some matrices with special structure: 
 \itemnum
@@ -628,6 +635,8 @@ In matrix form, this means we obtain a factorization $A = QR$, with $Q \in \RR^{
 This is just as simple for us to solve with back-substitution, but we can also permute the columns of $R$ so that we bring all the pivot entries to thhe front. 
 
 \subsection{Kernels in Machine Learning}
+This section is quite rough since it was on the fly during lecture. We revisit this later on in the least-squares lecture, so I'd just read that section instead. 
+
 Recall that in least-squares, our training problem is solving the optimization problem 
 \[ \min_{w, b} \Lcal(X^\T w + b\cdot 1, y),\] 
 where the pairs of poinits $(X_i, y_i)$ with $X_i\in\RR^n, y_i\in \RR$ form our training set.
@@ -728,7 +737,7 @@ We can finally get to this most important result, which states that every symmet
 
 In other words, $A$ can be written as the weighted sum of dyads which are mutually orthogonal. 
 
-Also talked about Rayleigh quotients and matrix gain. 
+\todo{Write up Rayleigh quotient and matrix gain}
 
 \subsection{Positive-Semidefinite Matrices}
 
@@ -747,8 +756,7 @@ Also, it holds that
 \[ A \succeq 0 \iff \la_i(A) \geq 0,\; i=1, \dots, n.\] 
 \[ A \succ   0 \iff \la_i(A) > 0,\; i=1, \dots, n.\] 
 
-We then talked about Matrix square-root, Cholesky decomp, and PSD's with ellipsoids. 
-Schur complements are on the homework.
+\todo{Matrix square-root, Cholesky decomp, and PSD's with ellipsoids. Maybe schur complements?}
 
 \subsection{Principal Component Analysis}
 
@@ -771,7 +779,7 @@ Later we will see how to arrive at this using SVD.
 
 \newpage
 \section{Thursday, February 4th: Singular Value Decomposition}
-
+\todo{Add in more understandable motivation for SVD}
 \subsection{The Singular Value Decomposition (SVD)}
 One motivation for SVD is that we'd like to analyze data better and understand potential clusters that may arise from it. 
 First, we need to understand what \emph{dyads} are. 
@@ -810,7 +818,7 @@ It provides a three-term factorization which is similar to spectral factorizatio
     \[ \tsig = \bbm \Sigma & 0_{r, n-r} \\ 0_{m-r, r} & 0_{m-r, n-r} \ebm, \quad \Sigma = \diag(\si_1, \dots, \si_r) \succ 0.\]
     \label{thm:svd}
 \end{theorem}
-
+\todo{Add in proof of SVD}
 Before we discuss the proof, let's analyze in further detail what SVD is really doing. 
 We look at its effect as a matrix operation 
 \[ x \mapsto Ax = U\tsig V^\T x.\] 
@@ -883,6 +891,9 @@ This is the spectral decomposition applied to the symmetric matrix $AA^\T$.
 As a result, $AA^\T \succeq 0$ and $A^\T A \succeq 0$, since all the eigenvalues are squared values and must be non-negative.
 
 To summarize, the SVD theorem allows us to write any matrix as a sum of dyads $A = \sum_{i=1}^r \si_i u_i v_i^\T$ where the $\si_i$ provide the ``strength'' of the corresponding dyad and the rank is how many dyads we need to reconstruct $A$. 
+
+In practice, we'll employ algorithms to compute the SVD of matrices for us.
+The complexity of the algorithm which computes it via a sequence of linear transformation is $O(nm\min(n,m))$, but this can be sped up for sparse matrices if we're only interested in the largest few singular values. 
 
 \subsection{Matrix properties via SVD}
 We can infer many things from the SVD. 
@@ -1131,13 +1142,42 @@ That is all.
 
 \newpage
 \section{Tuesday, February 23rd: Linear Programs}
+We're starting the next portion of the course, which will be focused on ``conic optimization.'' 
+The main motivation comes from some problems which we've already seen can be solved by SVD/PCA, such as 
+\begin{itemize}
+    \ii $\min_{X} \|Ax-y\|_2^2 + \la \|x\|_2^2$ for $\la > 0$ (Ridge Regression)
+    \ii $\min_{L,R} \|X-LR^\T\|_F^2$ where $L, R$ have $k$ columns ($k < \min(n,m)$). 
+\end{itemize}
+
+Our goal will be to discuss an entire class of optimization problems called conic optimization, which will lead us into discussing linear programming.
 
 \subsection{Polyhedrons}
 To talk about linear programs, we first need to discuss the geometry of the set of points we want to work with. 
 For a given $a\in \RR^n$ and $b\in \RR$, the set $\Hcal$ of points satisfying the linear inequality $a^\T x \leq b$ is a closed half-space. 
 Its boundary is the hyperplane defined by the \emph{equality} $a^\T x = b$. 
 
-TODO: insert more graphs. 
+The way to think about this is to start with the boundary $a^\T x=0$, which is simply the plane normal to $a$ passing through the origin. 
+Then if $\Hcal = \{x\; |\; a^\T x \leq 0\}$, then $\Hcal$ is the set of points forming an obtuse angle with $a$ (by properties of inner products). 
+
+\vspace{.4cm}
+\begin{minipage}{.4\textwidth}
+    \centering
+    \includegraphics{hp0.png}
+    \captionof{figure}{The half-space $a^\T x \leq 0$.}
+\end{minipage}%
+\begin{minipage}{.6\textwidth}
+    \centering
+    \includegraphics[scale=0.75]{hpb.png}
+    \captionof{figure}{The half-space $a^\T x \leq b$ (figures my own).}
+\end{minipage}%
+\vspace{.4cm}
+
+Now if we consider $a^\T x \leq b$, our boundary plane instead passes through the point $x_0 = (b/a^\T a) a$ (see the previous lecture), so the value $b$ just tells us how far along $a$ the boundary sits. 
+
+We can interpret this half-space as being the set of points whose inner product with $a$ is less than $b$ (obviously), which occurs below the boundary. 
+However, a more illuminating intepretation is to rewrite the half-space as $a^\T x - b = a^\T (x-x_0) \leq 0$, which reduces to the case we just had. 
+Hence the desired region is the one from before but shifted in the direction of $a$ by $x_0$. 
+
 
 For given $a_1, \dots, a_m\in \RR^n$, and $b\in \RR^m$, the collection of $m$ linear inequalities 
 \[ a_i^\T x \leq b_i, \quad i = 1,\dots, m\] 
@@ -1151,11 +1191,24 @@ As such, if
 then we can write the inequalities in equivalent matrix form $Ax\leq b$ (inequality taken component-wise). 
 
 \begin{example}[Probability Simplex]
+    The probability simplex is the polytope defined as 
+    \[ P = \{x\in \RR^n : x\geq 0, \sum_{i=1}^n x_i = 1\}.\] 
+    The name lends itself to an obvious interpretation.
+    Every point in the polytope represents a potential point in a discrete probability distribution, i.e. the $x_i$'s are nonnegative and they sum up to one. 
 
+    The $n$ vertices of this simplex in $\RR^n$ are the standard orthonormal basis vectors for $\RR^n$, i.e. 
+    \[ P = \text{co}\{e_1, \dots, e_n\}\] 
+    where $\text{co}\{x_1, \dots, x_n\}$ contains all linear combinations $\sum \la_i x_i$ where $\sum \la_i = 1$ and $\la_i \geq 0$. 
 \end{example}
 
 \begin{example}[The $\ell_1$-norm ball]
-
+    The $\ell_1$-norm ball is the set $\{x\in \RR^n : \|x\|_1 \leq 1\}$, that is the set where $\sum_{i=1}^n |x_i| \leq 1$. 
+    This is indeed a polytope, since the previous inequality is equivalen to $2^n$ linear inequalities. 
+    We can see this by considering the sign variables $s_i \in \{-1, 1\}$, $i = 1,\dots, n$. 
+    Then the condition can be written as 
+    \[ \|x\|_1 = \sum_{i=1}^n |x_i| = \max_{s_i\in \{-1, 1\}} \sum_{i=1}^n s_i x_i \leq 1.\] 
+    But this is equivalent to simply requiring all of the $2^n$ choices for $s_1, \dots, s_n$ to be less than 1, i.e. 
+    \[ \sum_{i=1}^n s_i x_i \leq 1, \quad \text{ for all } s_i\in \{-1, 1\}, i = 1, \dots, m.\] 
 \end{example}
 
 \subsection{Linear Programs}
@@ -1191,7 +1244,7 @@ A point $x_f\in \Xcal$ is an optimal point, hence a solution of our LP, if and o
     Using matrix notation, we can write this as $\min_x c^\T x$ subject to $Ax\leq b$, with 
     \[ c^\T = \rowvec{2}{3}{1.5},\quad A = \bbm -1 & 0 \\ 1 & 0 \\0& -1 \\ 0 & 1\ebm,\quad b = \colvec{4}{1}{2}{0}{3}.\] 
     
-    The level curves (curves of constant value) of the objective function are straight lines orthogonal to the objective vector, $c^\T = \rowvec{2}{3}{1,5}$. 
+    The level curves (curves of constant value) of the objective function are straight lines orthogonal to the objective vector, $c^\T = \rowvec{2}{3}{1.5}$. 
     The problem amounts to finding the smallest value of $p$ such that $p = c^\T x$ for some feasible $x$. 
     The optimal point is $x^* = \rowvec{2}{-1}{0}^\T$, which gives an optimal objective value of $p^* = -3$. 
 
@@ -1272,6 +1325,365 @@ However, note that the explicit representation of an LP in standard form may req
 \end{example}
 
 \newpage
+\section{Thursday, February 25th: Convex Quadratic Programs}
+\subsection{Convex Quadratic Functions and the QP Model}
+A quadratic function in a vector of variables $x = \rowvec{4}{x_1}{x_2}{\cdots}{x_n}$ can be written generically as 
+\[ f_0(x) = \frac 12 x^\T H x + c^\T x + d\] 
+where $d\in \RR, c\in \RR^n$, and $H \in \RR^{n,n}$ is a symmetric matrix. 
+
+This last condition can always be achieved, since if I had some arbitrary $n\times n$ matrix $A$ in my form, $x^\T A x = x^\T A^\T x$, so 
+\[ x^\T A x = x^\T \left(\frac{A+A^\T}{2}\right) x,\] 
+where the inside term is symmetric. 
+So any quadratic form $x^\T H x$ can always be written as one where $H$ is symmetric; we refer to $H$ as the \emph{Hessian} of the quadratic function.
+
+A quadratic function is said to be \emph{convex} if its Hessian is positive semi-definite, that is: every eigenvalue of the (symmetric) matrix $H$ is non-negative.
+Convex quadratic functions typically look bowl-shaped, while non-convex ones can look saddle-like, etc. 
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[scale=0.4]{qfconvex.jpeg}
+    \caption{Taken from El Ghaoui's Slides.}
+\end{figure}
+
+\begin{definition}[Convex Quadratic Programs]
+    Let $A\in \RR^{m,n}, b\in \RR^m$. The model 
+    \begin{align*}
+        \min \quad &f_0(x) \\ 
+        \text{subject to: }\;\; & Ax\leq b, Cx = d,
+    \end{align*}
+    
+    is called a \emph{quadratic program} (QP for short) if $f_0$ is a convex quadratic function, that is: 
+    \[ f_0(x) = \frac 12 x^\T H x + c^\T x,\] 
+    where $H = H^\T$ is positive semi-definite (PSD). 
+\end{definition}
+Note that $f_0$ is still quadratic if $H$ is not PSD, but the problem above would not be referred as a QP. 
+An artifact of historical naming conventions, supposedly.
+
+\subsubsection{Unconstrained QP Problems}
+
+In the unconstrained setting, we can still employ our usual linear algebra techniques to minimize quadratic functions. 
+Consider the convex quadratic function 
+\[ p^* = \min_{x\in \RR^n} f(x) := \frac 12 x^\T H x + c^\T x + d.\] 
+
+If $H\succ 0$ (PD), we can write 
+\[ f(x) = \frac 12 (x-x_0)^\T H (x-x_0) + \alpha \geq \alpha,\] 
+where $x_0 = -H^{-1}c, \alpha = d - \frac 12 x_0^\T H x_0$.
+I think of this as completing the square, which you can see by expanding the above as 
+\begin{align*}
+    f(x) &= \frac 12 (x^\T H x - 2x_0^\T Hx + x_0^\T H x_0) + \alpha \\ 
+         &= \frac 12 x^\T H x + (c^\T H^{-1}) H x + \frac 12 x_0^\T H x_0 + (d - \frac 12 x_0^\T H x_0)  \tag{since $H = H^\T$} \\ 
+         &= \frac 12 x^\T H x + c^\T x + d 
+\end{align*}
+
+Then you know the quadratic form will always be greater than $0$ for nonzero $x-x_0$ by virtue of $H$ being positive-definite, so the best minimizer is to pick $x^* = x_0$.
+
+If $H\succeq 0$ is only positive semi-definite, and $c\in \Rcal(H)$, then any $x_0$ such that $Hx_0 + c = 0$ is optimal by the same argument as before. 
+Hencec, the set of solutions is given by 
+\[ \{-H^\dagger c + \zeta,\; \zeta \in \Ncal(H)\}.\] 
+
+Finally, if $H\succeq 0$ is PSD but $c\not\in \Rcal(H)$, then the function is unbounded below.
+By the fundamental theorem, we can write $c$ as $c = -Hx_0 + r$, where $Hr = 0$ and for some $x_0, r\not= 0 \in \RR^n$.
+Set $x(t) = x_0 - tr$ where $t\in \RR$, and note that 
+\begin{align*}
+    f(x(t)) &= \frac 12 (x_0-tr)^\T H (x_0 - tr) + (-Hx_0 + r)^\T (x_0 - tr) + d \\ 
+            &= \frac 12 x_0^\T H x_0  - x_0^\T H x_0 + r^\T x_0 - t r^\T r \tag{since $Hr = 0$}  \\ 
+            &= \text{constant} - t(r^\T r),
+\end{align*}
+which tends to $-\infty$ as $t \to\infty$, as we stated. 
+
+
+\begin{example}[Least-Squares]
+    Least-squares is actually a special case of an unconstrained QP model. 
+    The problem ammounts to minimizing $f_0(x) = \|Ax-y\|_2^2$, where 
+    \[ f_0(x) = (Ax-y)^\T (Ax-y) = x^\T A^\T A x - 2y^\T A x + y^\T y,\] 
+    which is a quadratic function in standard form, with 
+    \[ H = 2(A^\T A),\quad c = -2 A^\T y, \quad d = y^\T y.\] 
+    Note that $f_0$ is convex since $A^\T A \succeq 0$. 
+    Since this is unconstrained, and $c = -HA^\dagger y\in \Rcal(H)$, we have (from above) that the set of solutions is of the form 
+    \[ \Xcal^{\text{opt}} = \{x^* = A^\dagger y + Nz : z\in \RR^r\},\] 
+    wherer $r$ is the rank of $H$ (and column rank of $A$), and $N$ spans the nullspace of $A$. 
+
+    If $A$ is full column rank, then $A^\T A \succ 0$, so the solution is unique and given by the well-known formula 
+    \[ x^* = -H^{-1} c = (A^\T A)^{-1} A^\T y.\] 
+\end{example}
+
+\subsubsection{Linear Equality Constrained QP Problems}
+
+If we have only linear equality constraints, then we can convert it into unconstrained form by eliminating the equality constraints (similar to how we did for linear systems).
+Suppose we have the problem 
+\begin{align*}
+    \min \quad &f_0(x) := \frac 12 x^\T Hx + c^\T x + d\\ 
+    \text{subject to: }\;\; & Ax\leq b,
+\end{align*}
+Parameterize all of the solutions $x$ to $Ax=b$ as $x = \bar{x} + Nz$, where $\bar{x}$ is a specific solution to $Ax=b$, $N$'s columns form a basis for $\Ncal(A)$, and $z$ is a vector of free variables.
+Then we can substitute this in for $x$ in $f_0$ to get the unconstrained problem 
+\[ \min_z \varphi_0(z) = \frac 12 z^\T \bar{H} z + \bar{c}^\T z + \bar{d},\] 
+where 
+\[ \bar{H} = N^\T H N,\; \bar{c} = N^\T (c + H\bar{x}),\; \bar{d} = d + c^\T \bar{x} + \frac 12 \bar{x}^T H \bar{x}.\] 
+
+\subsection{Minimal cardinality solutions and $\ell_1$-norm problems}
+
+Many engineering problems will concern themselves with finding solutions which are \emph{sparse}, i.e. contain few non-zero entries (low-cardinality solutions). 
+This is a very natural requirement, since minimal representations tend to be the best explanations. 
+However, finding minimum cardinality solutions (i.e. solutions with small $l_0$ norm) is hard in general, from a computational point of view. 
+Thus, often several \emph{heuristics} are used in order to devise tractable numerical schemes which provide low cardinality solutions, such as using $\ell_1$ norm in place of the $\ell_0$ norm. 
+
+For example, using the Cauchy-Schwartz inequality (Theorem~\ref{thm:cs}), we can obtain a close relation between $\card(x)$ and its $\ell_1$ norm. 
+Let $\nz(x)$ be the vector whose $i$th entry is one whenever $x_i\not= 0$, and is zero otherwise, and $|x|$ is the vector of absolute values of all of the entries of $x$.
+Note that $\|\nz(x)\|_2 = \card(x)$.
+Then 
+\[ \|x\|_1 = \nz(x)^\T |x| \leq \|\nz(x)\|_2 \cdot \|x\|_2 = \|x\|_2 \sqrt{\card(x)},\]
+hence 
+\[ \card(x) \leq k \implies \|x\|_1^2 \leq k \|x\|_2^2.\] 
+Similarly, using Holder's (Theorem~\ref{thm:holder}) for $p = 1, q=\infty$, 
+\[ \|x\|_1 = \nz(x)^\T |x| \leq \|\nz(x)\|_1 \|x\|_\infty = \|x\|_\infty\, \card(x),\] 
+hence 
+\[ \card(x) \leq k \implies \|x\|_1 \leq k\|x\|_\infty.\] 
+
+The following example illustrates exactly how we can replace a cardinality constraint with one relying on the $\ell_1$ norm instead. 
+
+\begin{example}[Piece-wise constant fitting]
+    Suppose one observes a noisy time-series which is almost piece-wise constant. 
+    The goal would be to find out what the constant levels are, which could correspond to states or levels of a system in applications. 
+
+    Let $x\in \RR^n$ denote the signal vector (unknown), and $y\in \RR^n$ denote the vector of noisy signal observations (i.e. the true signal $x$ plus noise). 
+    Given $y$, we want an estimate $\hat{x}$ of the original signal $x$ which has as few changes in consecutive time steps as possible. 
+    This requirement can be modeled by minimizing the cardinality of the different vector $D\hat{x}$, where $D\in \RR^{n-1,n}$ is the difference matrix 
+    \[ D = \bbm -1 & 1 & 0 & \dots & 0 \\ 0 & -1 & 1 & \dots & 0 \\  \vdots & & & \ddots &  \\ 0 & \dots & 0 & -1 & 1 \ebm,\] 
+    so that $D\hat{x} = [\hat{x}_2-\hat{x}_1, \hat{x}_3-\hat{x}_2, \dots, \hat{x}_n - \hat{x}_{n-1}]^\T$. 
+
+    Thus, we have the problem 
+    \[ p^* = \min_{\hat{x}} f(\hat{x}) := \|y-\hat{x}\|_2^2\text{ s.t. } \card(D\hat{x}) \leq k, \] 
+    where $k$ is an estimate on the number of jumps in the signal, and our objective function is measuring the error in our estimate. 
+
+    We can get a \emph{lower bound} on the problem by noticing that we have the obvious solution $\hat{x} = 0$ which satisfies our cardinality constraint, and thus our optimal value must be lower than this. 
+    Hence, $\|\hat{x}-y\|_2^2 \leq f(0) = \|y\|_2^2$ and so by triangle inequality, 
+    \[ \|\hat{x}\|_2 = \|(\hat{x} - y) + y\|_2 \leq \|\hat{x}-y\|_2 + \|y\|_2 \leq 2\|y\|_2.\] 
+Thus, using the cardinality results we obtained above, the constraint $\card(D\hat{x}) \leq k$ implies 
+    \[ \|D\hat{x}\|_1 \leq \sqrt{k} \| D\hat{x}\|_2 \leq \sqrt{k} \|D\|_F \|x\|_2 \leq 2\sqrt{k}\|D\|_F\|y\|_2 =: \alpha.\]
+    The relaxed problem is a QP of the form 
+    \[ \min_{\hat{x}} \|y - \hat{x}\|_2^2 \quad \text{ s.t.: } \|D\hat{x}\|_1 \leq \alpha.\] 
+    Alternatively, we could have instead chosen a problem with a weighted objective 
+    \[ \min_{\hat{x}} \|y - \hat{x} \|_2^2 + \gamma \|D\hat{x}\|_1,\] 
+    for some suitable parameter $\gamma \geq 0$. 
+\end{example}
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[scale=0.5]{pw_constant.png}
+    \caption{Example of the piece-wise constant fitting problem and result achieved with $\ell_1$ objective. Taken from El Ghaoui's slides.}
+\end{figure}
+
+This general theme of using $\ell_1$ norms in our optimization problems leads to another important problem. 
+Solving least-squares problems that, instead of having an $\ell_2$ regularization term as we've seen in the past, have an $\ell_1$ norm regularizer. 
+\begin{example}[LASSO]
+    Consider the following problem, known as the \emph{basis pursuit denoising problem} (BDPN), or as the \emph{least absolute shrinkage and selection operator} (LASSO) problem:
+    \[ \min_{x\in \RR^n} \|Ax-y\|^2_2 + \la\|x\|_1, \quad \la \geq 0,\] 
+    where $\|x\|_1 = |x_1|+\dots + |x_n|$.
+    This problem has received much attention in recent years due to its relevance in the field of \emph{compressed sensing}. 
+
+    The basic idea is that the $\ell_1$ norm is used as a proxy for the cardinality of $x$. 
+    It formalizes a tradeoff between the accuracy with which $Ax$ approximates $y$, and the \emph{complexity} of the solution, i.e. the number of nonzero entries in $x$ (which can be interpreted as the number of relevant features, for example). 
+    The larger $\la$ is, the more biased our problem is towards finding low-complexity solutions. 
+
+    We can rewrite the above problem in standard QP form by introducing slack variables $u\in \RR^n$: 
+    \begin{align*}
+        \min_{x,u\in\RR^n}\quad &\|Ax-y\|_2^2 + \la \sum_{i=1}^n u_i \\ 
+        \text{s.t. : }\;\; &|x_i|\leq u_i,\; i=1,\dots, n.
+    \end{align*}
+\end{example}
+
+There are cool applications of LASSO to image compression in different bases, for example the wavelet basis, which is what modern JPEG compression schemes utilize. 
+We also talked about Markowitz's mean-variance portfolio optimization model, which is central to modern portfolio theory. 
+
+\newpage
+\section{Tuesday, March 2nd: Second-Order Cone Models}
+\subsection{Second-order cone programs}
+
+Today, we'll be talking about \emph{second-order cone programming} (SOCP), which is a generalization of linear and quadratic programming which allows for affine combinations of variables to be constrained in a special convex set, called a \emph{second-order cone}. 
+LPs and convex quadratic optimization fall under special cases of SOCP models, and they're quite useful in geometry problems, approximation problems, and probabilistic approaches to linear optimization. 
+
+\begin{definition}[Second-Order Cone]
+    The \emph{second-order cone} (SOC) in $\RR^3$ is the set of vectors $(x_1, x_2, t)$ such that $\sqrt{x_1^2+x_2^2} \leq t$ (i.e. the ice cream cone). 
+    Horizontal sections of this set at level $\alpha \geq 0$ are discs of radius $\alpha$.
+
+    In arbitrary dimensions, an $(n+1)$-dimensional SOC is the following set: 
+    \[ \Kcal_n = \{(x,t), x\in \RR^n, t\in \RR : \|x\|_2 \leq t\}.\] 
+\end{definition}
+
+All of these cones point upwards however, so to capture the general notion of a second-order cone, we need to discuss what rotated second-order cones are. 
+\begin{definition}[Rotated Second-Order Cone]
+The rotated second-order cone in $\RR^{n+2}$ is defined by 
+\[ \Kcal_n^r = \{(x,y,z), x\in \RR^n, y\in \RR^n,z\in \RR^n : x^\T x \leq 2yz, y\geq 0,z\geq 0\}.\] 
+We can express this as a linear transformation (i.e. rotation) of our usual second order cones in $\RR^{n+2}$, since 
+\[ \|x\|_2^2 \leq 2yz, y\geq 0, z\geq 0 \iff \left\|\colvec{2}{x}{\tfrac{1}{\sqrt{2}}(y-z)}\right\|_2 \leq \frac{1}{\sqrt{2}}(y+z),\] 
+where the right hand side is a form in our original constraint from above.
+
+\end{definition}
+It's exactly as it sounds like: they're just second-order cones which are rotated, which is the purpose of the $y$ and $z$ parameters. 
+Constraints of the form $\|x\|_2^2 \leq 2yz$ are usually referred to as \emph{hyperbolic constraints}. 
+To see the equivalence between the two conditions, simply expand the $\ell_2$-norm condition as 
+\[ \rowvec{2}{x}{\tfrac{1}{\sqrt{2}}(y-z)}\colvec{2}{x}{\tfrac{1}{\sqrt{2}}(y-z)} = x^\T x + \frac{1}{2} (y-z)^2 \leq \frac{1}{2}(y+z)^2 \iff x^\T x \leq 2yz\] 
+as expected.
+
+
+The standard format of a second-order cone constraint on a variable $x\in \RR^n$ expresses the condition that $(y,t) \in \Kcal_m$, with $y\in \RR^m, t\in \RR$ where $y,t$ are some affine functions of $x$. 
+We can express these affine functions as $y = Ax+b$ and $t = c^\T x + d$, so the condition $(y,t) \in \Kcal_m$ becomes 
+\begin{align}
+\|Ax+b\|_2 \leq c^\T x + d,
+\label{eq:soc}
+\end{align}
+where $A\in \RR^{m,n}, b\in \RR^m, c\in \RR^n,$ and $d\in \RR$. 
+
+For example, our usual quadratic constraint 
+\[ x^\T Qx + c^\T x \leq t, \quad Q\succeq 0\] 
+can be expressed in conic form using the square root $Q^{1/2}$ (since $Q$ is PSD) as 
+\begin{align}
+\left\| \colvec{2}{\sqrt{2} Q^{1/2} x}{t-c^\T x - 1/2}\right\|_2 \leq t - c^\T x + 1/2.
+\label{eq:quadsoc}
+\end{align}
+
+This can be achieved from our above transformation for rotated second-order cones, by writing our constraint as $\|\sqrt{2} Q^{1/2}x\|_2^2 \leq 2(t-c^\T x)$ and setting 
+\[ \tilde{x} := \sqrt{2} Q^{1/2} x, \; \tilde{y} := \sqrt{2}(t-c^\T x),\; \tilde{z} := \tfrac{1}{\sqrt{2}}.\] 
+
+Then 
+\[ \frac{1}{\sqrt{2}}(\tilde{y}-\tilde{z}) = t - c^\T x - 1/2,\quad \frac{1}{\sqrt{2}}(\tilde{y}+\tilde{z}) = t - c^\T x + 1/2 \]
+as we have seen.
+
+Now we can define what an SOCP is.
+
+\begin{definition}[Second-Order Cone Programs]
+    A \emph{second-order cone program} is a convex optimization problem having \textbf{linear} objective and \textbf{SOC} constraints. 
+    When the SOC constraints have the standard form in~(\ref{eq:soc}), we have a SOCP in \emph{standard inequality form} 
+    \begin{align*}
+        \min_{x\in \RR^n}& \quad c^\T x \\ 
+        \text{s.t.:}& \quad \|A_i x + b_i \|_2 \leq c_i^\T x + d_i, \quad i = 1,\dots, m,
+    \end{align*}
+    where $A_i\in \RR^{m_i, n}$ are given matrices, $b_i\in \RR^{m_i}$, $c_i\in \RR^n$ are vectors, and $d_i$ are given scalars. 
+\end{definition}
+
+SOCPs are quite a large class of convex optimization problems; in fact, they generalize all of the convex optimization problems we've seen thus far, including LPs, convex QPs, and convex QCQPs. 
+
+\subsection{Examples}
+To demonstrate just how vast SOCPs really are, we'll show that basically every problem we've come across so far (and more!) can be written as an SOCP. 
+\begin{example}[LPs are SOCPs]
+    Any standard linear program in standard inequality form  
+    \begin{align*}
+        \min_{x\in \RR^n}& \quad c^\T x \\ 
+        \text{s.t.:}& \quad a_i^\T x \leq b_i, \quad i = 1,\dots, m,
+    \end{align*}
+    can be easily written in SOCP form by setting the $\ell_2$-norm condition to zero and using just the affine part, as 
+    \begin{align*}
+        \min_{x\in \RR^n}& \quad c^\T x \\ 
+        \text{s.t.:}& \quad \|C_i x + d_i \|_2 \leq b_i - a_i^\T x, \quad i = 1,\dots, m,
+    \end{align*}
+    where $C_i = 0, d_i = 0$ for $i = 1, \dots, m$. 
+\end{example}
+
+\begin{example}[QPs are SOCPs]
+    Any standard quadratic program in standard form  
+    \begin{align*}
+        \min_{x\in \RR^n}& \quad x^\T Q x + c^\T x \\ 
+        \text{s.t.:}& \quad a_i^\T x \leq b_i, \quad i = 1,\dots, m,
+    \end{align*}
+    where $Q = Q^\T \succeq 0$ can be written in SOCP form as 
+    \begin{align*}
+        \min_{x,y}& \quad c^\T x +y \\ 
+        \text{s.t.:}& \quad \left\|\colvec{2}{2Q^{1/2} x}{y-1}\right\|_2 \leq y+1, \\ 
+                    & \quad a_i^\T x \leq b_i, \quad i = 1, \dots, m.
+    \end{align*}
+    The trick is to convert the quadratic form constraint into an inequality.
+    First, we set $y = x^\T Q x$. 
+    Then use our earlier form for quadratic constraints~(\ref{eq:quadsoc}) to write $x^\T Q x \leq y$ in the form presented here by setting $c^\T x = 0$ and adjusting constants.
+    
+    Directly expanding the constraint here gives us 
+    \[ 4x^\T Q x + (y-1)^2 \leq (y+1)^2 \iff x^\T Q x\leq y,\] 
+    which corresponds to our quadratic form condition. 
+\end{example}
+
+\begin{example}[QCQPs are SOCPs]
+    Any convex quadratic-constrained quadratic programs of the form
+    \begin{align*}
+        \min_{x\in \RR^n}& \quad x^\T Q_0 x + a_0^\T x \\ 
+        \text{s.t.:}& \quad x^\T Q_i x + a_i^\T x \leq b_i, \quad i = 1,\dots, m,
+    \end{align*}
+    where $Q_i = Q_i^\T \succeq 0$ can be written in SOCP form as 
+    \begin{align*}
+        \min_{x,t}& \quad a_0^\T x +t \\ 
+        \text{s.t.:}& \quad \left\|\colvec{2}{2Q_0^{1/2} x}{t-1}\right\|_2 \leq t+1, \\ 
+                    & \quad \left\|\colvec{2}{2Q_i^{1/2} x}{b_i-a_i^\T x - 1}\right\|_2 \leq b_i - a_i^\T x + 1, \; i = 1, \dots, m
+    \end{align*}
+    using the same idea as before.
+\end{example}
+
+For a new example, consider the problem of sums of norms, i.e. 
+\[ \min_x \sum_{i=1}^p \|A_i x - b_i\|_2,\] 
+where $A_i \in \RR^{m,n}, b_i\in \RR^m$ are given data.
+This can be easily written as an SOCP by introducing auxiliary scalar variables $y_1, \dots, y_p$ to make our objective linear, so 
+\begin{align*}
+    \min_{x,y}& \quad \sum_{i=1}^p y_i \\ 
+    \text{s.t.:}& \quad \|A_i x - b_i \|_2 \leq y_i, \quad i = 1,\dots, p
+\end{align*}
+
+Similarly, the maxima of norms problem 
+\[ \min_x \max_{i=1,\dots,p} \|A_i x - b_i\|_2,\] 
+can be cast in SOCP form as 
+\begin{align*}
+    \min_{x,y}& \quad y \\ 
+    \text{s.t.:}& \quad \|A_i x - b_i \|_2 \leq y, \quad i = 1,\dots, p
+\end{align*}
+
+It's important to note that while the constraint $\|z\|_2 \leq y$ is convex and can be optimized over, $\|z\|_2^2 \leq y^2, y\geq 0$ is \emph{not convex}, so we can't optimize over it.
+
+\begin{example}[Square-root LASSO]
+    Consider the optimization problem 
+    \[ p^* := \min_w \|X^\T w - y\|_2 + \la \|w\|_1\] 
+    where $X$ is our data matrix, with $\la > 0$ a sparsity-inducing parameter. 
+    This is square-root LASSO, as we're missing the usual squared term on the $\ell_2$-norm for our loss. 
+
+    This turns out to be an SOCP as well, of the form 
+    \[ \min_{w,v,t} t + \la \sum v_i \quad \text{ s.t.: } t \geq \|X^\T w - y\|_2,\; v_i \geq w_i \geq -v_i \;\forall i.\] 
+\end{example}
+
+
+\begin{example}[Examplar Selection]
+    In examplar selection, we are given a data matrix $X = [x_1,\dots, x_m]\in \RR^{m,n}$, where columns $x_i$ are the data points. 
+    We wish to find a small subset of data points which are approximately representative of the whole dataset. 
+    Precisely, we seek to find a sparse subset of data points $\{x_j\}_{j\in \Jcal}$, with $\Jcal\subseteq \{1,\dots, m\}$ some indexing set, such that 
+    \[ \forall i\in \{1, \dots, n\}, \; x_i \approx \sum_{j\in \Jcal} x_j w_{ij}.\] 
+    In other words, every data point can be accurately represented as a linear combination of the same few data points. 
+    We can write the above condition as $X \approx XW^\T$, where $W$ has a lot of its columns entirely zero. 
+
+    We can model this as an SOCP: 
+    \[ \min_{W = [w_1, \dots, w_m]} \|X - XW^\T \|_F : \quad \sum_{j=1}^m \|w_j\|_2 \leq \kappa,\] 
+    where a small value of parameter $\kappa > 0$ encourages many columns in $W$ to be entirely zero. 
+
+    Note that the constraint here is essentially an $\ell_1$-norm on the $w_i$ column norms, so we're doing a LASSO-like feature selection to find the sparse set $\Jcal$. 
+    Also, we can easily write the Frobenius norm as a sum of $\ell_2$ constraints on the column norms of the inside matrix.
+    So this is indeed an SOCP.
+\end{example}
+
+Finally, SOCP can also model problems involving powers of variables. 
+For example, consider the following variant of least-squares: 
+\[ p^* := \min_w \|X^\T w - y\|_2 + \la \sum_{i=1}^n |w_i|^\alpha, \] 
+where $\alpha > 1$ is the ratio of two integers. 
+Notice that $\alpha = 1$ gives us LASSO, while $\alpha = 2$ gives us Ridge regression. 
+A typical choice is $\alpha \in (1,2)$ to achieve a good trade-off between encouraging sparsity and robustness to noise. 
+
+For example, take $\alpha = 3/2$. 
+The condition $t \geq u^{3/2}$ for $u \geq 0$ is equivalent to the existence of $v\geq 0$ such that 
+\[ vt \geq u^2, u \geq v^2.\] 
+Hence we can rewrite this as an SOCP with rotated cone constraints 
+\[ p^* = \min_{w,v,u,t} \|X^\T w - y\|_2 + \la \sum_{i=1}^n t_i : \quad t\geq 0, u\geq |w|,\] 
+\[ v_i t_i\geq u_i^2, u_i \geq v_i^2, i = 1,\dots, n.\] 
+
+We ended on an interesting discussion of PCA vs LASSO, i.e. how are they different in dimensionality reduction and sparsity. 
+The summary is that PCA gives you the directions of most variance (in an unsupervised manner), but provides no sparsity nor interpretability of the resulting data. 
+LASSO provides intepretability and sparsity, but requires labels in order to do so (and hence is supervised). 
+
+There is something called sparse PCA which can give you directions with sparser projections though, which could be considered somewhere in between the two.
+
+\newpage
 \section{Matrix Cheat Sheet}
 Useful matrix tips I've learned throughout this class. 
 
@@ -1279,5 +1691,7 @@ Useful matrix tips I've learned throughout this class.
 \section{Appendix}
 \renewcommand{\listtheoremname}{List of Definitions and Theorems}
 \listoftheorems[ignoreall,show={theorem,definition}]
+
+\listoftodos
 
 \end{document}

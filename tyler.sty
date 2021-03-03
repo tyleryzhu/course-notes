@@ -100,6 +100,7 @@
     innerbottommargin=6pt,
     skipbelow=2pt,
 %    linecolor=blue,
+    nobreak=true,
     backgroundcolor=TealBlue!5,
 }
 \declaretheoremstyle[
@@ -142,6 +143,7 @@ style=thmredbox,name=Problem]{problem}
     innerbottommargin=6pt,
     skipbelow=2pt,
 %    linecolor=blue,
+    nobreak=true, % add back no breaks for defs + theorems
     linecolor=FireBrick,
     hidealllines=true, 
     leftline=true
@@ -213,6 +215,8 @@ style=redleftborder,name=Definition, sibling=theorem]{definition}
 \newcommand{\Gcal}{\mathcal G}
 \newcommand{\Hcal}{\mathcal H}
 \newcommand{\Ical}{\mathcal I}
+\newcommand{\Jcal}{\mathcal J}
+\newcommand{\Kcal}{\mathcal K}
 \newcommand{\Lcal}{\mathcal L}
 \newcommand{\Ncal}{\mathcal N}
 \newcommand{\Pcal}{\mathcal P}
@@ -258,6 +262,7 @@ style=redleftborder,name=Definition, sibling=theorem]{definition}
 \newcommand{\diag}{\text{diag}}
 \newcommand{\se}{\subseteq}
 \newcommand{\sgn}{\text{sgn}}
+\newcommand{\card}{\text{card}\,}
 \newcommand{\ord}{\text{ord}}
 \newcommand{\Syl}{\text{Syl}}
 \newcommand{\Res}{\text{Res}}
