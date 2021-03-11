@@ -12,6 +12,7 @@
 
 \newcommand{\tx}{\tilde{x}}
 \newcommand{\eq}{\text{eq}}
+\newcommand{\opt}{\text{opt}}
 \newcommand{\nz}{\text{nz}\,}
 \newcommand{\epi}{\text{epi}\;}
 
@@ -60,7 +61,7 @@ In this class, we're not as concerned with algorithms for optimization, but more
 A classic example in machine learning is when we have a given vector $y$ and we're trying to express it as a linear function of an input vector $z$, i.e. data points. 
 The goal is the solve the objective 
 \[ \min_x \sum_{i=1}^m (y_i - x^\T z^{(i)})^2\] 
-where 
+where i think it’s a racha’s angle for me
 \itemnum
     \ii $z^{(i)}\in \RR^n$, $i=1, \dots, n$ are data points; 
     \ii $y\in \RR^m$ is a ``response'' vector; 
@@ -347,6 +348,7 @@ The idea of projection is central in optimization, which is finding a point on a
 
 We have an important theorem concerning projections.
 \begin{theorem}[Projection Theorem]
+    \label{thm:proj}
     Let $\Xcal$ be an inner product space, $x$ be a given element in $\Xcal$, and $\Scal$ a subspace of $\Xcal$. 
     Then, there exists a unique vector $x^*\in \Scal$ which is the solution to the problem 
     \[ \min_{y\in\Scal} \|y-x\|.\] 
@@ -1104,14 +1106,201 @@ Similarly to using SVD, we're rotating our outputs here to make the system trian
 \newpage
 
 \section{Thursday, February 11th: Least-Squares and Variants}
-Todo.
-
 \subsection{Ordinary Least-Squares and Minimum-Norm Solutions}
+One classical \textbf{goal} of modeling is the following: given $A\in \RR^{m\times n}, y\in \RR^m$, find $x$ such that $Ax \approx y$. 
+In other words, if $A = [a_1 \;\dots\; a_n]$, then we are asking if $y$ can be written as the linear combination of the columns of $A$, i.e. $y \approx \sum_{i=1}^n x_i a_i$. 
+
+The least squares approach uses the Euclidean norm to rate our approximation, solving the optimization problem 
+\[ \min_x \|Ax - y\|_2.\] 
+Since the objective function is always $\geq 0$, we can solve the ``ordinary least-squares'' problem 
+\[ \min_x \|Ax-y\|^2_2 = \sum_{i=1}^m r_i^2, \quad r := Ax-y,\] 
+i.e. minimizing the sum of squared residuals. 
+
+Geometrically, since $Ax\in \Rcal(A)$, the problem amounts to finding the point $\tilde{y} = Ax^*$ in $\Rcal(A)$ at \emph{minimum distance} from $y$. 
+By the Projection Theorem (Theorem~\ref{thm:proj}), this is just the orthogonal projection of $y$ onto the subspace $\Rcal(A)$.
+Notice the similarity to projections on a line, where we minimize $\|ax-y\|_2^2$ for a single vector. 
+
+Another interpretation of this problem can be in terms of the rows $a_i^\T$ of $A$, as we were alluding to above. 
+The problem then becomes 
+\[ \min_x \; \sum_{i=1}^m (y_i - a_i^\T x)^2.\] 
+Here, we're trying to fit every component $y_i$ as some linear combination of the input $a_i$, where $x$ determines the coefficients. 
+
+This interpretation hails from machine learning, where this is often useful for prediction. 
+We have some training set where we find what the solution $x^*$ to the above problem is, and then we can predict the output corresponding to a new vector $a\in \RR^n$ (a \emph{test point}) by computing $\hat{y} = a^\T x^*$. 
+
+We usually write least-squares in the above form because it leads us to an easy proof of the closed-form solution. 
+As $y-Ax^* \in \Rcal(A)^\perp = \Ncal(A^\T)$, we have $A^\T (y - Ax^*) = 0$. 
+This leads us to the following result. 
+
+\begin{theorem}[Closed-Form Least Squares]
+Any solution to the least-squares problem must satisfy the \textbf{Normal Equations} 
+    \[ A^\T Ax = A^\T y.\] 
+This system always admits a solution, and if $A$ is additionally full column rank, then the solution is unique and is given by 
+\[ x^* = (A^\T A)^{-1} A^\T y.\] 
+\end{theorem}
+Recall that $A^\T A$ is invertible since if it is full rank, $\|Ax\|_2^2$ is never 0 if $x\not= 0$, so $x^\T A^\T A x > 0$ meaning $A^\T A$ is positive definite. 
+
+As a corollary, notice that the set of optimal solutions is 
+\[ \Xcal_{\opt} = A^\dagger y + \Ncal(A),\] 
+where $A^\dagger y$ is the minimum norm point in the optimal set. 
+Adding anything from the null space will still make it a solution that is optimal, just not necessarilly minimum norm. 
+
+We can also find solutions of OLS via QR decomposition. 
+Assume the columns of $A\in \RR^{m\times n}$ are linearly independent so that the QR factorization $A = QR$ exists, with 
+\begin{itemize}
+    \ii $m\times n$ matrix $Q$ satisfies $Q^\T Q = I$, 
+    \ii $n\times n$ matrix $R$ invertible,
+    \ii then $A^\dagger = (A^\T A)^{-1} A^\T = R^{-1} Q^\T$.
+\end{itemize}
+This gives us the following algorithm.
+\begin{itemize}
+    \ii compute the QR factorization of $A = QR$ ($2mn^2$ flops);
+    \ii form $z = Q^\T y$ ($2mn$ flops); 
+    \ii solve the triangular system $Rx = z$ via backward substitution. 
+\end{itemize}
+
+In total, our algorithm is identical for solving $Ax = b$ for square invertible $A$ and has complexity is $2mn^2$ flops.
 
 \subsection{Variants of Least-Squares}
+A generalization of the basic LS problem allows for the addition of linear equality constraints on $x$, resulting in the constrained problem 
+\[ \min_x \|Ax - y\|_2^2,\quad \text{s.t. } Cx = d,\] 
+where $C\in \RR^{p,n}$ and $d \in \RR^p$. 
+
+This may look difficult to solve now, but we can convert it into a standard LS problem by ``eliminating'' the equality constraints via a standard procedure. 
+Assume the problem is feasible, and let $\bar{x}$ be such that $C\bar{x} = d$, and let $N$ have columns which are a basis for $\Ncal(C)$. 
+Then all of the feasible points can be expressed as $x = \bar{x} + Nz$, so our unconstrained problem in the variable $z$ becomes 
+\[ \min_z \|\bar{A} z - \bar{y} \|_2^2,\] 
+where $\bar{A} = AN, \bar{y} = y - A\bar{x}$. 
+
+Another variant is \emph{Weighted Least-Squares}, where we want to give different weights to our residuals, instead minimizing $f_0(x) = \sum_{i=1}^m w_i^2 r_i^2$ where $w_i\geq 0$ are the given weights. 
+We can easily convert this as 
+\[ f_0(x) = \|W(Ax - y)\|^2_2 = \|A_w x - y_w \|_2^2,\] 
+where $W = \diag (w_1, \dots, w_m)$, $A_w = WA$, and $y_w = Wy$. 
+This is again our original LS problem with row-weighted matrix $A_w$ and vector $y_w$. 
+
+One popular variant of LS is the class of regularized LS problems, which are of the form 
+\[ \min_x\; \|Ax - y\|_2^2 + \phi(x),\] 
+where a ``regularization,'' or \emph{penalty} term $\phi(x)$ is added to our usual LS objective. 
+Typically $\phi(x)$ is proportional to either the $\ell_1$ or $\ell_2$ norm of $x$. 
+In the former case, the problem is known as LASSO. 
+We will instead discuss the latter case, known as \emph{ridge regression}. 
+
+Consider the problem 
+\[ \min_x \; \|Ax - y\|_2^2 +\la\|x\|_2^2, \quad \la \geq 0.\] 
+We can use the fact that the squared $\ell_2$ norm of block vectors is the sum of the squared norms of the blocks to rewrite our problem as 
+\[ \|Ax-y\|_2^2 + \la \|x\|_2^2 = \|\tilde{A}x - \tilde{y}\|_2^2,\] 
+where 
+\[ \tilde{A} = \colvec{2}{A}{\sqrt{\la} I_n}, \quad \tilde{y} = \colvec{2}{y}{0_n}.\] 
+By construction $\tilde{A}$ is full column rank due to the $I_n$. 
+Here, $\la\geq 0$ is a tradeoff parameter between output accuracy and input effort. 
+Since $\la$ is a hyperparameter, we typically try out a bunch of different values to find the one with the best test accuracy on unseen data. 
+
+Applying our solution from above, we find that the optimal solution is just 
+\[ x^* = (A^\T A + \la I_n)A^\T y,\] 
+which always exists and is unique since $\tilde{A}$ is always full column rank. 
 
 \subsection{Kernels for Least-Squares}
+Before we talk about kernel learning, we're going to try and motivate it. 
+Suppose we're making a nonlinear auto-regressive model for time-series, where $y_t$ is a \emph{quadratic} function of $y_{t-1}$ and $y_{t-2}$. 
+This can be modeled by 
+\[ y_t = w_1 + w_2 y_{t-1} + w_3y_{t-2} + w_4 y^2_{t-1} + w_5 y_{t-1}y_{t-2} + w_6 y_{t-2}^2.\] 
+We can't exactly model this by a LS formulation with just $x_t = \rowvec{2}{y_{t-1}}{y_{t-2}}^\T$, but if we augment our data with a function $\phi(x_t)$, where 
+\[ \phi(x_t) := (1,y_{t-1}, y_{t-2}, y^2_{t-1}, y_{t-1}y_{t-2}, y^2_{t-2}),\] 
+then we can write it as $y_t = w^\T \phi(x_t)$. 
+Thus, we can just solve the classic LS problem 
+\[ \min_w \sum_{t=1}^T (y_t - w^\T \phi(y_t))^2,\] 
+where our model is nonlinear in the data, but is linear in the model coefficients. 
+If it was nonlinear in the coefficients, this would be a neural network. 
 
+With this realization, we can create non-linear (e.g. quadratic) decision boundaries, such as 
+\[ w_1x_1 + w_2x_2 + w_3x_1^2 + w_4 x_1x_2 + w_5x_2^2 = b = 0.\]
+This can be written as $w^\T \phi(x) + b = 0$ where $\phi(x) := (x_1, x_2, x_1^2, x_1x_2, x_2^2)$. 
+
+\begin{figure}[!htb]
+    \centering 
+    \includegraphics[scale=0.35]{kernel.png}
+    \caption{An example of moving to a higher dimension to create a linear decision boundary separating the data. Image taken from \href{https://medium.com/@zxr.nju/what-is-the-kernel-trick-why-is-it-important-98a98db0961d}{this medium article by Grace Zhang}.}
+\end{figure}
+
+If we can do this, then in theory it seems we could always augment our input with enough dimensions to make any data separable. 
+The question is how to do this in a computationally feasible manner. 
+
+First, let's look at the regularized learning setting for inspiration.  
+The setup is to find
+\[ w^* = \min_w \|X^\T w - y\|^2_2 + \la \|w\|^2_2\] 
+where 
+\begin{itemize}
+    \ii $X = [x_1, \dots, x_n]$ is a $p\times n$ matrix of data points,
+    \ii $y\in \RR^n$ is the response vector (or labels), 
+    \ii $w\in \RR^p$ is the classifier or regression coefficients, 
+    \ii $\la\geq 0$ is a regularization parameter. 
+\end{itemize}
+
+With the optimal coefficients $w^*$, prediction simply requires computing $\hat{y} = (w^*)^\T x$ where $x\in \RR^p$ is a new data point. 
+
+In general, the key result is that for any generic problem 
+\[ \min_w \Lcal(X^\T w, y) + \la \|w\|_2^2\] 
+where $\Lcal$ is any loss function, the optimal $w$ lies in the span of the data points $(x_1,\dots, x_n)$, i.e. $w = Xv$ for some $v\in\RR^n$. 
+In the above problem, we used $\Lcal(z,y) = \|z-y\|^2_2$, i.e. the squared $\ell_2$-norm. 
+\begin{proof}
+    Invoke the fundamental theorem of linear algebra, and write $w\in \RR^p$ as the sum of two orthogonal vectors, one in the range of $X$ and another orthogonal to it. 
+    Then
+    \[ w = Xv + r,\]
+    where $v\in \RR^n$ and $X^\T r = 0$ (since $r\in \Rcal(X)^\perp = \Ncal(X^\T)$).
+    Applying this to our problem above and instead minimizing over $v$ and $r$ gives 
+    \[ \min_{v,r} \Lcal(X^\T (Xv+r), y) + \la (\|Xv+r\|_2^2) = \min_{v,r} \Lcal(X^\T Xv, y) + \la (\|Xv\|^2_2+\|r\|_2^2) ,\] 
+    where we used the Pythagorean theorem in the last step since $Xv$ and $r$ are orthogonal. 
+    Hence, setting $r = 0$ is optimal, and hence $w = Xv$ as we claimed.
+\end{proof}
+
+Using this result, we can show that our training problem rewrites as 
+\[ \min_v \Lcal(Kv, y) + \la v^\T K v\]
+which depends only on the $n\times n$ (PSD) ``kernel'' matrix $K := X^\T X$. 
+Note that 
+\[ K_{ij} = x_i^\T x_j, \quad 1\leq i,j\leq n,\] 
+that is, $K$ contains the scalar products between all data point pairs. 
+
+Now, our prediction/classification rule depends solely on the scalar products between any new point $\tilde{x}$ and our training data points $x_1, \dots, x_n$. 
+Since $w = Xv$, we have
+\[ w^\T \tilde{x} = v^\T X^\T \tilde{x} = v^\T k, \quad \text{ where } k := X^\T \tilde{x} = (x_1^\T \tilde{x},\dots, x_n^\T \tx).\]
+
+Note the computational advantage here! 
+Once $K$ is formed (this takes $O(n^2p)$), then the training problem only has $n$ variables. 
+When $p \gg n$, this leads to a dramatic reduction in problem size.
+
+We haven't touched upon how this lets us create a richer class of models yet, so let's revisitt that. 
+In the nonlilnear case, we can replace the feature vectors $x_i$ by some ``augmented'' feature vectors $\phi(x_i)$, with $\phi$ a non-linear mapping. 
+
+For example, recall in classification with a quadratic decision boundary, we optimized 
+\[ \min_w \sum_{i=1}^n (y_i - \phi(x_i)^\T w)^2 \text{  where  } \phi(x) := (x_1, x_2, x_1^2, x_1x_2, x_2^2). \]
+This leads to the modified kernel matrix 
+\[ K_{ij} = \phi(x_i)^\T \phi(x_j), \; 1\leq i,j\leq n,\]
+which, like the old kernel matrix, gives us scalar products between data points, except now the points are augmented. 
+
+Since we only need to know the scalar products, actually all we need is the \emph{kernel function} associated with mapping $\phi$, which is 
+\[ k(x,z) = \phi(x)^\T \phi(z).\] 
+It gives us information about the metric in the feature space, e.g. 
+\[ \| \phi(x) - \phi(z) \|^2_2 = k(x,x) - 2k(x,z) + k(z,z).\] 
+However, this function $k(\cdot, \cdot)$ can't be constructed arbitrarily; it has to satisfy our above condition for some $\phi$. 
+
+Finally, suppose we have two different augmented points $\phi(x)$ and $\phi(z)$ for some given two vectors $x,z\in\RR^2$.
+Then it turns out (and is easily verified upon inspection) that  
+\[ k(x,z) = \phi(x)^\T \phi(z) = (1 + x^\T z)^2.\] 
+So instead of needing to expand $\phi(x)$ which is an expensive operation scaling exponentially, we can instead just work with this dot product formula which is more efficient (i.e. linear in the dimension of our vectors, in this case 2).  
+
+More generally, when $\phi(x)$ is the vector formed with all the products between the components of $x\in \RR^n$ up to degree $d$, then for any two vectors $x,z\in \RR^n$, 
+\[ \phi(x)^\T \phi(z) = (1+x^\T z)^d.\] 
+Our computational effort grows linearly in $n$ since we just need to form this dot product. 
+
+Compare this with the ``brute force'' approach, where we first form $\phi(x),\phi(z)$ and then evaluate $\phi(x)^\T \phi(z)$. 
+Here, the computational effort grows as $n^d$! 
+In other words, we found a way to reduce an exponential effort to a linear one; pretty good I'd say. 
+
+This is what most people will refer to as the \emph{kernel trick}, which allows us to pseudo-augment our data points into infinite-dimensional spaces. 
+For example, we could also consider using the Gaussian kernel function (radial basis function) 
+\[ k(x,z) = \exp \left(-\dfrac{\|x-z\|^2_2}{2\si^2}\right),\] 
+where $\si>0$ is a scale parameter. 
+In order to approximate this kernel function by some $\phi$, we'd need to use a series for the exponential that goes on infinitely, i.e. $\phi$ is mapping into an infinite-dimensional space. 
 
 \newpage
 \section{Tuesday, February 16th: Linear Algebra Review}
@@ -1421,7 +1610,7 @@ Then we can substitute this in for $x$ in $f_0$ to get the unconstrained problem
 where 
 \[ \bar{H} = N^\T H N,\; \bar{c} = N^\T (c + H\bar{x}),\; \bar{d} = d + c^\T \bar{x} + \frac 12 \bar{x}^T H \bar{x}.\] 
 
-\subsection{Minimal cardinality solutions and $\ell_1$-norm problems}
+\subsection{Minimal cardinality solutions and \texorpdfstring{$\ell_1$}{l1}-norm problems}
 
 Many engineering problems will concern themselves with finding solutions which are \emph{sparse}, i.e. contain few non-zero entries (low-cardinality solutions). 
 This is a very natural requirement, since minimal representations tend to be the best explanations. 
@@ -1682,6 +1871,174 @@ The summary is that PCA gives you the directions of most variance (in an unsuper
 LASSO provides intepretability and sparsity, but requires labels in order to do so (and hence is supervised). 
 
 There is something called sparse PCA which can give you directions with sparser projections though, which could be considered somewhere in between the two.
+
+\newpage
+\section{Thursday, March 4th: Robust Optimization Models}
+
+\subsection{Robust optimization framework}
+Consider a ``nominal'' optimization problem (meaning the original, idealistic no-noise model) 
+\[ \min_x f_0(x) \; : \; f_i(x) \leq 0, i = 1,\dots, m.\] 
+In practice, our problem data is \emph{uncertain}, i.e. 
+\begin{itemize}
+    \ii \emph{Estimation} errors affect problem parameters
+    \ii \emph{Implementation} errors affect the decision taken.
+\end{itemize}
+
+Uncertainties often lead to highly unstable solutions or much degraded realized performance. 
+These problems are even compounded in problems with multiple decision periods! 
+
+We call this the \emph{curse of uncertainty}, and the goal of today's lecture is to formalize a framework for fixing nominal problems to be more robust.
+
+Consider the nominal optimization problem from above
+\[ \min_x f_0(x) \; :\; f_i(x) \leq 0, i=1,\dots, m.\] 
+It is possible now that each of these values in our functions is uncertain and has unknown parts. 
+For example, if $f_0(x)$ is modeled as $c^\T x$ where $c$ is known, it's possible that there is an unknown $u$ (noise or uncertainty) for which our function is actually $f_0(x,u) = (c+u)^\T x$, for $\|u\|_\infty \leq .01$. 
+
+Our functions $f_i$ then depend on a second variable $u$, the ``uncertainty'', which is constrained to lie in a given set $\Ucal$. 
+This creates the \emph{robust counterpart} to our optimization problem:
+\[ \min_x\; \max_{u\in \Ucal} f_0(x,u) \; : \; \forall u\in \Ucal,\; f_i(x,u) \leq 0, i = 1,\dots, m.\] 
+
+You could think of this as playing a game, where the uncertainty is trying to make your life as hard as possible, and you need to minimize your objective in light of that. 
+
+This inherits convexity from the nominal, and is very tractable in some practically relevant cases. 
+In general though, the robust counterpart has high complexity, but there are systematic ways to get relaxations. 
+
+You could also consider other cost functions instead of a $\max$ over all $u$'s (which is a worst-case estimate); other options are to integrate over all values of $f_0$, or averaging. 
+
+Let's look at robustifying linear programs in particular. 
+Take the nominal problem 
+\begin{align}
+\text{(nominal) }\min_x c^\T x : a_i^\T \leq b_i, i = 1, \dots, m.
+\label{eq:nomLP}
+\end{align}
+
+Assume for now that $a_i$ is only know to belong to a given set $\Ucal_i \subseteq \RR^n$ (we will soon generalize to errors everywhere). 
+For example, we could have $a_i \in \Ucal_i = \{\hat{a}_i + u_i : \|u_i\|_\infty \leq \eps\}.$
+Then our robust counterpart to~(\ref{eq:nomLP}) would be 
+
+\[ \text{(robust) }\min_x c^\T x : \forall a_i\in \Ucal_i, a_i^\T x \leq b_i, i = 1,\dots, m.\] 
+
+If we assume instead that the cost vector $c$ in~(\ref{eq:nomLP}) is only known to belong to a given set $\Ucal \subseteq \RR^n$, then our robust counterpart would be 
+\[ \text{(robust) }\min_x \max_{c\in\Ucal} c^\T x : a_i^\T x \leq b_i, i = 1,\dots, m.\] 
+
+In general we can extend this robust approach to uncertainties affecting the cost vectors, coefficient matrix, and the right-hand side vector $b$. 
+The solution may be hard, but it becomes easy for special uncertainty sets, which we'll examine now. 
+
+\subsection{Special Uncertainty Sets for Robust LPs}
+Let's examine the robust counterpart to a single inequality constraint 
+\[ \forall a\in \Ucal,\; a^\T x \leq b\]
+where $\Ucal$ takes the following forms: 
+\begin{itemize}
+    \ii scenario uncertainty: $\Ucal$ is a finite set ``scenarios''; 
+    \ii $\Ucal$ is a box.
+    \ii $\Ucal$ is a sphere, or more generally an ellipsoid; 
+\end{itemize}
+
+The above constraint can be written as 
+\[ b \geq \max_{a\in \Ucal} a^\T x.\] 
+
+\begin{itemize}
+    \ii \textbf{Scenario uncertainty}: This model assumes that the coefficient vector $a$ is only known to lie in a finite sets in $\RR^n$, say 
+    \[ \Ucal = \{a^{(1)}, \dots, a^{(K)}\}\]
+    with $a^{(k)}$ a ``scenario'', $k = 1,\dots, K$. 
+    We then have 
+    \[ \max_{a\in \Ucal} a^\T x = \max_{1\leq k \leq K} (a^{(k)})^\T x.\] 
+    For example, when $\Ucal$ is a finite set of three scenarios, our feasibly set $\{x: a^\T x \leq b \forall a\in \Ucal\}$ will be a polyhedron made up of three half-spaces. 
+
+    \ii \textbf{Box uncertainty}: This model assumes that the coefficient vector $a_i$ is only known to lie in a ``box'' (or hyper-rectangle in $\RR^n$). 
+    In its simplest case, this uncertainty model has the form 
+    \[ \Ucal = \{a : \|a-\hat{a}\|_\infty \leq \rho\} = \{a + \rho u : \|u\|_\infty \leq 1\},\] 
+    where $\rho \geq 0$ is a measure of the size of the uncertainty, and $\hat{a}$ is the nominal value of the coefficient vector. 
+    We have 
+    \[ \max_{a\in \Ucal} a^\T x = \hat{a}^\T x + \rho\cdot \left(\max_{u:\|u\|_\infty \leq 1} u^\T x\right) = \hat{a}^\T x + \rho\|x\|_1.\] 
+    When $\Ucal$ is a box, the set $\{x:a^\T x \leq b \; \forall a\in\Ucal\}$ is a polyhedron with at most $2^n$ vertices.
+
+    \ii \textbf{Spherical uncertainty}: This model has similar assumptions to the box uncertainty, except that the coefficient vector $a_i$ is only known to lie in a sphere, i.e. 
+    \[ \Ucal = \{a : \|a-\hat{a}\|_2 \leq \rho\} = \{a + \rho u : \|u\|_2 \leq 1\},\] 
+    where $\rho \geq 0$ is a measure of the size of the uncertainty, and $\hat{a}$ is the nominal value of the coefficient vector. 
+    We have 
+    \[ \max_{a\in \Ucal} a^\T x = \hat{a}^\T x + \rho\cdot \left(\max_{u:\|u\|_2 \leq 1} u^\T x\right) = \hat{a}^\T x + \rho\|x\|_2 \leq b\] 
+    by Cauchy-Schwarz (Theorem~\ref{thm:cs}). 
+
+    Notice that this condition is an SOCP constraint, which alludes to why they're so well studied currently. 
+    So when $\Ucal$ is a sphere, the feasible set is defined by a single SOCP constraint. 
+
+    \ii \textbf{Ellipsoidal uncertainty}: The uncertainty set in this model has form 
+    \[ \Ucal = \{a : (a-\hat{a})^\T P^{-1} (a-\hat{a}) \leq 1\}, \] 
+    where $\hat{a}$ is the nominal coeffficient vector as usual, and $P = P^\T \succ 0$ determines the shape and size of the ellipse. 
+    Since $P\succ 0$, we can write $P = R^\T R$ for some matrix $R$ and get 
+    \[ \Ucal = \{a = \hat{a} + Ru : \|u\|_2 \leq 1\},\] 
+    as $u = R^{-1}(a-\hat{a})$ gives back our original condition. 
+    So 
+    \[ \max_{a\in \Ucal} a^\T x = \hat{a}^\T x + \max_{u: \|u\|_2 \leq 1} (Ru)^\T x = \hat{a}^\T x + \|R^\T x \|_2.\] 
+\end{itemize}
+
+Next we can discuss what robust LP looks like with each of these uncertainty constraints, and look at the geometry of the feasible sets. 
+
+The robust LP with box uncertainty 
+\begin{align*}
+    \min_x\; c^\T x \quad\text{ s.t.: } \forall a_i\in \Bcal_i,\; a_i^\T x \leq b_i \quad i = 1,\dots, m,
+\end{align*}
+where $\Bcal_i = \{\hat{a}_i + \rho_i u : \|u\|_\infty \leq 1\}$ is 
+\begin{align*}
+    \min_x\; c^\T x \quad\text{ s.t.: } \hat{a}_i^\T x + \rho_i\|x\|_1 \leq b_i \quad i = 1,\dots, m.
+\end{align*}
+
+This can be expressed in standard LP form with our usual tricks as 
+\begin{align*}
+    \min_x\; c^\T x \quad\text{ s.t.: } &\hat{a}_i^\T x + \rho_i\sum_{j=1}^nx \leq b_i \quad i = 1,\dots, m, \\
+                                        & -u_j \leq x_j \leq u_j, \quad j = 1, \dots, n.
+\end{align*}
+\todo{insert picture of geometry for box uncertain robust LP}
+Then discuss ellipsoidal uncertainty, add in spherical geometry.
+
+\subsection{Chance-constrained LP}
+Chance constrained linear programs arise naturally from standard LPs when some of the data could be uncertain and random. 
+Then we want to model some of our variables as random variables, which generally would make the problem too hard to solve, but under certain assumptions we can arrive at some results.
+
+As always, consider the standard inequality form LP 
+\[ \min_x\; c^\T x \quad \text{s.t.: } a_i^\T x \leq b_i, \; i = 1,\dots, m.\] 
+Suppose that the problem data vectors $a_i$ are not knonw precisely, but rather are random vectors modeled by multivariate Gaussians with mean value $\EE\{a_i\} = \bar{a}_i$ and covariance matrix $\var\{a_i\} = \Sigma_i \succ 0$. 
+In this case, the scalar $a_i^\T x$ is also a random variable, specifically a normal random variable with 
+\[ \EE\{a_i^\T x\} = \bar{a}_i^\T x, \quad \var\{a_i^\T x\} = x^\T \Sigma_i x.\] 
+
+However, this means it makes no sense to impose a constraint of the form $a_i^\T x\leq b_i$, since the LHS is a normal random variable and can assume any value. 
+So this constraint can always be violated by some outcomes of our random data $a_i$. 
+Instead, we only ask for this constraint to be satisfied up to a given level of probability $p_i \in (0,1)$ chosen \emph{a priori} by the user. 
+This represents the probabilistic \emph{reliability} at which the constraint will be satisfied despite random fluctuations in data. 
+
+In summary, we can define chance-constrained LPs as follows: 
+\begin{definition}[Chance-constrained LPs]
+    The \emph{chance-constrained} (or probability constrained) counterpart of the standard nominal LP is 
+    \begin{align}
+    \min_x\; c^\T x \quad\text{ s.t.: } \Pr\{a_i^\T x \leq b_i\} \geq p_i, \quad i = 1,\dots, m,
+    \label{eq:chanceLP}
+    \end{align}
+where $p_i$ are the assigned reliability levels. 
+\end{definition}
+
+We have the following result that demonstrates this chance-constrained LP can be modeled by an SOCP. 
+
+\begin{theorem}[Chance-constrained LPs are SOCP]
+    Consider the problem in~(\ref{eq:chanceLP}), under the assumptions that $p_i > 0.5$ for $i = 1,\dots, m$, and that $a_i$ are independent, normal random vectors with means $\bar{a}_i$ and covariance matrices $\Sigma_i \succ 0$. 
+    Then the chance-constrained LP presented in~(\ref{eq:chanceLP}) is equivalent to the SOCP 
+    \begin{align*}
+        \min_x\; c^\T x\quad \text{ s.t.: } \bar{a}_i^\T x \leq b_i - \Phi^{-1}(p_i) \|\Sigma_i^{1/2} x\|_2,\quad i = 1,\dots, m,
+    \end{align*}
+    where $\Phi^{-1}(p)$ is the inverse cumulative probability distribution of a standard normal variable.
+\end{theorem}
+
+\begin{proof}
+
+\end{proof}
+
+\subsection{Robust Least-Squares}
+
+\section{March 9th: Review}
+We just did review. 
+
+\section{March 11th: Midterm 1}
+We had our midterm. 
 
 \newpage
 \section{Matrix Cheat Sheet}
