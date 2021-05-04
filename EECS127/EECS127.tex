@@ -869,7 +869,10 @@ Since we don't care about these last few columns of $U$ corresponding to the zer
     where $r = \rank(A), U_r = [u_1\; \dots\; u_r]$ is such that $U_r^\T U_r = I_r$, $V_r = [v_1\; \dots\; v_r]$ is such that $V_r^\T V_r = I_r$, and $\si_1 \geq \dots \geq \si_r > 0$. 
 
     The positive number $\si_i$ are the \emph{singular values} of $A$, vectors $u_i$ are the \emph{left singular vectors} of $A$, and $v_i$ the \emph{right singular vectors}. These quantities satisfy 
-    \[ Av_i = \si_i u_i, \quad u_i^\T A = \si_i v_i, \quad i = 1, \dots, r.\]
+    \begin{align}
+        \label{eq:svdeig}
+        Av_i = \si_i u_i, \quad u_i^\T A = \si_i v_i, \quad i = 1, \dots, r.
+    \end{align}
 
     Morever, $\si_i^2 = \la_i(AA^\T) = \la_i(A^\T A), \; i = 1,\dots, r$, and $u_i, v_i$ are the eigenvectors of $A A^\T$ and of $A^\T A$, respectively.
 \end{theorem}
@@ -897,29 +900,61 @@ To summarize, the SVD theorem allows us to write any matrix as a sum of dyads $A
 In practice, we'll employ algorithms to compute the SVD of matrices for us.
 The complexity of the algorithm which computes it via a sequence of linear transformation is $O(nm\min(n,m))$, but this can be sped up for sparse matrices if we're only interested in the largest few singular values. 
 
-\subsection{Matrix properties via SVD}
+\subsection{Range and Null Space Bases via SVD}
 We can infer many things from the SVD. 
 For example, the rank $r$ of $A$ is the number of nonzero singular values, i.e. nonzero entries on the diagonal of $\tsig$. 
 
 The SVD also gives us a basis for the range and nullspace of $A$.
 Recall that the range of $A$ is $\Rcal(A) = \{Ax : x\in \RR^n\}$. 
+We have this fundamental result relating to SVD (similar results hold for the row and left null space): 
+\begin{theorem}[Column and Null Space from SVD]
+Let $A\in\RR^{m,n}$ have full SVD $U\Sigma V^\T$. 
 Then the first $r$ columns of $U$ give an orthonormal basis spanning the range of $A$, i.e. 
 \[ \Rcal(A) = \Rcal(U_r), \quad U_r = \rowvec{3}{u_1}{\dots}{u_r}.\] 
 
 Since $r = \rank\; A$, by the fundamental theorem the dimension of the nullspace is $n-r$. 
 An orthonormal basis spanning $\Ncal(A)$ is given by the last $n-r$ columns of $V$, i.e. 
 \[ \Ncal(A) = \Rcal(V_{nr}),\quad V_{nr} = \rowvec{3}{v_{r+1}}{\dots}{v_n}.\] 
+\end{theorem}
 
 These two facts are not immediately obvious, but here's some intuition. 
+Special thanks to Daniel Zhu for helping out with the presented argument. 
+
+First, we'll see why $\Rcal(A) = \Rcal(U_r)$. 
+The most important step is to realize that $\Rcal(U\Sigma V^\T) = \Rcal(U\Sigma )$.
+A simple argument will suffice.
+If $y\in \Rcal(U\Sigma)$, then $y = U\Sigma x$. 
+Now there  must be $x' \in \RR^n$ for which $Vx = x'$, so $x = V^\T x'$ and $y = U\Sigma V^\T x'$ as desired. 
+The other direction is similar (in general, this holds for any invertible matrix).
+
+Now only the first $r$ columns of $\Sigma$ are nonempty, so $\Sigma$ wipes out the last $n-r$ columns of $U$, and only the first $r$ matter. 
+In equations, that means
+\[ \Rcal(U\Sigma) = \left\{ U\Sigma x \;|\; x\in \RR^n \right\} = \left\{ \sum_{i=1}^r u_i \si_i x_i \;|\; x\in \RR^r \right\} = \left\{\sum_{i=1}^r u_i x'_i \; |\; x'\in \RR^r\right\} = \Rcal(U_r).\]
+
+Here's a concrete example which might help.
 Let $A$ be a $3\times 5$ matrix with entries
 \[ A = \bpm 1 & 0 & 0 & 0 & 0 \\ 0 & .1 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 & 0 \epm.\] 
 The rank of $A$ is clearly 2, and the range is $\Rcal(A) = \{Ax: x\in \RR^5\}$, which expands to 
 \[ \left\{Ax = \colvec{3}{x_1}{.1x_2}{0} : x_1, x_2\in \RR\right\} = x_1e_1 + (.1x_2) e_2,\] 
 meaning that $\{e_1, e_2\}$ is an orthonormal basis for the range.
-When we add back in the $U$ and $V^\T$, all that happens to the basis is it gets rotated. 
+When we add back in $V^\T$, all that happens to the basis is it gets rotated, but the range is still the same.
+When we add back in $U$, $A$ selects out only the first 2 columns of $U$, so multiplying by arbitrary vector results in linear combinations of $u_1$ and $u_2$.
 
-(I will say it's still not clear to me personally yet why this means the columns of $U$ and $V$ should be the basis, but I'm thinking about it). 
+Now let's see why $\Ncal(A) = \Rcal(V_{nr})$.  
+Using the full SVD, where $\Sigma = [s_1\; \dots\; s_n]$, we can break it down as 
+\begin{align*}
+    A &= U\Sigma V^\T \\ 
+    AV &= U\Sigma \\ 
+    \rowvec{5}{Av_1}{\dots}{Av_r}{\dots}{Av_n} &=  \rowvec{5}{Us_1}{\dots}{Us_r}{\dots}{Us_n}
+\end{align*}
+All the columns of $\Sigma$ after $s_r$ are empty, so $Av_i = 0$ for $i = r+1, \dots, n$. 
+Since these are $n-r$ orthonormal vectors which are linearly independent and belong to $\Ncal(A)$, they must span $\Ncal(A)$.
 
+Another similar proof (presented by Daniel) is to take $x\in \Rcal(V_{nr})$, which can be written as $x = \sum_{i=r+1}^n c_i v_i$. 
+Then $Ax = \sum_{i=r+1}^n c_i (Av_i) = 0$ for the same reason as above, so $\Rcal(V_{nr})$ contains the null space, but is also dimension $n-r$, so $V_{nr}$ forms a basis.
+
+\subsection{Matrix Norms via SVD}
+\label{subsec:svd_norms}
 We can also look at matrix norms using SVD. 
 The \emph{squared Frobenius} matrix norm of a matrix $A\in \RR^{m,n}$ can be defined as 
 \[ \|A\|_F^2 = \sum_{i,j} A_{i,j}^2 = \tr\; A^\T A = \sum_{i=1}^n \la_i (A^\T A) = \sum_{i=1}^n \si_i^2,\] 
@@ -956,7 +991,20 @@ We can use this idea to define a useful matrix property.
 The condition number provides a quantitative measure of how close $A$ is to being singular. 
 The larger $\kappa(A)$ is, the more close to singular $A$ is. 
 
-It also provides a measure of the sensitivity of the solution of a system of linear equations to changes in the equatin coefficients.
+It also provides a measure of the sensitivity of the solution of a system of linear equations to changes in the equation coefficients.
+Suppose we're solving the linear equation $Ax = b$ where we know there is some error $e$ in $b$. 
+The condition number (roughly) gives the rate at which the solution $x$ will change with respect to a change in $b$ (i.e. error). 
+More precisely, we define it to be the maximum ratio of the relative rror in $x$ to the relative error in $b$. 
+
+Since if $A$ is nonsingular the error in the solution $A^{-1} b$ is $A^{-1} e$, the ratio above is 
+\[ \frac{\|A^{-1}e\|}{\|A^{-1} b\|} / \frac{\|e\|}{\|b\|} = \frac{\|A^{-1} e\|}{\|e\|} \frac{\|b\|}{\|A^{-1} b\|}.\] 
+Then the maximum such ratio is 
+\begin{align*}
+    \max_{e,b\not= 0} \frac{\|A^{-1} e\|}{\|e\|} \frac{\|b\|}{\|A^{-1} b\|} &= \max_{e\not=0} \frac{\|A^{-1} e\|}{\|e\|} \max_{b\not= 0}\frac{\|b\|}{\|A^{-1} b\|} \\ 
+                                                                            &= \max_{e\not=0}  \frac{\|A^{-1} e\|}{\|e\|}\max_{x\not= 0}\frac{\|Ax\|}{\|x\|} \\ 
+                                                                            &= \|A^{-1}\| \|A\| = \kappa(A)
+\end{align*}
+as we showed above.
 
 There are other matrix properties we could derive, such as the Moore-Penrose pseudo-inverse, but we did not go over them in lecture (although I added condition number here for my own notes).
 
@@ -1269,7 +1317,7 @@ Once $K$ is formed (this takes $O(n^2p)$), then the training problem only has $n
 When $p \gg n$, this leads to a dramatic reduction in problem size.
 
 We haven't touched upon how this lets us create a richer class of models yet, so let's revisitt that. 
-In the nonlilnear case, we can replace the feature vectors $x_i$ by some ``augmented'' feature vectors $\phi(x_i)$, with $\phi$ a non-linear mapping. 
+In the nonlinear case, we can replace the feature vectors $x_i$ by some ``augmented'' feature vectors $\phi(x_i)$, with $\phi$ a non-linear mapping. 
 
 For example, recall in classification with a quadratic decision boundary, we optimized 
 \[ \min_w \sum_{i=1}^n (y_i - \phi(x_i)^\T w)^2 \text{  where  } \phi(x) := (x_1, x_2, x_1^2, x_1x_2, x_2^2). \]
@@ -1304,7 +1352,7 @@ In order to approximate this kernel function by some $\phi$, we'd need to use a 
 
 \newpage
 \section{Tuesday, February 16th: Linear Algebra Review}
-Today is a linear algebra review.
+Today is a linear algebra review for the quiz on Thursday.
 
 Recall that projections are solving the optimization problem where given a point $x$, and some line going through $x_0$ in the direction of $v$ ($\|v\|_2 = 1$), we want to find the point $z$ on that line closestt to $x$. 
 The line is defined by $\Lcal = \{x_0 + tv : t\in \RR\}$, and our optimal $z$ will look like $z = x_0 + t^* v$. 
@@ -1323,11 +1371,6 @@ We know that $x_0 = \alpha a$ (by the fundamental theorem of linear algebra), so
 \[ \alpha a^\T a = b \implies \alpha = \frac{b}{\|a\|_2^2},\; x = \frac{ba}{a^\T a}.\]
 
 The rest of today was review of previous days, so I didn't take notes.
-
-\section{Thursday, February 18th: Quiz}
-We just took a quiz today. 
-That is all. 
-
 
 \newpage
 \section{Tuesday, February 23rd: Linear Programs}
@@ -1908,11 +1951,11 @@ You could also consider other cost functions instead of a $\max$ over all $u$'s 
 Let's look at robustifying linear programs in particular. 
 Take the nominal problem 
 \begin{align}
-\text{(nominal) }\min_x c^\T x : a_i^\T \leq b_i, i = 1, \dots, m.
+\text{(nominal) }\min_x c^\T x : a_i^\T x \leq b_i, i = 1, \dots, m.
 \label{eq:nomLP}
 \end{align}
 
-Assume for now that $a_i$ is only know to belong to a given set $\Ucal_i \subseteq \RR^n$ (we will soon generalize to errors everywhere). 
+Assume for now that $a_i$ is only known to belong to a given set $\Ucal_i \subseteq \RR^n$ (we will soon generalize to errors everywhere). 
 For example, we could have $a_i \in \Ucal_i = \{\hat{a}_i + u_i : \|u_i\|_\infty \leq \eps\}.$
 Then our robust counterpart to~(\ref{eq:nomLP}) would be 
 
@@ -1942,16 +1985,31 @@ The above constraint can be written as
     \[ \Ucal = \{a^{(1)}, \dots, a^{(K)}\}\]
     with $a^{(k)}$ a ``scenario'', $k = 1,\dots, K$. 
     We then have 
-    \[ \max_{a\in \Ucal} a^\T x = \max_{1\leq k \leq K} (a^{(k)})^\T x.\] 
-    For example, when $\Ucal$ is a finite set of three scenarios, our feasibly set $\{x: a^\T x \leq b \forall a\in \Ucal\}$ will be a polyhedron made up of three half-spaces. 
+    \[ \max_{a\in \Ucal} a^\T x = \max_{1\leq k \leq K} (a^{(k)})^\T x \leq b.\] 
+    For example, when $\Ucal$ is a finite set of three scenarios, our feasible set $\{x: a^\T x \leq b,\; \forall a\in \Ucal\}$ will be a polyhedron made up of three half-spaces. 
+\end{itemize}
 
+\begin{minipage}{0.5\textwidth}%
+    \centering
+    \includegraphics[scale=0.7]{scenario_uncertainty.png}
+    \captionof{figure}{Scenario uncertainty.}
+\end{minipage}%
+\begin{minipage}{0.47\textwidth}
+    \centering
+    \includegraphics[scale=0.87]{box_uncertainty.png}
+    \captionof{figure}{Box uncertainty for $\rho=0,0.1,$ $0.2,\dots$. The straight line is $\rho=0$.}
+\end{minipage}
+
+\begin{itemize}
     \ii \textbf{Box uncertainty}: This model assumes that the coefficient vector $a_i$ is only known to lie in a ``box'' (or hyper-rectangle in $\RR^n$). 
     In its simplest case, this uncertainty model has the form 
     \[ \Ucal = \{a : \|a-\hat{a}\|_\infty \leq \rho\} = \{a + \rho u : \|u\|_\infty \leq 1\},\] 
     where $\rho \geq 0$ is a measure of the size of the uncertainty, and $\hat{a}$ is the nominal value of the coefficient vector. 
     We have 
-    \[ \max_{a\in \Ucal} a^\T x = \hat{a}^\T x + \rho\cdot \left(\max_{u:\|u\|_\infty \leq 1} u^\T x\right) = \hat{a}^\T x + \rho\|x\|_1.\] 
-    When $\Ucal$ is a box, the set $\{x:a^\T x \leq b \; \forall a\in\Ucal\}$ is a polyhedron with at most $2^n$ vertices.
+    \[ \max_{a\in \Ucal} a^\T x = \hat{a}^\T x + \rho\cdot \left(\max_{u:\|u\|_\infty \leq 1} u^\T x\right) = \hat{a}^\T x + \rho\|x\|_1 \leq b.\] 
+    When $\Ucal$ is a box, the set $\{x:a^\T x \leq b, \; \forall a\in\Ucal\}$ is a polyhedron with at most $2^n$ vertices.
+    For big enough $\rho$, some of the $a$'s will have different signs when taking inner products ($a^\T x$). 
+    The hyperplanes will then face opposite and enclose a space, leading to the box shape we see above.
 
     \ii \textbf{Spherical uncertainty}: This model has similar assumptions to the box uncertainty, except that the coefficient vector $a_i$ is only known to lie in a sphere, i.e. 
     \[ \Ucal = \{a : \|a-\hat{a}\|_2 \leq \rho\} = \{a + \rho u : \|u\|_2 \leq 1\},\] 
@@ -1963,6 +2021,12 @@ The above constraint can be written as
     Notice that this condition is an SOCP constraint, which alludes to why they're so well studied currently. 
     So when $\Ucal$ is a sphere, the feasible set is defined by a single SOCP constraint. 
 
+    \begin{figure}[!htb]
+        \centering
+        \includegraphics[scale=0.7]{spherical_uncertainty.png}
+        \caption{Spherical uncertainty.}
+    \end{figure}
+
     \ii \textbf{Ellipsoidal uncertainty}: The uncertainty set in this model has form 
     \[ \Ucal = \{a : (a-\hat{a})^\T P^{-1} (a-\hat{a}) \leq 1\}, \] 
     where $\hat{a}$ is the nominal coeffficient vector as usual, and $P = P^\T \succ 0$ determines the shape and size of the ellipse. 
@@ -1970,7 +2034,8 @@ The above constraint can be written as
     \[ \Ucal = \{a = \hat{a} + Ru : \|u\|_2 \leq 1\},\] 
     as $u = R^{-1}(a-\hat{a})$ gives back our original condition. 
     So 
-    \[ \max_{a\in \Ucal} a^\T x = \hat{a}^\T x + \max_{u: \|u\|_2 \leq 1} (Ru)^\T x = \hat{a}^\T x + \|R^\T x \|_2.\] 
+    \[ \max_{a\in \Ucal} a^\T x = \hat{a}^\T x + \max_{u: \|u\|_2 \leq 1} (Ru)^\T x = \hat{a}^\T x + \|R^\T x \|_2 \leq b,\] 
+    which is again an SOC constraint.
 \end{itemize}
 
 Next we can discuss what robust LP looks like with each of these uncertainty constraints, and look at the geometry of the feasible sets. 
@@ -1986,11 +2051,26 @@ where $\Bcal_i = \{\hat{a}_i + \rho_i u : \|u\|_\infty \leq 1\}$ is
 
 This can be expressed in standard LP form with our usual tricks as 
 \begin{align*}
-    \min_x\; c^\T x \quad\text{ s.t.: } &\hat{a}_i^\T x + \rho_i\sum_{j=1}^nx \leq b_i \quad i = 1,\dots, m, \\
+    \min_x\; c^\T x \quad\text{ s.t.: } &\hat{a}_i^\T x + \rho_i\sum_{j=1}^n u_j \leq b_i \quad i = 1,\dots, m, \\
                                         & -u_j \leq x_j \leq u_j, \quad j = 1, \dots, n.
 \end{align*}
-\todo{insert picture of geometry for box uncertain robust LP}
-Then discuss ellipsoidal uncertainty, add in spherical geometry.
+
+Looking at the geometry, we see that the robust counterpart's feasible set is inside the nominal feasible set, and has polyhedral boundaries; it's still an LP! 
+
+\begin{minipage}{0.5\textwidth}%
+    \centering
+    \includegraphics[scale=0.45]{robust_lp_box.png}
+    \captionof{figure}{Robust LP with box uncertainty.}
+\end{minipage}%
+\begin{minipage}{0.47\textwidth}
+    \centering
+    \includegraphics[scale=0.45]{robust_lp_spherical.png}
+    \captionof{figure}{Robust LP with spherical uncertainty (feat. my Paint skills).}
+\end{minipage}
+\vspace{0.2cm}
+
+On the other hand, with spherical uncertainty, the robust counterpart's feasible set is also inside the nominal feasible set, but its boundaries are smooth, making the solution unique. 
+This makes the robust solution less sensitive to data changes, while the nominal LP has many optimal point (red line), which means solutions may be very sensitive. 
 
 \subsection{Chance-constrained LP}
 Chance constrained linear programs arise naturally from standard LPs when some of the data could be uncertain and random. 
@@ -2028,17 +2108,180 @@ We have the following result that demonstrates this chance-constrained LP can be
     where $\Phi^{-1}(p)$ is the inverse cumulative probability distribution of a standard normal variable.
 \end{theorem}
 
-\begin{proof}
-
-\end{proof}
+Notice that this constraint can be rewritten as 
+\[ \bar{a}_i^\T x + \kappa_i \sqrt{x^\T \Sigma_i x} \leq b_i,\] 
+where $\kappa_i = \Phi^{-1}(p_i)$ represents the $z$-score of the reliability level $p_i$, and $\sqrt{x^\T \Sigma_i x}$ represents the standard deviation of $\bar{a}^\T x$. 
+This last term can be thought of as regularization.
 
 \subsection{Robust Least-Squares}
+Suppose we start with our standard LS problem 
+\[ \min_x \|Ax - y\|_2, \quad A\in \RR^{m,n},\; y\in\RR^m.\]
+Now assume that $A$ is only known to be within a certain ``distance'' to a given ``nominal'' matrix $\hat{A}$ (as we have throughout this lecture). 
+Mathematically, we will formulate that 
+\[ \|A - \hat{A} \|_2 \leq \rho,\] 
+where $\|\cdot\|_2$ denotes the $\ell_2$ operator norm (which coincides with the largest singular value norm, see Sec~\ref{subsec:svd_norms}), 
+and $\rho\geq 0$ measures the size of the uncertainty.
+Equivalently, $A = \hat{A} + \Delta$ where $\Delta$ is the uncertainty, and $\|\Delta\|_2 \leq \rho$. 
 
-\section{March 9th: Review}
+The \emph{robust least-squares} problem is then the following: 
+\[ \min_x \max_{\|\Delta \|_2 \leq \rho} \| (\hat{A} + \Delta)x - y \|_2.\] 
+
+We want to minimize (over $x$) our worst-case value of our residual error under the uncertainty of $\Delta$. 
+
+The solution is quite simple. 
+We can solve the inner maximization, first by using the convexity (or just the triangle inequality) of the Euclidean norm to get 
+\[ \|(\hat{A} + \Delta)x - y \|_2 \leq \|\hat{A}x - y\|_2 + \|\Delta x\|_2.\] 
+
+By properties of the operator norm, we can simplify this last term as 
+\[ \|\Delta x\|_2 \leq \|\Delta\| \cdot \|x\|_2 \leq \rho \|x\|_2.\] 
+Thus we obtain a bound on the objective value of our robust LS problem: 
+\[ \max_{\|\Delta \|_2 \leq \rho} \| (\hat{A} + \Delta)x - y \|_2 \leq \|\hat{A}x-y\|_2 + \rho \|x\|_2.\] 
+This is actually achieved for some choice of $\Delta$, so our original robust LS problem is equivalent to  
+\[ \min_x \|\hat{A} x - y\|_2 + \rho\|x\|_2,\] 
+i.e. our nominal problem with some regularization penalty. 
+This, in turn, can be easily cast into SOCP form as 
+\[ \min_{x,u,v}\quad u + \rho v \quad \text{s.t. } u\geq \|\hat{A}x -y\|_2,\; v \geq \|x\|_2.\] 
+
+\section{Tuesday, March 9th: Review}
 We just did review. 
 
-\section{March 11th: Midterm 1}
+\section{Thursday, March 11th: Midterm 1}
 We had our midterm. 
+
+\newpage
+\section{Tuesday, March 16th: Convexity}
+Today, we will be talking about the key feature that makes an optimization problem ``nice'', which is a property called \emph{convexity}. 
+In this lecture, we characterize convex sets and convex functions. 
+In the next, we'll define convex optimization problems as those where a convex objective function is minimized over a convex set. 
+This will be useful, as certain types of convex models will have special tech which makes solving and modeling them much easier. 
+
+\subsection{Convex Sets}
+
+\subsection{Convex Functions}
+
+One operation that preserves convexity is an affine variable transformation. 
+Let $f:\RR^n\to\RR$ be convex, and define 
+\[ g(x) = f(Ax+b), \quad A \in \RR^{n,m}, b\in \RR^n.\] 
+Then $g$ is convex over $\dom g = \{x : Ax + b \in \dom f\}$. 
+\begin{example}[Examples of Affine Convex Operations]
+    We have $f(z) =  -\log (z)$ is convex over $\dom f = \RR_{>0}$, so $f(x) = -\log(ax+b)$ is also convex over $ax+b>0$. 
+
+    Another common example is the use of convex loss functions in machine learning. 
+    For any convex function $\Lcal :\RR\to\RR$, the function 
+    \[ (w,b) \in \RR^n \times \RR \to \sum_{i=1}^m \Lcal(w^\T x_i + b),\] 
+    where $x_1, \dots, x_m\in\RR^n$ are given data points, is convex. 
+    For example, one common case would be the least squares loss $\Lcal(z) = \|z-y\|_2^2$. 
+\end{example}
+
+If $(f_\alpha)_{\alpha\in\Acal}$ is a family of convex functions, then the pointwise max function 
+\[ f(x) = \max_{\alpha\in\Acal} f_\alpha (x)\] 
+is convex over the domain $\{\cap_{\alpha\in \Acal} \dom f_\alpha\} \cap \{x : f(x) < \infty\}.$
+
+\subsection{Characterizations of Convexity}
+
+
+\newpage
+\section{Thursday, March 18th: Convex Optimization Problems}
+\subsection{Nomenclature}
+\subsection{Examples}
+\subsection{Problem transformations}
+
+\newpage
+\section{Tuesday, March 30th: Weak Duality}
+
+\subsection{Weak duality}
+Consider an optimization problem in standard form 
+\begin{align*}
+    p^* = \min_{x\in\RR^n} \quad & f_0(x) \\ 
+    \text{subject to: } \quad & f_i(x) \leq 0, \quad i = 1,\dots, m, \\ 
+                              & h_i(x) = 0, \quad i = 1,\dots, q,
+\end{align*}
+and let $\Dcal$ denote the domain of this problem, assumed to be nonempty. 
+
+We refer to the above problem as the \emph{primal} problem. 
+Note we are not assuming the convexity of $f_i, h_i$ currently. 
+
+\begin{example}
+    Illustrative example.
+\end{example}
+
+We have the following definition: 
+\begin{definition}[Lagrangian]
+    The \emph{Lagrangian} of a primal optimization problem is the function 
+    \[ \Lcal(x,\la,\nu) = f_0(x) + \sum_{i=1}^m \la_i f_i(x) + \sum_{i=1}^q \nu_i h_i(x)\] 
+    where $x\in \RR^n$, $\la \in \RR^m$, and $\nu\in \RR^q$. 
+    The vectors $\la$ and $\nu$ are referred to as \emph{Lagrange multipliers}, or dual variables.
+\end{definition}
+
+Using the Lagrangian, we can express our problem in min-max form as 
+\[ p^* = \min_x \max_{\la\geq 0, \nu} \Lcal(x,\la,\nu).\] 
+This is due to the fact that for any $x$, 
+\[ \max_{\la\geq 0, \nu} \Lcal(x,\la,\nu) = \begin{cases} f_0(x) \quad \text{ if } x\text{ is feasible,} \\ +\infty \quad \text{otherwise}.\end{cases}.\] 
+We've seen this technique before, where we can remove the constraints in the problem by defining ourr objective to be $+\infty$ outside of our feasible set. 
+
+We have the following relationship between $\min\max$ and $\max\min$: 
+\begin{theorem}[Minimax inequality]
+For any sets $X,Y$ and any function $F: X\times Y\to \RR$, 
+\[ \min_{x\in X} \max_{y\in Y} F(x,y) \geq \max_{y\in Y} \min_{x\in X} F(x,y).\] 
+\end{theorem}
+\begin{proof}
+    For any $(x_0, y_0) \in X\times Y$, the value of $F(x_0, y_0)$ has to wedge itself between the $\min_{x\in X}$ and the $\max_{y\in Y}$. 
+    In equations, 
+    \[ h(y_0) := \min_{x\in X} F(x,y_0) \leq F(x_0, y_0) \leq \max_{y\in Y} F(x_0, y) =: g(x_0),\]
+    so $h(y_0) \leq g(x_0)$.
+    Since this was for any $(x_0, y_0)$, we can take $y_0$ to be the max over $Y$ and $x_0$ to be the min over $X$.
+\end{proof}
+
+We can illustrate this point in the interpretation of a game, in which case it's always better to go first (if first is the maximizing player). 
+
+Applying the minimax inequality to the Lagrangian, we obtain 
+\[ p^*  = \min_x \max_{\la\geq 0, \nu} \Lcal(x,\la, \nu) \geq \max_{\la\geq 0,\nu} \min_x \Lcal(x,\la,\nu) =: d^*.\] 
+The problem on the right is called the \emph{dual problem}, and it involves maximizing (over $\la\geq 0, \nu$) the \emph{dual function} 
+\begin{align*}
+    g(\la,\nu) &:= \min_x  \Lcal(x,\la,\nu) \\ 
+               &= \min_x f_0(x) + \sum_{i=1}^m \la_i f_i(x) + \sum_{i=1}^q \nu_i h_i(x).
+\end{align*}
+This function is the pointwise minimum of affine (and therefore concave) functions in $(\la, \nu)$, so $g$ itself is concave. 
+Hence the dual problem, a concave maximization problem over a convex set $(\RR^m_+ \times \RR)$, is convex!
+
+<probability simplex projection duality>
+
+In fact, strong duality does hold sometimes, i.e. $p^* = d^*$, specifically for projection on the probability simplex.
+For every $\nu\in \RR$, the solution to the problem 
+\[ \min_{x\geq 0} \Lcal(x,\nu)\] 
+is unique, and characterized by the zero-gradient condition $\nabla_x \Lcal(x,\nu) = 0$, leading to 
+\[ x_i^*(\nu) = \max(0, z_i + \nu), \quad i = 1,\dots, m.\] 
+In addition, the dual function $g$ is smooth, and at its maximum its gradient is zero: 
+\[ 0 = \nabla_\nu g(\nu^*) = 1 - \sum_{i=1}^n \max(0, z_i + \nu^*) = 1 - \sum_{i=1}^n x_i^* (v^*),\] 
+which proves that the point $x^* (v^*)$ is feasible for the primal problem. 
+
+\begin{example}[Sum of $k$ largest elements]
+For given $w\in \RR^n$ and $k\in \{1,\dots, n-1\}$, define 
+\[ s_k(w) = \sum_{i=1}^k w_{[i]},\] 
+where $w_{[i]}$ is the $i$-th largest element in $w$.
+
+The function $s_k$ is convex, since $s_k$ is just a maximum of all $k$-wise sums of $w_i$'s, and hence pointwise maximums holds. 
+\begin{align*}
+    s_k(w) &= \max_{\Ical} \sum_{i\in\Ical} w_i \; :\; \Ical \subseteq \{1, \dots, n\},\quad \text{Card }\Ical \leq k \\ 
+           &= \max_{u\in\{0,1\}^n} u^\T w \; :\; \one^\T u = k.
+\end{align*}
+
+While this constraint is convex in $w$, it's completely intractable since there are an exponential amount of constraints in $k$. 
+Now by weak duality, we have 
+\begin{align*}
+    s_k(w) &= \max_{u\in \{0,1\}^n} u^\T w \; : \; \one^\T u = k \\ 
+           &= \max_{u\in \{0,1\}^n} \min_\nu\; u^\T w +\nu  (k - \one^\T u) \\ 
+           &\leq \min_\nu \max_{u\in \{0,1\}^n} u^\T w +\nu  (k - \one^\T u) \tag{weak dualilty} \\ 
+           &\leq \min_\nu k\nu + \sum_{i=1}^n \max(0, w_i - \nu),
+\end{align*}
+where in the last line we notice the independence between the entries of $u$ and tease them apart, using that 
+\[ \max_{u\in \{0,1\}^n} u^\T z = \sum_{i=1}^n \max(0, z_i).\] 
+
+This is still weak duality however. 
+To move to strong duality, we notice that if $\nu$ is set to the $(k+1)$-th largest element in $w$, then we recover $s_k(w)$. 
+hence equality holds on the third line, and so we obtain the dual form 
+\[ s_k(w) = \min_\nu k\nu + \sum_{i=1}^n \max(0, w_i -\nu).\] 
+\end{example}
 
 \newpage
 \section{Matrix Cheat Sheet}

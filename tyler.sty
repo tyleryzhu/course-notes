@@ -173,7 +173,7 @@ style=redleftborder,name=Definition, sibling=theorem]{definition}
 \iftylerkoma 
     \theoremstyle{ss-definition}
 \else
-    \theoremstyle{definition}
+    \theoremstyle{definition}e.x. take 
 \fi
 \newtheorem{corollary}[theorem]{Corollary}
 \newtheorem{proposition}[theorem]{Proposition}
@@ -255,6 +255,7 @@ style=redleftborder,name=Definition, sibling=theorem]{definition}
 \newcommand{\Null}[1]{\text{Null} #1 } 
 \newcommand{\tr}[1]{\text{tr} #1 } 
 \newcommand{\Tr}{\text{Tr}} 
+\newcommand{\dom}{\text{dom}\,} 
 \newcommand{\rank}[1]{\text{rank} #1 } 
 \newcommand{\range}{\text{range}}
 \newcommand{\spn}{\text{span}} % don't renew \span! fucks up align environments :-(
@@ -306,7 +307,7 @@ style=redleftborder,name=Definition, sibling=theorem]{definition}
 \newcommand{\BEC}[1]{\text{BEC}(#1)}
 \newcommand{\grle}[2]{\underset{{#2}}{\overset{#1}{\gtrless}}}
 \newcommand{\legr}[2]{\underset{{#2}}{\overset{#1}{\lessgtr}}}
-\newcommand{\cyc}[1]{\langle #1 \rangle}
+\newcommand{\cyc}[1]{\left\langle #1 \right\rangle}
 \newcommand{\proj}{\text{proj}}
 \newcommand{\MMSE}{\text{MMSE}}
 \newcommand{\MAP}{\text{MAP}}
